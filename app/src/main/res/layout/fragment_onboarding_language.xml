@@ -16,14 +16,15 @@
 
     <RadioGroup
         android:id="@+id/languageRadioGroup"
+        android:saveEnabled="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp">
 
-        <RadioButton android:id="@+id/langEnglish" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/language_english" android:textSize="16sp" android:padding="8dp" />
-        <RadioButton android:id="@+id/langArabic" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/language_arabic" android:textSize="16sp" android:padding="8dp" />
-        <RadioButton android:id="@+id/langFrench" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/language_french" android:textSize="16sp" android:padding="8dp" />
-        <RadioButton android:id="@+id/langSpanish" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/language_spanish" android:textSize="16sp" android:padding="8dp" />
+        <RadioButton android:id="@+id/langEnglish" android:saveEnabled="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/language_english" android:textSize="16sp" android:padding="8dp" />
+        <RadioButton android:id="@+id/langArabic" android:saveEnabled="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/language_arabic" android:textSize="16sp" android:padding="8dp" />
+        <RadioButton android:id="@+id/langFrench" android:saveEnabled="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/language_french" android:textSize="16sp" android:padding="8dp" />
+        <RadioButton android:id="@+id/langSpanish" android:saveEnabled="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/language_spanish" android:textSize="16sp" android:padding="8dp" />
 
     </RadioGroup>
 

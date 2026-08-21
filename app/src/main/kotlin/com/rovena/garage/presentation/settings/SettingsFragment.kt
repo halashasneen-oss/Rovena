@@ -284,7 +284,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             .setSingleChoiceItems(options, current) { dialog, which ->
                 val chosen = languages[which]
                 viewModel.setLanguage(chosen)
-                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(chosen.tag))
+                if (AppCompatDelegate.getApplicationLocales().get(0)?.language != chosen.tag) {
+                    AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(chosen.tag))
+                }
                 dialog.dismiss()
             }
             .show()

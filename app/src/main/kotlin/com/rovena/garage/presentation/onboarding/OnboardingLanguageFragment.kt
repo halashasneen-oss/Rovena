@@ -26,7 +26,14 @@ class OnboardingLanguageFragment : Fragment(R.layout.fragment_onboarding_languag
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.langEnglish.isChecked = true
+
+        when (AppCompatDelegate.getApplicationLocales().get(0)?.language) {
+            AppLanguage.ARABIC.tag -> binding.langArabic.isChecked = true
+            AppLanguage.FRENCH.tag -> binding.langFrench.isChecked = true
+            AppLanguage.SPANISH.tag -> binding.langSpanish.isChecked = true
+            else -> binding.langEnglish.isChecked = true
+        }
+
         binding.languageRadioGroup.setOnCheckedChangeListener { _, checkedId ->
             val language = when (checkedId) {
                 binding.langArabic.id -> AppLanguage.ARABIC
@@ -35,7 +42,14 @@ class OnboardingLanguageFragment : Fragment(R.layout.fragment_onboarding_languag
                 else -> AppLanguage.ENGLISH
             }
             lifecycleScope.launch { appContainer.settingsRepository.setLanguage(language) }
-            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(language.tag))
+
+            // setApplicationLocales() recreates every activity when the locale actually
+            // changes - only call it when the language really changed, otherwise a
+            // redundant call here (e.g. from view-state restoration replaying this
+            // listener after that very recreate) would trigger another recreate loop.
+            if (AppCompatDelegate.getApplicationLocales().get(0)?.language != language.tag) {
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(language.tag))
+            }
         }
     }
 
