@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Rovena" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/rovena_accent</item>
+        <item name="colorOnPrimary">@color/rovena_on_accent</item>
+        <item name="colorSecondary">@color/rovena_accent</item>
+        <item name="colorOnSecondary">@color/rovena_on_accent</item>
+        <item name="colorSurface">@color/rovena_surface</item>
+        <item name="colorOnSurface">@color/rovena_on_surface</item>
+        <item name="colorSurfaceVariant">@color/rovena_surface_alt</item>
+        <item name="colorOnSurfaceVariant">@color/rovena_on_surface_variant</item>
+        <item name="colorOutline">@color/rovena_outline</item>
+        <item name="android:colorBackground">@color/rovena_background</item>
+        <item name="colorError">@color/rovena_status_critical</item>
+        <item name="android:statusBarColor">@color/rovena_background</item>
+        <item name="android:navigationBarColor">@color/rovena_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="materialCardViewStyle">@style/Widget.Rovena.CardView</item>
+        <item name="bottomNavigationStyle">@style/Widget.Rovena.BottomNav</item>
+        <item name="floatingActionButtonStyle">@style/Widget.Rovena.Fab</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Theme.Rovena.Splash">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">@color/rovena_background</item>
+        <item name="android:navigationBarColor">@color/rovena_background</item>
+    </style>
+
+</resources>
