@@ -41,4 +41,7 @@ interface ReminderDao {
 
     @Query("SELECT COUNT(*) FROM reminders WHERE vehicleId = :vehicleId AND isActive = 1 AND isCompleted = 0")
     fun observeActiveCount(vehicleId: Long): Flow<Int>
+
+    @Query("UPDATE reminders SET lastNotifiedAtMillis = :whenMillis WHERE id = :reminderId")
+    suspend fun markNotified(reminderId: Long, whenMillis: Long)
 }

@@ -35,6 +35,8 @@ data class ReminderEntity(
     val linkedMaintenanceCategory: MaintenanceCategory? = null,
     val notes: String? = null,
     val lastTriggeredAtMillis: Long? = null,
+    /** Last time a due/overdue notification was posted for this reminder, so the periodic check never double-notifies. */
+    val lastNotifiedAtMillis: Long? = null,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 )

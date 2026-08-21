@@ -50,6 +50,10 @@ class ReminderRepository(
         }
     }
 
+    suspend fun markNotified(reminderId: Long, whenMillis: Long = System.currentTimeMillis()) {
+        reminderDao.markNotified(reminderId, whenMillis)
+    }
+
     suspend fun delete(reminder: ReminderEntity) {
         reminderDao.delete(reminder)
         timelineSyncer.removeForSource(TimelineEventType.REMINDER, reminder.id)

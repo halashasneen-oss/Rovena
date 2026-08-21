@@ -8,4 +8,250 @@
     <string name="notification_channel_reminders_desc">Maintenance, mileage, and custom reminders</string>
     <string name="notification_channel_documents">Documents</string>
     <string name="notification_channel_documents_desc">Document expiry alerts (registration, insurance, inspection)</string>
+
+    <!-- Fuel types -->
+    <string name="fuel_type_petrol">Petrol</string>
+    <string name="fuel_type_diesel">Diesel</string>
+    <string name="fuel_type_hybrid">Hybrid</string>
+    <string name="fuel_type_plugin_hybrid">Plug-in Hybrid</string>
+    <string name="fuel_type_electric">Electric</string>
+    <string name="fuel_type_lpg">LPG</string>
+    <string name="fuel_type_other">Other</string>
+
+    <!-- Transmission -->
+    <string name="transmission_manual">Manual</string>
+    <string name="transmission_automatic">Automatic</string>
+    <string name="transmission_cvt">CVT</string>
+    <string name="transmission_dct">DCT</string>
+    <string name="transmission_other">Other</string>
+
+    <!-- Maintenance categories -->
+    <string name="maintenance_category_engine_oil">Engine Oil</string>
+    <string name="maintenance_category_oil_filter">Oil Filter</string>
+    <string name="maintenance_category_air_filter">Air Filter</string>
+    <string name="maintenance_category_cabin_filter">Cabin Filter</string>
+    <string name="maintenance_category_fuel_filter">Fuel Filter</string>
+    <string name="maintenance_category_spark_plugs">Spark Plugs</string>
+    <string name="maintenance_category_brake_pads">Brake Pads</string>
+    <string name="maintenance_category_brake_discs">Brake Discs</string>
+    <string name="maintenance_category_tires">Tires</string>
+    <string name="maintenance_category_battery">Battery</string>
+    <string name="maintenance_category_coolant">Coolant</string>
+    <string name="maintenance_category_transmission_fluid">Transmission Fluid</string>
+    <string name="maintenance_category_timing_belt">Timing Belt</string>
+    <string name="maintenance_category_serpentine_belt">Serpentine Belt</string>
+    <string name="maintenance_category_suspension">Suspension</string>
+    <string name="maintenance_category_steering">Steering</string>
+    <string name="maintenance_category_ac">A/C</string>
+    <string name="maintenance_category_electrical">Electrical</string>
+    <string name="maintenance_category_engine">Engine</string>
+    <string name="maintenance_category_transmission">Transmission</string>
+    <string name="maintenance_category_other">Other</string>
+
+    <!-- Expense categories -->
+    <string name="expense_category_fuel">Fuel</string>
+    <string name="expense_category_maintenance">Maintenance</string>
+    <string name="expense_category_repairs">Repairs</string>
+    <string name="expense_category_insurance">Insurance</string>
+    <string name="expense_category_registration">Registration</string>
+    <string name="expense_category_tires">Tires</string>
+    <string name="expense_category_car_wash">Car Wash</string>
+    <string name="expense_category_parking">Parking</string>
+    <string name="expense_category_fines">Fines</string>
+    <string name="expense_category_parts">Parts</string>
+    <string name="expense_category_accessories">Accessories</string>
+    <string name="expense_category_inspection">Inspection</string>
+    <string name="expense_category_other">Other</string>
+
+    <!-- Document types -->
+    <string name="document_type_registration">Registration</string>
+    <string name="document_type_insurance">Insurance</string>
+    <string name="document_type_inspection">Inspection</string>
+    <string name="document_type_purchase_contract">Purchase Contract</string>
+    <string name="document_type_maintenance_invoice">Maintenance Invoice</string>
+    <string name="document_type_receipt">Receipt</string>
+    <string name="document_type_other">Other</string>
+
+    <!-- Inspection items -->
+    <string name="inspection_item_paint">Paint</string>
+    <string name="inspection_item_body">Body</string>
+    <string name="inspection_item_doors">Doors</string>
+    <string name="inspection_item_windows">Windows</string>
+    <string name="inspection_item_lights">Lights</string>
+    <string name="inspection_item_mirrors">Mirrors</string>
+    <string name="inspection_item_tires">Tires</string>
+    <string name="inspection_item_wheels">Wheels</string>
+    <string name="inspection_item_chassis">Chassis</string>
+    <string name="inspection_item_seats">Seats</string>
+    <string name="inspection_item_dashboard">Dashboard</string>
+    <string name="inspection_item_ac">A/C</string>
+    <string name="inspection_item_audio">Audio</string>
+    <string name="inspection_item_electronics">Electronics</string>
+    <string name="inspection_item_interior_condition">Interior Condition</string>
+    <string name="inspection_item_engine">Engine</string>
+    <string name="inspection_item_transmission">Transmission</string>
+    <string name="inspection_item_brakes">Brakes</string>
+    <string name="inspection_item_suspension">Suspension</string>
+    <string name="inspection_item_steering">Steering</string>
+    <string name="inspection_item_cooling">Cooling</string>
+    <string name="inspection_item_fluids">Fluids</string>
+    <string name="inspection_item_battery">Battery</string>
+
+    <!-- Inspection item statuses -->
+    <string name="inspection_status_good">Good</string>
+    <string name="inspection_status_attention">Attention</string>
+    <string name="inspection_status_problem">Problem</string>
+    <string name="inspection_status_unknown">Unknown</string>
+
+    <!-- Health statuses -->
+    <string name="health_status_excellent">Excellent</string>
+    <string name="health_status_good">Good</string>
+    <string name="health_status_fair">Fair</string>
+    <string name="health_status_attention_needed">Attention Needed</string>
+    <string name="health_status_critical">Critical</string>
+    <string name="health_status_not_enough_data">Not Enough Data</string>
+
+    <!-- Due statuses -->
+    <string name="due_status_upcoming">Upcoming</string>
+    <string name="due_status_due_soon">Due Soon</string>
+    <string name="due_status_due">Due</string>
+    <string name="due_status_overdue">Overdue</string>
+
+    <!-- Units -->
+    <string name="unit_km_short">KM</string>
+    <string name="unit_miles_short">mi</string>
+    <string name="unit_l_100km_short">L/100km</string>
+    <string name="unit_mpg_short">MPG</string>
+    <string name="not_enough_data">Not enough data</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_garage">Garage</string>
+    <string name="nav_service">Service</string>
+    <string name="nav_insights">Insights</string>
+    <string name="nav_more">More</string>
+    <string name="quick_add_content_description">Quick add</string>
+
+    <!-- Timeline -->
+    <string name="timeline_fuel_title">Fuel · %1$s</string>
+    <string name="timeline_fuel_title_generic">Fuel</string>
+    <string name="inspection_title">Inspection</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_vehicle_health">Vehicle Health</string>
+    <string name="dashboard_next_service">Next Service</string>
+    <string name="dashboard_fuel">Fuel</string>
+    <string name="dashboard_monthly_cost">Monthly Cost</string>
+    <string name="dashboard_upcoming_tasks">Upcoming Tasks</string>
+    <string name="dashboard_no_upcoming_tasks">No upcoming tasks. You\'re all caught up.</string>
+    <string name="dashboard_recent_activity">Recent Activity</string>
+    <string name="dashboard_no_recent_activity">No activity yet.</string>
+    <string name="dashboard_quick_actions">Quick Actions</string>
+    <string name="quick_action_fuel">Fuel</string>
+    <string name="quick_action_maintenance">Maintenance</string>
+    <string name="quick_action_expense">Expense</string>
+    <string name="quick_action_document">Document</string>
+    <string name="quick_action_inspection">Inspection</string>
+
+    <!-- Empty states -->
+    <string name="garage_empty_title">Your garage is empty</string>
+    <string name="garage_empty_message">Add your first vehicle to get started.</string>
+    <string name="add_vehicle">Add Vehicle</string>
+    <string name="edit_vehicle">Edit Vehicle</string>
+
+    <!-- Vehicle form -->
+    <string name="vehicle_field_make">Make</string>
+    <string name="vehicle_field_model">Model</string>
+    <string name="vehicle_field_year">Year</string>
+    <string name="vehicle_field_trim">Trim</string>
+    <string name="vehicle_field_fuel_type">Fuel Type</string>
+    <string name="vehicle_field_transmission">Transmission</string>
+    <string name="vehicle_field_engine_size">Engine Size (L)</string>
+    <string name="vehicle_field_mileage">Current Mileage (KM)</string>
+    <string name="vehicle_field_vin">VIN</string>
+    <string name="vehicle_field_plate">License Plate</string>
+    <string name="vehicle_field_color">Color</string>
+    <string name="vehicle_field_purchase_date">Purchase Date</string>
+    <string name="vehicle_field_purchase_price">Purchase Price</string>
+    <string name="vehicle_field_estimated_value">Estimated Value</string>
+    <string name="vehicle_field_notes">Notes</string>
+    <string name="vehicle_field_set_primary">Set as primary vehicle</string>
+    <string name="action_save">Save</string>
+    <string name="error_required">This field is required</string>
+    <string name="error_invalid_year">Enter a valid year</string>
+    <string name="error_invalid_mileage">Enter a valid mileage</string>
+    <string name="vehicle_primary_badge">Primary vehicle</string>
+    <string name="action_more_options">More options</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_set_primary">Set as Primary</string>
+    <string name="delete_vehicle_confirm_title">Delete this vehicle?</string>
+    <string name="delete_vehicle_confirm_message">All maintenance, fuel, expense, document, inspection and reminder records for this vehicle will be permanently deleted. This cannot be undone.</string>
+    <string name="action_cancel">Cancel</string>
+
+    <!-- Vehicle hub sections -->
+    <string name="hub_section_maintenance">Maintenance</string>
+    <string name="hub_section_fuel">Fuel</string>
+    <string name="hub_section_expenses">Expenses</string>
+    <string name="hub_section_documents">Documents</string>
+    <string name="hub_section_inspection">Inspection</string>
+    <string name="hub_section_insights">Insights</string>
+    <string name="hub_section_timeline">Timeline</string>
+    <string name="hub_section_reminders">Reminders</string>
+    <string name="hub_records_count">%d records</string>
+    <string name="hub_documents_expired">%d expired</string>
+    <string name="hub_active_reminders">%d active</string>
+    <string name="hub_view_score">View score</string>
+    <string name="action_back">Back</string>
+    <string name="maintenance_empty_title">No service history yet</string>
+    <string name="maintenance_empty_message">Log an oil change, tire rotation, or any service to start tracking maintenance.</string>
+    <string name="maintenance_field_category">Category</string>
+    <string name="maintenance_field_date">Date</string>
+    <string name="maintenance_field_description">Description</string>
+    <string name="maintenance_field_cost">Cost</string>
+    <string name="maintenance_field_parts">Parts</string>
+    <string name="maintenance_field_workshop">Workshop</string>
+    <string name="maintenance_field_technician">Technician</string>
+    <string name="maintenance_next_due_section">Next Due</string>
+    <string name="maintenance_field_next_due_mileage">Next Due Mileage</string>
+    <string name="maintenance_field_next_due_date">Next Due Date</string>
+    <string name="field_photos">Photos</string>
+    <string name="fuel_partial">partial</string>
+    <string name="fuel_empty_title">Start tracking your fuel</string>
+    <string name="fuel_empty_message">Log a fill-up to see consumption stats.</string>
+    <string name="fuel_field_liters">Liters</string>
+    <string name="fuel_field_price_per_liter">Price per Liter</string>
+    <string name="fuel_field_total_cost">Total Cost</string>
+    <string name="fuel_field_station">Station</string>
+    <string name="fuel_field_full_tank">Full tank</string>
+    <string name="fuel_field_fuel_type">Fuel Type</string>
+    <string name="fuel_stats_avg">Avg %1$s</string>
+    <string name="fuel_stats_best">Best %1$s</string>
+    <string name="fuel_stats_worst">Worst %1$s</string>
+    <string name="mileage_warning_lower">Current mileage is lower than your previous record. Please check the value.</string>
+    <string name="expense_empty_title">No expenses yet</string>
+    <string name="expense_empty_message">Track car washes, parking, fines, and more.</string>
+    <string name="expense_field_category">Category</string>
+    <string name="expense_field_amount">Amount</string>
+    <string name="expense_field_vendor">Vendor</string>
+    <string name="expense_field_receipt">Attach Receipt Photo</string>
+    <string name="expense_field_receipt_attached">Receipt attached · Tap to change</string>
+    <string name="document_expired">Expired</string>
+    <string name="document_empty_title">Keep your vehicle documents organized</string>
+    <string name="document_empty_message">Add registration, insurance, and inspection papers here.</string>
+    <string name="document_field_name">Document Name</string>
+    <string name="document_field_type">Type</string>
+    <string name="document_field_issue_date">Issue Date</string>
+    <string name="document_field_expiry_date">Expiry Date (optional)</string>
+    <string name="document_field_attach_file">Attach File / Photo</string>
+    <string name="document_field_file_attached">File attached · Tap to change</string>
+    <string name="document_field_no_file">No file attached yet</string>
+    <string name="error_file_required">Please attach a file or photo</string>
+    <string name="reminder_mark_done">Mark Done</string>
+    <string name="reminder_notification_title">%1$s is due</string>
+    <string name="reminder_notification_body_km">%1$d KM remaining</string>
+    <string name="reminder_notification_body_days">%1$d days remaining</string>
+    <string name="reminder_notification_body_overdue">Overdue</string>
+    <string name="document_expiry_notification_title">%1$s expiring soon</string>
+    <string name="document_expiry_notification_body">Expires %1$s</string>
 </resources>

@@ -11,6 +11,7 @@ import com.rovena.garage.data.repository.MaintenanceRepository
 import com.rovena.garage.data.repository.PhotoRepository
 import com.rovena.garage.data.repository.ReminderRepository
 import com.rovena.garage.data.repository.SettingsRepository
+import com.rovena.garage.data.repository.TimelineRepository
 import com.rovena.garage.data.repository.TimelineSyncer
 import com.rovena.garage.data.repository.UserPreferences
 import com.rovena.garage.data.repository.VehicleRepository
@@ -55,6 +56,10 @@ class AppContainer(context: Context) {
 
     val reminderRepository: ReminderRepository by lazy {
         ReminderRepository(database.reminderDao(), timelineSyncer)
+    }
+
+    val timelineRepository: TimelineRepository by lazy {
+        TimelineRepository(database.timelineDao())
     }
 
     val photoRepository: PhotoRepository by lazy {

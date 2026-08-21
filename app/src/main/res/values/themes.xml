@@ -68,4 +68,9 @@
         <item name="chipBackgroundColor">@color/rovena_surface_alt</item>
     </style>
 
+    <style name="ShapeAppearance.Rovena.RoundedCorners" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">14dp</item>
+    </style>
+
 </resources>

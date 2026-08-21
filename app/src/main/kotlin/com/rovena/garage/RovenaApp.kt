@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import com.rovena.garage.domain.model.AppThemeMode
+import com.rovena.garage.presentation.reminders.ReminderCheckWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -23,6 +24,7 @@ class RovenaApp : Application() {
         super.onCreate()
         createNotificationChannels()
         applyPersistedTheme()
+        ReminderCheckWorker.schedule(this)
     }
 
     private fun createNotificationChannels() {

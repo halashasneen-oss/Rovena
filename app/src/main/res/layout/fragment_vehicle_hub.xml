@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/contentScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/vehicleImage"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:background="?attr/colorSurfaceVariant"
+                android:padding="56dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_car_placeholder" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/vehicleName"
+                    style="?attr/textAppearanceHeadlineSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface"
+                    tools:text="BMW 320i" />
+
+                <TextView
+                    android:id="@+id/vehicleMeta"
+                    style="?attr/textAppearanceBodyMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    tools:text="2020 · Petrol · Automatic · 142,850 KM" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="16dp">
+
+                    <FrameLayout
+                        android:layout_width="56dp"
+                        android:layout_height="56dp">
+
+                        <com.rovena.garage.presentation.common.CircularScoreView
+                            android:id="@+id/healthRing"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <TextView
+                            android:id="@+id/healthScoreText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            style="?attr/textAppearanceTitleMedium"
+                            android:textStyle="bold"
+                            tools:text="87" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/healthStatusText"
+                        style="?attr/textAppearanceBodyLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        tools:text="Excellent" />
+                </LinearLayout>
+
+                <GridLayout
+                    android:id="@+id/sectionsGrid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:columnCount="2"
+                    android:useDefaultMargins="false">
+
+                    <include android:id="@+id/sectionMaintenance" layout="@layout/item_hub_section"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_columnWeight="1" android:layout_margin="4dp" />
+                    <include android:id="@+id/sectionFuel" layout="@layout/item_hub_section"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_columnWeight="1" android:layout_margin="4dp" />
+                    <include android:id="@+id/sectionExpenses" layout="@layout/item_hub_section"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_columnWeight="1" android:layout_margin="4dp" />
+                    <include android:id="@+id/sectionDocuments" layout="@layout/item_hub_section"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_columnWeight="1" android:layout_margin="4dp" />
+                    <include android:id="@+id/sectionInspection" layout="@layout/item_hub_section"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_columnWeight="1" android:layout_margin="4dp" />
+                    <include android:id="@+id/sectionInsights" layout="@layout/item_hub_section"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_columnWeight="1" android:layout_margin="4dp" />
+                    <include android:id="@+id/sectionTimeline" layout="@layout/item_hub_section"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_columnWeight="1" android:layout_margin="4dp" />
+                    <include android:id="@+id/sectionReminders" layout="@layout/item_hub_section"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_columnWeight="1" android:layout_margin="4dp" />
+                </GridLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <include
+        android:id="@+id/emptyState"
+        layout="@layout/view_empty_state"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+</FrameLayout>

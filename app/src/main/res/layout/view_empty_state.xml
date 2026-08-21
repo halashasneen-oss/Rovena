@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="?attr/colorSurface"
+    android:padding="32dp">
+
+    <ImageView
+        android:id="@+id/emptyIcon"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:alpha="0.5"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_car_placeholder"
+        app:tint="?attr/colorOnSurfaceVariant"
+        xmlns:app="http://schemas.android.com/apk/res/res-auto" />
+
+    <TextView
+        android:id="@+id/emptyTitle"
+        style="?attr/textAppearanceTitleMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:textColor="?attr/colorOnSurface"
+        android:textStyle="bold"
+        tools:text="Your garage is empty" />
+
+    <TextView
+        android:id="@+id/emptyMessage"
+        style="?attr/textAppearanceBodyMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        tools:text="Add your first vehicle to get started." />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/emptyAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        tools:text="Add Vehicle"
+        tools:visibility="visible" />
+
+</LinearLayout>

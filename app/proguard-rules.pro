@@ -8,7 +8,3 @@
 
 # Keep ViewModel constructors used via reflection-free factories (none needed, but keep names for debugging)
 -keepnames class com.rovena.garage.presentation.** { *; }
-
-# Navigation Safe Args generated classes
--keep class com.rovena.garage.**.*Directions { *; }
--keep class com.rovena.garage.**.*Args { *; }
