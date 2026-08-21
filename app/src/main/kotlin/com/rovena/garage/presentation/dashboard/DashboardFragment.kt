@@ -56,7 +56,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         binding.emptyState.emptyAction.text = getString(R.string.add_vehicle)
         binding.emptyState.emptyAction.visibility = View.VISIBLE
         binding.emptyState.emptyAction.setOnClickListener {
-            findNavController().navigate(R.id.action_global_vehicleForm)
+            findNavController().navigate(R.id.vehicleFormFragment, bundleOf("vehicleId" to 0L))
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -68,21 +68,23 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
 
     private fun setupQuickActions() {
         bindQuickAction(binding.quickAddFuel, R.drawable.ic_fuel, R.string.quick_action_fuel) {
-            findNavController().navigate(R.id.action_global_fuelForm)
+            currentVehicleId()?.let { findNavController().navigate(R.id.fuelFormFragment, bundleOf("vehicleId" to it, "recordId" to 0L)) }
         }
         bindQuickAction(binding.quickAddMaintenance, R.drawable.ic_service, R.string.quick_action_maintenance) {
-            findNavController().navigate(R.id.action_global_maintenanceForm)
+            currentVehicleId()?.let { findNavController().navigate(R.id.maintenanceFormFragment, bundleOf("vehicleId" to it, "recordId" to 0L)) }
         }
         bindQuickAction(binding.quickAddExpense, R.drawable.ic_expense, R.string.quick_action_expense) {
-            findNavController().navigate(R.id.action_global_expenseForm)
+            currentVehicleId()?.let { findNavController().navigate(R.id.expenseFormFragment, bundleOf("vehicleId" to it, "recordId" to 0L)) }
         }
         bindQuickAction(binding.quickAddDocument, R.drawable.ic_document, R.string.quick_action_document) {
-            findNavController().navigate(R.id.action_global_documentForm)
+            currentVehicleId()?.let { findNavController().navigate(R.id.documentFormFragment, bundleOf("vehicleId" to it, "recordId" to 0L)) }
         }
         bindQuickAction(binding.quickAddInspection, R.drawable.ic_inspection, R.string.quick_action_inspection) {
-            findNavController().navigate(R.id.action_global_inspectionForm)
+            currentVehicleId()?.let { findNavController().navigate(R.id.inspectionFormFragment, bundleOf("vehicleId" to it, "recordId" to 0L)) }
         }
     }
+
+    private fun currentVehicleId(): Long? = viewModel.uiState.value.vehicle?.id
 
     private fun bindQuickAction(included: com.rovena.garage.databinding.ItemQuickActionBinding, icon: Int, label: Int, onClick: () -> Unit) {
         included.quickActionIcon.setImageResource(icon)

@@ -75,6 +75,13 @@ abstract class RovenaDatabase : RoomDatabase() {
                 instance ?: build(context).also { instance = it }
             }
 
+        /** Closes and drops the cached instance so the underlying .db file can be safely replaced (used by Restore). */
+        @Synchronized
+        fun closeInstance() {
+            instance?.close()
+            instance = null
+        }
+
         private fun build(context: Context): RovenaDatabase =
             Room.databaseBuilder(context.applicationContext, RovenaDatabase::class.java, DATABASE_NAME)
                 // Deliberately no destructive fallback: a bad migration must fail loudly

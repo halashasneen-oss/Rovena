@@ -293,4 +293,90 @@
     <string name="reminder_field_recurring">Repeats</string>
     <string name="reminder_field_interval_km">Repeat every (KM)</string>
     <string name="reminder_field_interval_months">Repeat every (months)</string>
+
+    <string name="insights_monthly_spending">Monthly Spending</string>
+    <string name="insights_fuel_trend">Fuel Consumption Trend</string>
+    <string name="insights_category_breakdown">Expense Breakdown</string>
+    <string name="insights_total_distance">Total Distance</string>
+    <string name="insights_avg_consumption">Avg Consumption</string>
+    <string name="insights_cost_per_km">Cost / KM</string>
+    <string name="insights_avg_monthly">Avg Monthly Cost</string>
+
+    <string name="settings_section_garage">Garage</string>
+    <string name="settings_row_manage_vehicles">Manage Vehicles</string>
+    <string name="settings_row_manage_vehicles_subtitle">Add, edit, or remove vehicles</string>
+
+    <string name="settings_section_notifications">Notifications</string>
+    <string name="settings_row_notifications">Enable Reminders</string>
+    <string name="settings_row_notifications_on">On</string>
+    <string name="settings_row_notifications_off">Off</string>
+
+    <string name="settings_section_security">Security</string>
+    <string name="settings_row_app_lock">App Lock</string>
+    <string name="settings_row_biometric">Biometric Unlock</string>
+    <string name="settings_row_biometric_subtitle_disabled">Set a PIN first</string>
+
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_row_theme">Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System Default</string>
+
+    <string name="settings_section_data">Data</string>
+    <string name="settings_row_backup">Create Backup</string>
+    <string name="settings_row_backup_subtitle">Export a .motiva backup file</string>
+    <string name="settings_row_restore">Restore Backup</string>
+    <string name="settings_row_restore_subtitle">Import a .motiva backup file</string>
+
+    <string name="settings_section_units">Units</string>
+    <string name="settings_row_distance_unit">Distance Unit</string>
+    <string name="settings_row_fuel_unit">Fuel Economy Unit</string>
+    <string name="settings_row_currency">Currency</string>
+    <string name="unit_km_full">Kilometers (KM)</string>
+    <string name="unit_miles_full">Miles (mi)</string>
+    <string name="unit_l100km_full">L/100km</string>
+    <string name="unit_mpg_full">Miles per gallon (MPG)</string>
+
+    <string name="settings_section_language">Language</string>
+    <string name="settings_row_language">App Language</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">العربية</string>
+    <string name="language_french">Français</string>
+    <string name="language_spanish">Español</string>
+
+    <string name="settings_section_about">About</string>
+    <string name="settings_row_version">App Version</string>
+    <string name="settings_row_privacy">Privacy</string>
+    <string name="settings_row_terms">Terms</string>
+    <string name="settings_row_licenses">Open Source Licenses</string>
+    <string name="settings_row_sample_data">Generate Sample Data (Debug)</string>
+
+    <string name="privacy_title">Privacy</string>
+    <string name="privacy_body">Your vehicle data stays on your device.\n\nRovena works completely offline. There is no account, no login, and no cloud database. Every vehicle, maintenance record, fuel entry, expense, document, inspection and reminder you add is stored only in this app\'s local database on this device.\n\nRovena does not include analytics, tracking, or remote logging of any kind, and never transmits your vehicle information anywhere. The only way your data leaves this device is if you explicitly create a backup file and share or move it yourself.</string>
+    <string name="terms_title">Terms</string>
+    <string name="terms_body">Rovena is provided as-is, for personal vehicle record-keeping. The Vehicle Health Score and inspection scores are informational estimates based only on the data you enter - they are not a mechanical diagnosis and should not replace a professional inspection. You are responsible for the accuracy of the data you enter and for keeping your own backups.</string>
+    <string name="licenses_title">Open Source Licenses</string>
+    <string name="licenses_body">Rovena is built with the following open-source software, each under the Apache License 2.0 unless noted:\n\n• AndroidX (Core, AppCompat, Lifecycle, Navigation, Room, WorkManager, DataStore, Biometric)\n• Material Components for Android\n• Kotlin &amp; Kotlin Coroutines (Apache 2.0)\n• Coil - Image loading (Apache 2.0)</string>
+    <string name="action_close">Close</string>
+    <string name="lock_pin_hint">Enter a PIN (4+ digits)</string>
+    <string name="lock_pin_confirm_hint">Confirm PIN</string>
+    <string name="lock_pin_too_short">PIN must be at least 4 digits</string>
+    <string name="lock_pin_mismatch">PINs don\'t match</string>
+    <string name="currency_custom">Custom</string>
+    <string name="currency_custom_hint">e.g. CAD</string>
+
+    <string name="backup_title">Backup &amp; Restore</string>
+    <string name="backup_description">Create a .motiva backup file containing every vehicle, record, photo and document - or restore one you saved earlier. Everything stays on your device unless you choose to move the file yourself.</string>
+    <string name="backup_created_success">Backup created with %1$d vehicle(s)</string>
+    <string name="backup_error">Something went wrong: %1$s</string>
+    <string name="backup_invalid_corrupt">This backup file is corrupt or unreadable.</string>
+    <string name="backup_invalid_version">This backup was created by a newer version of Rovena and can\'t be restored here.</string>
+    <string name="backup_confirm_title">Restore this backup?</string>
+    <string name="backup_confirm_message">Choose how to restore %1$d vehicle(s) from this backup.</string>
+    <string name="backup_restore_option_replace">Replace current garage</string>
+    <string name="backup_restore_option_new">Add as new vehicles</string>
+    <string name="backup_restore_completed_restart">Restore complete. Rovena will now restart.</string>
+    <string name="backup_restore_completed_merged">%1$d vehicle(s) added to your garage.</string>
+    <string name="backup_last_created">Last backup: %1$s (%2$d vehicles)</string>
+    <string name="backup_none_yet">No backups created yet.</string>
 </resources>

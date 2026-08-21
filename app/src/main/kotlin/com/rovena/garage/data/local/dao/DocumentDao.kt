@@ -30,6 +30,9 @@ interface DocumentDao {
     @Query("SELECT * FROM documents WHERE vehicleId = :vehicleId ORDER BY createdAt DESC")
     fun observeByVehicle(vehicleId: Long): Flow<List<DocumentEntity>>
 
+    @Query("SELECT * FROM documents WHERE vehicleId = :vehicleId ORDER BY createdAt DESC")
+    suspend fun getByVehicleOnce(vehicleId: Long): List<DocumentEntity>
+
     @Query(
         "SELECT * FROM documents WHERE vehicleId = :vehicleId AND expiryDateMillis IS NOT NULL " +
             "AND expiryDateMillis BETWEEN :nowMillis AND :beforeMillis ORDER BY expiryDateMillis ASC"

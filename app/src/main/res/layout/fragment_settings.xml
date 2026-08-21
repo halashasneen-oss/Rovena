@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="24dp">
+
+        <TextView
+            style="?attr/textAppearanceHeadlineSmall"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:textStyle="bold" android:textColor="?attr/colorOnSurface"
+            android:text="@string/nav_more" />
+
+        <TextView android:id="@+id/sectionGarage" style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:layout_marginTop="8dp" android:text="@string/settings_section_garage" />
+        <include android:id="@+id/rowManageVehicles" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+        <TextView style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:layout_marginTop="16dp" android:text="@string/settings_section_notifications" />
+        <include android:id="@+id/rowNotifications" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+        <TextView style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:layout_marginTop="16dp" android:text="@string/settings_section_security" />
+        <include android:id="@+id/rowAppLock" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <include android:id="@+id/rowBiometric" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+        <TextView style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:layout_marginTop="16dp" android:text="@string/settings_section_appearance" />
+        <include android:id="@+id/rowTheme" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+        <TextView style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:layout_marginTop="16dp" android:text="@string/settings_section_data" />
+        <include android:id="@+id/rowBackup" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <include android:id="@+id/rowRestore" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+        <TextView style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:layout_marginTop="16dp" android:text="@string/settings_section_units" />
+        <include android:id="@+id/rowDistanceUnit" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <include android:id="@+id/rowFuelUnit" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <include android:id="@+id/rowCurrency" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+        <TextView style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:layout_marginTop="16dp" android:text="@string/settings_section_language" />
+        <include android:id="@+id/rowLanguage" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+
+        <TextView style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:layout_marginTop="16dp" android:text="@string/settings_section_about" />
+        <include android:id="@+id/rowVersion" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <include android:id="@+id/rowPrivacy" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <include android:id="@+id/rowTerms" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <include android:id="@+id/rowLicenses" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <include android:id="@+id/rowSampleData" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" android:visibility="gone" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

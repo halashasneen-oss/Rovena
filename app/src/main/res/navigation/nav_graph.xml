@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_home">
+
+    <!-- Bottom navigation top-level destinations -->
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.rovena.garage.presentation.dashboard.DashboardFragment"
+        android:label="@string/nav_home" />
+
+    <fragment
+        android:id="@+id/nav_garage"
+        android:name="com.rovena.garage.presentation.garage.GarageFragment"
+        android:label="@string/nav_garage" />
+
+    <fragment
+        android:id="@+id/nav_service"
+        android:name="com.rovena.garage.presentation.vehiclehub.VehicleHubFragment"
+        android:label="@string/nav_service" />
+
+    <fragment
+        android:id="@+id/nav_insights"
+        android:name="com.rovena.garage.presentation.insights.InsightsFragment"
+        android:label="@string/nav_insights" />
+
+    <fragment
+        android:id="@+id/nav_more"
+        android:name="com.rovena.garage.presentation.settings.SettingsFragment"
+        android:label="@string/nav_more" />
+
+    <!-- Vehicle -->
+    <fragment
+        android:id="@+id/vehicleFormFragment"
+        android:name="com.rovena.garage.presentation.vehicleform.VehicleFormFragment"
+        android:label="@string/add_vehicle">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/vehicleHubFragment"
+        android:name="com.rovena.garage.presentation.vehiclehub.VehicleHubFragment"
+        android:label="@string/nav_service">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/insightsFragment"
+        android:name="com.rovena.garage.presentation.insights.InsightsFragment"
+        android:label="@string/nav_insights">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+
+    <!-- Maintenance -->
+    <fragment
+        android:id="@+id/maintenanceListFragment"
+        android:name="com.rovena.garage.presentation.maintenance.MaintenanceListFragment"
+        android:label="@string/hub_section_maintenance">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+    <fragment
+        android:id="@+id/maintenanceFormFragment"
+        android:name="com.rovena.garage.presentation.maintenance.MaintenanceFormFragment"
+        android:label="@string/hub_section_maintenance">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+        <argument android:name="recordId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+
+    <!-- Fuel -->
+    <fragment
+        android:id="@+id/fuelListFragment"
+        android:name="com.rovena.garage.presentation.fuel.FuelListFragment"
+        android:label="@string/hub_section_fuel">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+    <fragment
+        android:id="@+id/fuelFormFragment"
+        android:name="com.rovena.garage.presentation.fuel.FuelFormFragment"
+        android:label="@string/hub_section_fuel">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+        <argument android:name="recordId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+
+    <!-- Expenses -->
+    <fragment
+        android:id="@+id/expenseListFragment"
+        android:name="com.rovena.garage.presentation.expenses.ExpenseListFragment"
+        android:label="@string/hub_section_expenses">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+    <fragment
+        android:id="@+id/expenseFormFragment"
+        android:name="com.rovena.garage.presentation.expenses.ExpenseFormFragment"
+        android:label="@string/hub_section_expenses">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+        <argument android:name="recordId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+
+    <!-- Documents -->
+    <fragment
+        android:id="@+id/documentListFragment"
+        android:name="com.rovena.garage.presentation.documents.DocumentListFragment"
+        android:label="@string/hub_section_documents">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+    <fragment
+        android:id="@+id/documentFormFragment"
+        android:name="com.rovena.garage.presentation.documents.DocumentFormFragment"
+        android:label="@string/hub_section_documents">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+        <argument android:name="recordId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+
+    <!-- Inspection -->
+    <fragment
+        android:id="@+id/inspectionListFragment"
+        android:name="com.rovena.garage.presentation.inspection.InspectionListFragment"
+        android:label="@string/hub_section_inspection">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+    <fragment
+        android:id="@+id/inspectionFormFragment"
+        android:name="com.rovena.garage.presentation.inspection.InspectionFormFragment"
+        android:label="@string/hub_section_inspection">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+        <argument android:name="recordId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+
+    <!-- Timeline -->
+    <fragment
+        android:id="@+id/timelineFragment"
+        android:name="com.rovena.garage.presentation.timeline.TimelineFragment"
+        android:label="@string/hub_section_timeline">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+
+    <!-- Reminders -->
+    <fragment
+        android:id="@+id/reminderListFragment"
+        android:name="com.rovena.garage.presentation.reminders.ReminderListFragment"
+        android:label="@string/hub_section_reminders">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+    <fragment
+        android:id="@+id/reminderFormFragment"
+        android:name="com.rovena.garage.presentation.reminders.ReminderFormFragment"
+        android:label="@string/hub_section_reminders">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+        <argument android:name="recordId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+
+    <!-- Backup / Restore -->
+    <fragment
+        android:id="@+id/backupFragment"
+        android:name="com.rovena.garage.presentation.backup.BackupFragment"
+        android:label="@string/settings_section_data" />
+
+</navigation>

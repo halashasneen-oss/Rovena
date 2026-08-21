@@ -21,6 +21,9 @@ interface VehiclePhotoDao {
     @Query("SELECT * FROM vehicle_photos WHERE vehicleId = :vehicleId ORDER BY createdAt DESC")
     fun observeByVehicle(vehicleId: Long): Flow<List<VehiclePhotoEntity>>
 
+    @Query("SELECT * FROM vehicle_photos WHERE vehicleId = :vehicleId ORDER BY createdAt DESC")
+    suspend fun getByVehicleOnce(vehicleId: Long): List<VehiclePhotoEntity>
+
     @Query("SELECT * FROM vehicle_photos WHERE linkedType = :linkedType AND linkedId = :linkedId ORDER BY createdAt ASC")
     fun observeByLink(linkedType: PhotoLinkedType, linkedId: Long): Flow<List<VehiclePhotoEntity>>
 

@@ -11,6 +11,7 @@ import java.security.SecureRandom
  */
 object PinHasher {
 
+    const val MIN_PIN_LENGTH = 4
     private const val ITERATIONS = 10_000
 
     fun generateSalt(): String {
