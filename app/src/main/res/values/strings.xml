@@ -2,4 +2,10 @@
 <resources>
     <string name="app_name">Rovena</string>
     <string name="app_tagline">Your Digital Garage</string>
+
+    <!-- Notification channels -->
+    <string name="notification_channel_reminders">Reminders</string>
+    <string name="notification_channel_reminders_desc">Maintenance, mileage, and custom reminders</string>
+    <string name="notification_channel_documents">Documents</string>
+    <string name="notification_channel_documents_desc">Document expiry alerts (registration, insurance, inspection)</string>
 </resources>
