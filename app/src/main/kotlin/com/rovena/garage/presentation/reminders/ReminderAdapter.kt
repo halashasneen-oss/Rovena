@@ -38,9 +38,11 @@ class ReminderAdapter(
             } else if (eval != null) {
                 binding.reminderDetail.visibility = android.view.View.VISIBLE
                 val statusLabel = context.getString(EnumLabels.of(eval.status))
+                val remainingKm = eval.remainingKm
+                val remainingDays = eval.remainingDays
                 val detail = when {
-                    eval.remainingKm != null -> "$statusLabel · ${eval.remainingKm} KM"
-                    eval.remainingDays != null -> "$statusLabel · ${eval.remainingDays}d"
+                    remainingKm != null -> "$statusLabel · $remainingKm KM"
+                    remainingDays != null -> "$statusLabel · ${remainingDays}d"
                     else -> statusLabel
                 }
                 binding.reminderDetail.text = detail

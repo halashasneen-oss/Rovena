@@ -37,7 +37,7 @@ class Converters {
     @TypeConverter fun toMaintenanceCategory(v: String): MaintenanceCategory = enumValueOf(v)
 
     @TypeConverter fun fromMaintenanceCategoryNullable(v: MaintenanceCategory?): String? = v?.name
-    @TypeConverter fun toMaintenanceCategoryNullable(v: String?): MaintenanceCategory? = v?.let { enumValueOf(it) }
+    @TypeConverter fun toMaintenanceCategoryNullable(v: String?): MaintenanceCategory? = v?.let { enumValueOf<MaintenanceCategory>(it) }
 
     @TypeConverter fun fromExpenseCategory(v: ExpenseCategory): String = v.name
     @TypeConverter fun toExpenseCategory(v: String): ExpenseCategory = enumValueOf(v)

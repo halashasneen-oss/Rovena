@@ -147,7 +147,7 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
                     dueDate = record.nextDueDateMillis?.toLocalDate()
                 )?.let { record to it }
             }
-            .minByOrNull { (_, eval) -> eval.remainingKm ?: eval.remainingDays ?: Long.MAX_VALUE }
+            .minByOrNull { (_, eval) -> eval.remainingKm?.toLong() ?: eval.remainingDays ?: Long.MAX_VALUE }
 
         val nextService = nextServiceEval?.let { (record, eval) ->
             UpcomingTaskUi(record.category.name, eval.status, eval.remainingKm, eval.remainingDays)

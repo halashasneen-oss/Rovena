@@ -18,6 +18,8 @@ class VehicleRepository(
 
     suspend fun getById(id: Long): VehicleEntity? = vehicleDao.getById(id)
 
+    suspend fun getAllOnce(): List<VehicleEntity> = vehicleDao.getAllOnce()
+
     suspend fun getPrimaryOrFirst(): VehicleEntity? =
         vehicleDao.getPrimaryOnce() ?: vehicleDao.getAllOnce().firstOrNull()
 

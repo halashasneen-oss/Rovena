@@ -46,10 +46,12 @@ class ReminderCheckWorker(context: Context, params: WorkerParameters) : Coroutin
                 (reminder.lastTriggeredAtMillis == null || reminder.lastNotifiedAtMillis!! > reminder.lastTriggeredAtMillis!!)
             if (alreadyNotified) continue
 
+            val remainingKm = evaluation.remainingKm
+            val remainingDays = evaluation.remainingDays
             val body = when {
                 evaluation.status == DueStatus.OVERDUE -> applicationContext.getString(R.string.reminder_notification_body_overdue)
-                evaluation.remainingKm != null -> applicationContext.getString(R.string.reminder_notification_body_km, evaluation.remainingKm)
-                evaluation.remainingDays != null -> applicationContext.getString(R.string.reminder_notification_body_days, evaluation.remainingDays.toInt())
+                remainingKm != null -> applicationContext.getString(R.string.reminder_notification_body_km, remainingKm)
+                remainingDays != null -> applicationContext.getString(R.string.reminder_notification_body_days, remainingDays.toInt())
                 else -> ""
             }
             NotificationHelper.showReminderNotification(
