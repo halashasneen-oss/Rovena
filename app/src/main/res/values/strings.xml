@@ -276,4 +276,21 @@
     <string name="pdf_expense_report_title">Expense Report</string>
     <string name="pdf_fuel_report_title">Fuel Report</string>
     <string name="pdf_total">Total</string>
+    <string name="timeline_empty_title">Nothing here yet</string>
+    <string name="timeline_empty_message">Fuel, maintenance, expenses and more will show up here as you add them.</string>
+    <string name="timeline_filter_all">All</string>
+
+    <string name="reminder_basis_mileage">Mileage</string>
+    <string name="reminder_basis_date">Date</string>
+    <string name="reminder_basis_both">Mileage &amp; Date</string>
+    <string name="reminder_empty_title">No reminders set</string>
+    <string name="reminder_empty_message">Create reminders for oil changes, insurance renewal, and more.</string>
+    <string name="error_reminder_trigger_required">Set a mileage and/or date for this reminder</string>
+    <string name="reminder_field_title">Reminder Title</string>
+    <string name="reminder_field_basis">Trigger Type</string>
+    <string name="reminder_field_due_mileage">Due at Mileage (KM)</string>
+    <string name="reminder_field_due_date">Due Date</string>
+    <string name="reminder_field_recurring">Repeats</string>
+    <string name="reminder_field_interval_km">Repeat every (KM)</string>
+    <string name="reminder_field_interval_months">Repeat every (months)</string>
 </resources>

@@ -11,6 +11,7 @@ import com.rovena.garage.domain.model.HealthStatus
 import com.rovena.garage.domain.model.InspectionItemKey
 import com.rovena.garage.domain.model.InspectionItemStatus
 import com.rovena.garage.domain.model.MaintenanceCategory
+import com.rovena.garage.domain.model.ReminderBasis
 import com.rovena.garage.domain.model.TransmissionType
 
 /** Central lookup from every fixed-vocabulary enum to its localized string resource. */
@@ -141,6 +142,13 @@ object EnumLabels {
         DueStatus.DUE_SOON -> R.string.due_status_due_soon
         DueStatus.DUE -> R.string.due_status_due
         DueStatus.OVERDUE -> R.string.due_status_overdue
+    }
+
+    @StringRes
+    fun of(basis: ReminderBasis): Int = when (basis) {
+        ReminderBasis.MILEAGE -> R.string.reminder_basis_mileage
+        ReminderBasis.DATE -> R.string.reminder_basis_date
+        ReminderBasis.BOTH -> R.string.reminder_basis_both
     }
 
     fun currencySymbolOrCode(currency: AppCurrency, customCode: String?): String = when (currency) {
