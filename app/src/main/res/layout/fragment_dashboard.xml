@@ -34,6 +34,7 @@
                     android:layout_height="56dp"
                     android:background="?attr/colorSurfaceVariant"
                     android:padding="10dp"
+                    android:importantForAccessibility="no"
                     android:scaleType="centerCrop"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Rovena.RoundedCorners"
                     android:src="@drawable/ic_car_placeholder" />

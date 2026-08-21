@@ -24,6 +24,7 @@
                 android:layout_height="180dp"
                 android:background="?attr/colorSurfaceVariant"
                 android:padding="56dp"
+                android:importantForAccessibility="no"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_car_placeholder" />
 

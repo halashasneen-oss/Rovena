@@ -22,6 +22,7 @@
             android:padding="36dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_car_placeholder"
+            android:contentDescription="@string/field_photos"
             app:shapeAppearanceOverlay="@style/ShapeAppearance.Rovena.RoundedCorners" />
 
         <com.google.android.material.textfield.TextInputLayout

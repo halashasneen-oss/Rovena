@@ -40,8 +40,8 @@
 
     <ImageButton
         android:id="@+id/reminderMoreButton"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_more"
         android:contentDescription="@string/action_more_options" />
