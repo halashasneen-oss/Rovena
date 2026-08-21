@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -12,8 +14,7 @@
         android:layout_height="88dp"
         android:src="@drawable/ic_car_placeholder"
         android:importantForAccessibility="no"
-        app:tint="@color/rovena_accent"
-        xmlns:app="http://schemas.android.com/apk/res/res-auto" />
+        app:tint="@color/rovena_accent" />
 
     <TextView
         android:id="@+id/stepTitle"
@@ -24,8 +25,7 @@
         android:gravity="center"
         android:textStyle="bold"
         android:textColor="?attr/colorOnSurface"
-        tools:text="Welcome to Rovena"
-        xmlns:tools="http://schemas.android.com/tools" />
+        tools:text="Welcome to Rovena" />
 
     <TextView
         android:id="@+id/stepMessage"
