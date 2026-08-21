@@ -67,3 +67,22 @@ enum class FuelEconomyUnit { L_100KM, MPG }
 enum class AppLanguage(val tag: String) { ENGLISH("en"), ARABIC("ar"), FRENCH("fr"), SPANISH("es") }
 
 enum class AppThemeMode { LIGHT, DARK, SYSTEM }
+
+/**
+ * Individual checklist items for a vehicle inspection, grouped by
+ * [InspectionCategoryGroup]. "WINDOWS" is intentionally usable under both
+ * EXTERIOR (glass condition) and INTERIOR (winding/electric mechanism).
+ */
+enum class InspectionItemKey {
+    // EXTERIOR
+    PAINT, BODY, DOORS, EXT_WINDOWS, LIGHTS, MIRRORS, TIRES, WHEELS, CHASSIS,
+    // INTERIOR
+    SEATS, DASHBOARD, INT_AC, INT_WINDOWS, AUDIO, ELECTRONICS, INTERIOR_CONDITION,
+    // MECHANICAL
+    ENGINE, TRANSMISSION, BRAKES, SUSPENSION, STEERING, COOLING, FLUIDS, BATTERY
+}
+
+/** What a [VehiclePhoto] record is attached to. */
+enum class PhotoLinkedType { VEHICLE, MAINTENANCE, INSPECTION, INSPECTION_ITEM, EXPENSE, DOCUMENT }
+
+enum class BackupRecordType { CREATED, RESTORED, EXPORTED, IMPORTED }
