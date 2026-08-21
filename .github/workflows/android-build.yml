@@ -67,13 +67,21 @@ jobs:
         run: ./gradlew :app:assembleDevDebug --stacktrace
 
       - name: Decode release keystore (only if the secret is configured)
-        if: ${{ secrets.ROVENA_KEYSTORE_BASE64 != '' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ROVENA_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ROVENA_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ROVENA_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ROVENA_KEY_PASSWORD }}
         run: |
-          echo "${{ secrets.ROVENA_KEYSTORE_BASE64 }}" | base64 -d > /tmp/release.jks
-          echo "ROVENA_KEYSTORE_PATH=/tmp/release.jks" >> "$GITHUB_ENV"
-          echo "ROVENA_KEYSTORE_PASSWORD=${{ secrets.ROVENA_KEYSTORE_PASSWORD }}" >> "$GITHUB_ENV"
-          echo "ROVENA_KEY_ALIAS=${{ secrets.ROVENA_KEY_ALIAS }}" >> "$GITHUB_ENV"
-          echo "ROVENA_KEY_PASSWORD=${{ secrets.ROVENA_KEY_PASSWORD }}" >> "$GITHUB_ENV"
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > /tmp/release.jks
+            echo "ROVENA_KEYSTORE_PATH=/tmp/release.jks" >> "$GITHUB_ENV"
+            echo "ROVENA_KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> "$GITHUB_ENV"
+            echo "ROVENA_KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_ENV"
+            echo "ROVENA_KEY_PASSWORD=$KEY_PASSWORD" >> "$GITHUB_ENV"
+          else
+            echo "No release keystore secret configured - release build will be unsigned."
+          fi
 
       - name: Assemble release APK (prod flavor, unsigned unless a keystore secret is configured)
         run: ./gradlew :app:assembleProdRelease --stacktrace
