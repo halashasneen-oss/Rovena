@@ -8,6 +8,8 @@ import com.rovena.garage.BuildConfig
 import com.rovena.garage.data.local.database.RovenaDatabase
 import com.rovena.garage.data.local.entities.BackupMetadataEntity
 import com.rovena.garage.domain.model.BackupRecordType
+import com.rovena.garage.domain.model.PhotoLinkedType
+import com.rovena.garage.domain.usecase.BackupPathValidator
 import com.rovena.garage.domain.usecase.BackupVersionValidator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -36,12 +38,19 @@ data class BackupInspection(
  * manifest, a full snapshot of the Room database, and every locally-stored
  * photo/document/receipt file, all read/written through Storage Access
  * Framework `Uri`s so nothing needs broad storage permissions.
+ *
+ * Security note: [inspect] is the *only* place a `.motiva` archive's bytes
+ * are ever written to disk, so it is the single choke point where a
+ * malicious archive must be defeated - Zip Slip path traversal
+ * ([BackupPathValidator]) and zip-bomb entry/size limits are both enforced
+ * there, before either restore path ever touches the extracted directory.
  */
 object BackupManager {
 
     private const val ENTRY_MANIFEST = "manifest.json"
     private const val ENTRY_DATABASE = "database.db"
     private const val FILES_PREFIX = "files/"
+    private const val COPY_BUFFER_SIZE = 8192
 
     suspend fun createBackup(context: Context, container: AppContainer, destination: Uri): BackupResult = withContext(Dispatchers.IO) {
         try {
@@ -54,7 +63,9 @@ object BackupManager {
 
             val manifest = JSONObject().apply {
                 put("backupFormatVersion", BackupVersionValidator.CURRENT_BACKUP_FORMAT_VERSION)
+                put("databaseSchemaVersion", BackupVersionValidator.CURRENT_DATABASE_SCHEMA_VERSION)
                 put("appVersionCode", BuildConfig.VERSION_CODE)
+                put("appVersionName", BuildConfig.VERSION_NAME)
                 put("createdAtMillis", System.currentTimeMillis())
                 put("vehicleCount", vehicleCount)
                 put("checksum", checksum)
@@ -99,18 +110,48 @@ object BackupManager {
         }
     }
 
-    /** Extracts the backup into a temp working directory and validates it without touching live data. */
+    /**
+     * Extracts the backup into a temp working directory and validates it without
+     * touching live data. Every entry name is checked with [BackupPathValidator]
+     * before a single byte is written (Zip Slip defense), and both the entry
+     * count and total decompressed size are capped (zip-bomb defense) - either
+     * violation aborts extraction and reports [BackupVersionValidator.ValidationResult.UnsafeArchive]
+     * rather than throwing, so a hostile file can never crash the app.
+     */
     suspend fun inspect(context: Context, source: Uri): BackupInspection = withContext(Dispatchers.IO) {
         val workDir = File(context.cacheDir, "restore_${UUID.randomUUID()}").apply { mkdirs() }
         try {
+            var entryCount = 0
+            var totalBytes = 0L
+
             context.contentResolver.openInputStream(source)?.use { input ->
                 ZipInputStream(input).use { zip ->
                     var entry: ZipEntry? = zip.nextEntry
                     while (entry != null) {
-                        val outFile = File(workDir, entry.name)
-                        outFile.parentFile?.mkdirs()
-                        if (!entry.isDirectory) {
-                            outFile.outputStream().use { zip.copyTo(it) }
+                        entryCount++
+                        if (entryCount > BackupVersionValidator.MAX_ZIP_ENTRIES) {
+                            return@withContext BackupInspection(null, BackupVersionValidator.ValidationResult.UnsafeArchive, workDir)
+                        }
+
+                        val outFile = BackupPathValidator.resolveSafeEntry(workDir, entry.name)
+                            ?: return@withContext BackupInspection(null, BackupVersionValidator.ValidationResult.UnsafeArchive, workDir)
+
+                        if (entry.isDirectory) {
+                            outFile.mkdirs()
+                        } else {
+                            outFile.parentFile?.mkdirs()
+                            outFile.outputStream().use { out ->
+                                val buffer = ByteArray(COPY_BUFFER_SIZE)
+                                var read = zip.read(buffer)
+                                while (read >= 0) {
+                                    totalBytes += read
+                                    if (totalBytes > BackupVersionValidator.MAX_TOTAL_UNCOMPRESSED_BYTES) {
+                                        return@withContext BackupInspection(null, BackupVersionValidator.ValidationResult.UnsafeArchive, workDir)
+                                    }
+                                    out.write(buffer, 0, read)
+                                    read = zip.read(buffer)
+                                }
+                            }
                         }
                         zip.closeEntry()
                         entry = zip.nextEntry
@@ -131,7 +172,8 @@ object BackupManager {
                 backupFormatVersion = json.optInt("backupFormatVersion", -1),
                 appVersionCode = json.optInt("appVersionCode", -1),
                 vehicleCount = json.optInt("vehicleCount", -1),
-                checksumValid = expectedChecksum.isNotBlank() && expectedChecksum == actualChecksum
+                checksumValid = expectedChecksum.isNotBlank() && expectedChecksum == actualChecksum,
+                databaseSchemaVersion = json.optInt("databaseSchemaVersion", BackupVersionValidator.CURRENT_DATABASE_SCHEMA_VERSION)
             )
             BackupInspection(manifest, BackupVersionValidator.validate(manifest), workDir)
         } catch (e: Exception) {
@@ -139,7 +181,12 @@ object BackupManager {
         }
     }
 
-    /** Replaces all current data with the backup's contents. Caller must have already confirmed with the user. */
+    /**
+     * Replaces all current data with the backup's contents. Caller must have already
+     * confirmed with the user. The live documents/photos/receipts directories are
+     * cleared first so the result faithfully matches the backup with no leftover files
+     * from records that no longer exist after the swap.
+     */
     suspend fun restoreReplacing(context: Context, extractedDir: File): BackupResult = withContext(Dispatchers.IO) {
         try {
             RovenaDatabase.closeInstance()
@@ -148,7 +195,10 @@ object BackupManager {
             File(dbFile.path + "-shm").delete()
             File(extractedDir, ENTRY_DATABASE).copyTo(dbFile, overwrite = true)
 
-            restoreFiles(context, extractedDir)
+            listOf("documents", "photos", "receipts").forEach { subDir ->
+                File(context.filesDir, subDir).deleteRecursively()
+            }
+            restoreFilesInto(context, extractedDir)
             extractedDir.deleteRecursively()
             BackupResult.Success(0)
         } catch (e: Exception) {
@@ -156,70 +206,164 @@ object BackupManager {
         }
     }
 
-    /** Copies every vehicle (and its dependent records) from the backup into the current live garage, assigning fresh IDs. */
+    /**
+     * Copies every vehicle (and every dependent record: maintenance, fuel, expenses,
+     * reminders, documents, inspections, inspection items, and every linked photo) from
+     * the backup into the current live garage, assigning fresh IDs throughout and
+     * remapping every foreign key explicitly so nothing in the new garage ever points
+     * back at an id from the old one. Files are copied into live storage under fresh
+     * UUID names (never the backup's original filename) so they can never collide with
+     * an existing file already used by the current garage.
+     */
     suspend fun restoreAsNewGarage(context: Context, container: AppContainer, extractedDir: File): BackupResult = withContext(Dispatchers.IO) {
+        var sourceDb: RovenaDatabase? = null
         try {
             val sourceDbFile = File(extractedDir, ENTRY_DATABASE)
-            val sourceDb = Room.databaseBuilder(context, RovenaDatabase::class.java, sourceDbFile.absolutePath)
+            sourceDb = Room.databaseBuilder(context, RovenaDatabase::class.java, sourceDbFile.absolutePath)
                 .allowMainThreadQueries()
                 .build()
 
-            restoreFiles(context, extractedDir)
+            // "subDir/originalFileName" (e.g. "photos/car.jpg") -> freshly copied absolute
+            // path. Keyed by the *backup's relative* name, not the old absolute path -
+            // the DB rows store absolute paths from the original install, which mean
+            // nothing on this device/session.
+            val pathMap = copyBackupFilesAsNewFiles(context, extractedDir)
 
             val vehicles = sourceDb.vehicleDao().getAllOnce()
             var imported = 0
             for (oldVehicle in vehicles) {
                 val newVehicleId = container.vehicleRepository.addVehicle(
-                    oldVehicle.copy(id = 0, isPrimary = false, photoPath = remapPath(context, oldVehicle.photoPath, "photos"))
+                    oldVehicle.copy(id = 0, isPrimary = false, photoPath = remapPath(pathMap, oldVehicle.photoPath, "photos"))
                 )
                 imported++
 
-                sourceDb.maintenanceDao().getByVehicleOnce(oldVehicle.id).forEach {
-                    container.maintenanceRepository.addOrUpdate(it.copy(id = 0, vehicleId = newVehicleId))
+                val maintenanceIdMap = mutableMapOf<Long, Long>()
+                sourceDb.maintenanceDao().getByVehicleOnce(oldVehicle.id).forEach { old ->
+                    val newId = container.maintenanceRepository.addOrUpdate(old.copy(id = 0, vehicleId = newVehicleId))
+                    maintenanceIdMap[old.id] = newId
                 }
+
                 sourceDb.fuelDao().getByVehicleOrderedByMileage(oldVehicle.id).forEach {
                     container.fuelRepository.addOrUpdate(it.copy(id = 0, vehicleId = newVehicleId))
                 }
-                sourceDb.expenseDao().getByVehicleOnce(oldVehicle.id).forEach {
-                    container.expenseRepository.addOrUpdate(
-                        it.copy(id = 0, vehicleId = newVehicleId, receiptPhotoPath = remapPath(context, it.receiptPhotoPath, "receipts"))
+
+                val expenseIdMap = mutableMapOf<Long, Long>()
+                sourceDb.expenseDao().getByVehicleOnce(oldVehicle.id).forEach { old ->
+                    val newId = container.expenseRepository.addOrUpdate(
+                        old.copy(id = 0, vehicleId = newVehicleId, receiptPhotoPath = remapPath(pathMap, old.receiptPhotoPath, "receipts"))
                     )
+                    expenseIdMap[old.id] = newId
                 }
+
                 sourceDb.reminderDao().getActiveOnce(oldVehicle.id).forEach {
                     container.reminderRepository.addOrUpdate(it.copy(id = 0, vehicleId = newVehicleId))
                 }
-                sourceDb.documentDao().getByVehicleOnce(oldVehicle.id).forEach { doc ->
-                    container.documentRepository.addOrUpdate(
-                        doc.copy(id = 0, vehicleId = newVehicleId, reminderId = null, filePath = remapPath(context, doc.filePath, "documents") ?: doc.filePath)
+
+                val documentIdMap = mutableMapOf<Long, Long>()
+                sourceDb.documentDao().getByVehicleOnce(oldVehicle.id).forEach { old ->
+                    val (newId, _) = container.documentRepository.addOrUpdate(
+                        old.copy(
+                            id = 0, vehicleId = newVehicleId, reminderId = null,
+                            filePath = remapPath(pathMap, old.filePath, "documents") ?: old.filePath
+                        )
                     )
+                    documentIdMap[old.id] = newId
                 }
-                sourceDb.vehiclePhotoDao().getByVehicleOnce(oldVehicle.id).forEach {
+
+                // Inspections + their items, each with an explicit old-id -> new-id map so
+                // inspection-item photos below can be relinked correctly.
+                val inspectionIdMap = mutableMapOf<Long, Long>()
+                val inspectionItemIdMap = mutableMapOf<Long, Long>()
+                sourceDb.inspectionDao().getByVehicleOnce(oldVehicle.id).forEach { oldInspection ->
+                    val oldItems = sourceDb.inspectionItemDao().getByInspectionOnce(oldInspection.id)
+                    val newInspectionId = container.inspectionRepository.saveInspection(
+                        oldInspection.copy(id = 0, vehicleId = newVehicleId),
+                        oldItems.map { it.copy(id = 0, inspectionId = 0) }
+                    )
+                    inspectionIdMap[oldInspection.id] = newInspectionId
+
+                    // saveInspection upserts by itemKey, so match old items back to their
+                    // freshly-created rows by that same key to build the item id map.
+                    val newItemsByKey = container.inspectionRepository.getItemsOnce(newInspectionId).associateBy { it.itemKey }
+                    oldItems.forEach { oldItem ->
+                        newItemsByKey[oldItem.itemKey]?.let { newItem -> inspectionItemIdMap[oldItem.id] = newItem.id }
+                    }
+                }
+
+                sourceDb.vehiclePhotoDao().getByVehicleOnce(oldVehicle.id).forEach { oldPhoto ->
+                    val newLinkedId = when (oldPhoto.linkedType) {
+                        PhotoLinkedType.VEHICLE -> newVehicleId
+                        PhotoLinkedType.MAINTENANCE -> oldPhoto.linkedId?.let { maintenanceIdMap[it] }
+                        PhotoLinkedType.EXPENSE -> oldPhoto.linkedId?.let { expenseIdMap[it] }
+                        PhotoLinkedType.DOCUMENT -> oldPhoto.linkedId?.let { documentIdMap[it] }
+                        PhotoLinkedType.INSPECTION -> oldPhoto.linkedId?.let { inspectionIdMap[it] }
+                        PhotoLinkedType.INSPECTION_ITEM -> oldPhoto.linkedId?.let { inspectionItemIdMap[it] }
+                    }
+                    // A photo whose parent record couldn't be remapped (e.g. it referenced a
+                    // row that failed to import) would dangle - skip it rather than restore a
+                    // broken reference.
+                    if (oldPhoto.linkedId != null && newLinkedId == null) return@forEach
+
+                    val newFilePath = remapPath(pathMap, oldPhoto.filePath, "photos") ?: oldPhoto.filePath
                     container.photoRepository.add(
-                        it.copy(
-                            id = 0, vehicleId = newVehicleId,
-                            filePath = remapPath(context, it.filePath, "photos") ?: it.filePath,
-                            thumbnailPath = remapPath(context, it.thumbnailPath, "photos")
+                        oldPhoto.copy(
+                            id = 0,
+                            vehicleId = newVehicleId,
+                            linkedId = newLinkedId,
+                            filePath = newFilePath,
+                            thumbnailPath = remapPath(pathMap, oldPhoto.thumbnailPath, "photos")
                         )
                     )
                 }
             }
-            sourceDb.close()
             extractedDir.deleteRecursively()
             BackupResult.Success(imported)
         } catch (e: Exception) {
             BackupResult.Error(e.message ?: "Unknown error")
+        } finally {
+            sourceDb?.close()
         }
     }
 
-    /** Backup rows store absolute file paths from the original install; point them at the freshly-copied file in this app's own storage instead. */
-    private fun remapPath(context: Context, oldPath: String?, subDir: String): String? {
-        oldPath ?: return null
-        val fileName = File(oldPath).name
-        val candidate = File(File(context.filesDir, subDir), fileName)
-        return if (candidate.exists()) candidate.absolutePath else null
+    /**
+     * Copies every file under `files/` in an already-safely-extracted backup into live
+     * storage under a fresh UUID filename (see [restoreAsNewGarage] doc), returning a map
+     * keyed by "subDir/originalFileName" (e.g. "photos/car.jpg") to the new absolute path
+     * - see [remapPath]. Never overwrites an existing live file, because it never reuses
+     * an existing name in the first place.
+     */
+    private fun copyBackupFilesAsNewFiles(context: Context, extractedDir: File): Map<String, String> {
+        val pathMap = mutableMapOf<String, String>()
+        listOf("documents", "photos", "receipts").forEach { subDir ->
+            val sourceDir = File(extractedDir, "$FILES_PREFIX$subDir")
+            if (sourceDir.exists()) {
+                val destDir = File(context.filesDir, subDir).apply { mkdirs() }
+                sourceDir.listFiles()?.forEach { file ->
+                    if (file.isFile) {
+                        val extension = file.extension.let { if (it.isNotBlank()) ".$it" else "" }
+                        val destFile = File(destDir, "${UUID.randomUUID()}$extension")
+                        runCatching { file.copyTo(destFile, overwrite = false) }
+                            .onSuccess { pathMap["$subDir/${file.name}"] = destFile.absolutePath }
+                    }
+                }
+            }
+        }
+        return pathMap
     }
 
-    private fun restoreFiles(context: Context, extractedDir: File) {
+    /**
+     * Resolves an old (original-install-absolute) file path stored on a backed-up entity
+     * to its freshly-restored path, by looking up just the filename under [subDir] in
+     * [pathMap] - the entity's stored absolute path is meaningless on this device/session,
+     * only the filename it ends in matters.
+     */
+    private fun remapPath(pathMap: Map<String, String>, oldPath: String?, subDir: String): String? {
+        oldPath ?: return null
+        return pathMap["$subDir/${File(oldPath).name}"]
+    }
+
+    /** Used by [restoreReplacing]: the live directories are the target of a full swap, so reusing original filenames is correct there. */
+    private fun restoreFilesInto(context: Context, extractedDir: File) {
         listOf("documents", "photos", "receipts").forEach { subDir ->
             val sourceDir = File(extractedDir, "$FILES_PREFIX$subDir")
             if (sourceDir.exists()) {

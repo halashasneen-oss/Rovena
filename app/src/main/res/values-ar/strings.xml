@@ -240,6 +240,8 @@
     <string name="inspection_empty_title">لا توجد فحوصات بعد</string>
     <string name="inspection_empty_message">ابدأ فحصاً شاملاً للتحقق من حالة سيارتك.</string>
     <string name="inspection_item_notes">ملاحظات وتكلفة تقديرية</string>
+    <string name="inspection_item_photos">الصور</string>
+    <string name="inspection_photos_save_first">احفظ الفحص أولاً لإرفاق الصور</string>
     <string name="inspection_category_exterior">الهيكل الخارجي</string>
     <string name="inspection_category_interior">المقصورة الداخلية</string>
     <string name="inspection_category_mechanical">الميكانيكا</string>
@@ -341,7 +343,7 @@
     <string name="licenses_title">تراخيص المصادر المفتوحة</string>
     <string name="licenses_body">تم بناء روفينا باستخدام البرمجيات مفتوحة المصدر التالية، وكلها بموجب ترخيص Apache 2.0 ما لم يُذكر خلاف ذلك:\n\n• AndroidX (Core، AppCompat، Lifecycle، Navigation، Room، WorkManager، DataStore، Biometric)\n• Material Components for Android\n• Kotlin و Kotlin Coroutines (Apache 2.0)\n• Coil - تحميل الصور (Apache 2.0)</string>
     <string name="action_close">إغلاق</string>
-    <string name="lock_pin_hint">أدخل رمز PIN (4 أرقام على الأقل)</string>
+    <string name="lock_pin_hint">أدخل رمز PIN (6 أرقام على الأقل)</string>
     <string name="lock_pin_confirm_hint">تأكيد رمز PIN</string>
     <string name="lock_pin_too_short">يجب أن يتكون رمز PIN من 4 أرقام على الأقل</string>
     <string name="lock_pin_mismatch">رمزا PIN غير متطابقين</string>
@@ -354,6 +356,7 @@
     <string name="backup_error">حدث خطأ ما: %1$s</string>
     <string name="backup_invalid_corrupt">ملف النسخة الاحتياطية هذا تالف أو غير قابل للقراءة.</string>
     <string name="backup_invalid_version">تم إنشاء هذه النسخة الاحتياطية بواسطة إصدار أحدث من روفينا ولا يمكن استعادتها هنا.</string>
+    <string name="backup_invalid_unsafe">ملف النسخة الاحتياطية غير صالح أو غير آمن.</string>
     <string name="backup_confirm_title">هل تريد استعادة هذه النسخة الاحتياطية؟</string>
     <string name="backup_confirm_message">اختر كيفية استعادة %1$d سيارة من هذه النسخة الاحتياطية.</string>
     <string name="backup_restore_option_replace">استبدال المرآب الحالي</string>
@@ -381,5 +384,6 @@
     <string name="lock_use_biometric">استخدام فتح القفل بالبصمة</string>
     <string name="lock_backspace">حذف للخلف</string>
     <string name="lock_wrong_pin">رمز PIN غير صحيح</string>
+    <string name="lock_too_many_attempts">محاولات كثيرة جدًا. حاول مجددًا خلال %1$d ثانية.</string>
     <string name="lock_biometric_prompt_title">فتح قفل روفينا</string>
 </resources>

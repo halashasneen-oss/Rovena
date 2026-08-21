@@ -1,7 +1,9 @@
 package com.rovena.garage.data.repository
 
+import androidx.room.withTransaction
 import com.rovena.garage.data.local.dao.DocumentDao
 import com.rovena.garage.data.local.dao.ReminderDao
+import com.rovena.garage.data.local.database.RovenaDatabase
 import com.rovena.garage.data.local.entities.DocumentEntity
 import com.rovena.garage.data.local.entities.ReminderEntity
 import com.rovena.garage.domain.model.ReminderBasis
@@ -14,11 +16,18 @@ import kotlinx.coroutines.flow.Flow
  * alarm/notification is done by the presentation layer calling
  * `ReminderScheduler` after `addOrUpdate` returns - repositories stay
  * Android-Context-free and easily testable.
+ *
+ * Reminder lifecycle: a document with an expiry date always has exactly one
+ * linked reminder, kept in sync on every save - created the first time an
+ * expiry is set, updated when the expiry date changes, and deleted (with the
+ * document's own reminderId cleared) the moment the expiry date is removed.
+ * Deleting the document deletes its reminder too.
  */
 class DocumentRepository(
     private val documentDao: DocumentDao,
     private val reminderDao: ReminderDao,
-    private val timelineSyncer: TimelineSyncer
+    private val timelineSyncer: TimelineSyncer,
+    private val database: RovenaDatabase
 ) {
     fun observeByVehicle(vehicleId: Long): Flow<List<DocumentEntity>> = documentDao.observeByVehicle(vehicleId)
 
@@ -34,8 +43,8 @@ class DocumentRepository(
 
     suspend fun hasAnyForVehicle(vehicleId: Long): Boolean = documentDao.hasAnyForVehicle(vehicleId)
 
-    /** Returns the saved document's id and, if it has an expiry date, the id of its (created or updated) reminder. */
-    suspend fun addOrUpdate(document: DocumentEntity): Pair<Long, Long?> {
+    /** Returns the saved document's id and the id of its linked reminder, if it still has one. */
+    suspend fun addOrUpdate(document: DocumentEntity): Pair<Long, Long?> = database.withTransaction {
         var toSave = document
         val docId = if (document.id == 0L) {
             val newId = documentDao.insert(document)
@@ -60,17 +69,22 @@ class DocumentRepository(
             reminderId = if (reminderId == null) reminderDao.insert(reminder) else {
                 reminderDao.update(reminder); reminderId
             }
-            if (toSave.reminderId != reminderId) {
-                toSave = toSave.copy(reminderId = reminderId)
-                documentDao.update(toSave)
-            }
+        } else if (reminderId != null) {
+            // The expiry date was removed - the auto-generated reminder no longer applies.
+            reminderDao.getById(reminderId)?.let { reminderDao.delete(it) }
+            reminderId = null
+        }
+
+        if (toSave.reminderId != reminderId) {
+            toSave = toSave.copy(reminderId = reminderId)
+            documentDao.update(toSave)
         }
 
         timelineSyncer.upsertForDocument(toSave)
-        return docId to reminderId
+        docId to reminderId
     }
 
-    suspend fun delete(document: DocumentEntity) {
+    suspend fun delete(document: DocumentEntity) = database.withTransaction {
         documentDao.delete(document)
         timelineSyncer.removeForSource(TimelineEventType.DOCUMENT, document.id)
         document.reminderId?.let { reminderId ->

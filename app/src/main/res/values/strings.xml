@@ -257,6 +257,8 @@
     <string name="inspection_empty_title">No inspections yet</string>
     <string name="inspection_empty_message">Start a professional walkaround inspection to check your vehicle\'s condition.</string>
     <string name="inspection_item_notes">Notes and estimated cost</string>
+    <string name="inspection_item_photos">Photos</string>
+    <string name="inspection_photos_save_first">Save the inspection first to attach photos</string>
     <string name="inspection_category_exterior">Exterior</string>
     <string name="inspection_category_interior">Interior</string>
     <string name="inspection_category_mechanical">Mechanical</string>
@@ -358,7 +360,7 @@
     <string name="licenses_title">Open Source Licenses</string>
     <string name="licenses_body">Rovena is built with the following open-source software, each under the Apache License 2.0 unless noted:\n\n• AndroidX (Core, AppCompat, Lifecycle, Navigation, Room, WorkManager, DataStore, Biometric)\n• Material Components for Android\n• Kotlin &amp; Kotlin Coroutines (Apache 2.0)\n• Coil - Image loading (Apache 2.0)</string>
     <string name="action_close">Close</string>
-    <string name="lock_pin_hint">Enter a PIN (4+ digits)</string>
+    <string name="lock_pin_hint">Enter a PIN (6+ digits)</string>
     <string name="lock_pin_confirm_hint">Confirm PIN</string>
     <string name="lock_pin_too_short">PIN must be at least 4 digits</string>
     <string name="lock_pin_mismatch">PINs don\'t match</string>
@@ -371,6 +373,7 @@
     <string name="backup_error">Something went wrong: %1$s</string>
     <string name="backup_invalid_corrupt">This backup file is corrupt or unreadable.</string>
     <string name="backup_invalid_version">This backup was created by a newer version of Rovena and can\'t be restored here.</string>
+    <string name="backup_invalid_unsafe">Backup file is invalid or unsafe.</string>
     <string name="backup_confirm_title">Restore this backup?</string>
     <string name="backup_confirm_message">Choose how to restore %1$d vehicle(s) from this backup.</string>
     <string name="backup_restore_option_replace">Replace current garage</string>
@@ -398,5 +401,6 @@
     <string name="lock_use_biometric">Use biometric unlock</string>
     <string name="lock_backspace">Backspace</string>
     <string name="lock_wrong_pin">Incorrect PIN</string>
+    <string name="lock_too_many_attempts">Too many attempts. Try again in %1$ds.</string>
     <string name="lock_biometric_prompt_title">Unlock Rovena</string>
 </resources>

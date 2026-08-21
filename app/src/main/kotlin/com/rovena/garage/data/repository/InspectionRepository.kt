@@ -1,17 +1,23 @@
 package com.rovena.garage.data.repository
 
+import androidx.room.withTransaction
 import com.rovena.garage.data.local.dao.InspectionDao
 import com.rovena.garage.data.local.dao.InspectionItemDao
+import com.rovena.garage.data.local.database.RovenaDatabase
 import com.rovena.garage.data.local.entities.InspectionEntity
 import com.rovena.garage.data.local.entities.InspectionItemEntity
+import com.rovena.garage.domain.model.PhotoLinkedType
 import com.rovena.garage.domain.model.TimelineEventType
 import com.rovena.garage.domain.usecase.InspectionScoreCalculator
 import kotlinx.coroutines.flow.Flow
+import java.io.File
 
 class InspectionRepository(
     private val inspectionDao: InspectionDao,
     private val itemDao: InspectionItemDao,
-    private val timelineSyncer: TimelineSyncer
+    private val timelineSyncer: TimelineSyncer,
+    private val database: RovenaDatabase,
+    private val photoRepository: PhotoRepository
 ) {
     fun observeByVehicle(vehicleId: Long): Flow<List<InspectionEntity>> = inspectionDao.observeByVehicle(vehicleId)
 
@@ -25,25 +31,63 @@ class InspectionRepository(
 
     suspend fun getItemsOnce(inspectionId: Long): List<InspectionItemEntity> = itemDao.getByInspectionOnce(inspectionId)
 
-    /** Saves an inspection and its items together, computing the overall score from item statuses. */
-    suspend fun saveInspection(inspection: InspectionEntity, items: List<InspectionItemEntity>): Long {
-        val scoreResult = InspectionScoreCalculator.calculate(items.map { it.status })
-        val toSave = inspection.copy(overallScore = scoreResult.score)
+    /**
+     * Saves an inspection and its items together, computing the overall score from item
+     * statuses. Items are upserted by (inspectionId, itemKey) rather than deleted and
+     * reinserted, so each item keeps a stable row id across edits - inspection-item
+     * photos are linked to that id (see [PhotoRepository]), and reassigning ids on every
+     * save would silently orphan them.
+     */
+    suspend fun saveInspection(inspection: InspectionEntity, items: List<InspectionItemEntity>): Long =
+        database.withTransaction {
+            val scoreResult = InspectionScoreCalculator.calculate(items.map { it.status })
+            val toSave = inspection.copy(overallScore = scoreResult.score)
 
-        val id = if (inspection.id == 0L) {
-            inspectionDao.insert(toSave)
-        } else {
-            inspectionDao.update(toSave)
-            inspection.id
+            val id = if (inspection.id == 0L) {
+                inspectionDao.insert(toSave)
+            } else {
+                inspectionDao.update(toSave)
+                inspection.id
+            }
+
+            val existingByKey = itemDao.getByInspectionOnce(id).associateBy { it.itemKey }
+            items.forEach { item ->
+                val existing = existingByKey[item.itemKey]
+                if (existing != null) {
+                    itemDao.update(item.copy(id = existing.id, inspectionId = id))
+                } else {
+                    itemDao.insert(item.copy(inspectionId = id))
+                }
+            }
+            val newKeys = items.map { it.itemKey }.toSet()
+            existingByKey.values.filter { it.itemKey !in newKeys }.forEach { itemDao.delete(it) }
+
+            timelineSyncer.upsertForInspection(toSave.copy(id = id))
+            id
         }
 
-        itemDao.replaceAll(id, items.map { it.copy(inspectionId = id) })
-        timelineSyncer.upsertForInspection(toSave.copy(id = id))
-        return id
-    }
-
+    /**
+     * Deletes an inspection and its items (cascade via FK). VehiclePhoto rows are a
+     * generic polymorphic link (linkedType/linkedId), not a real foreign key Room can
+     * cascade for us, so each item's photos - both the DB rows and their files on disk -
+     * are cleaned up explicitly before the delete commits.
+     */
     suspend fun delete(inspection: InspectionEntity) {
-        inspectionDao.delete(inspection) // items cascade via FK
-        timelineSyncer.removeForSource(TimelineEventType.INSPECTION, inspection.id)
+        val items = itemDao.getByInspectionOnce(inspection.id)
+        val photoFiles = mutableListOf<String>()
+        items.forEach { item ->
+            photoRepository.getByLinkOnce(PhotoLinkedType.INSPECTION_ITEM, item.id).forEach { photo ->
+                photoFiles += photo.filePath
+                photo.thumbnailPath?.let { photoFiles += it }
+            }
+        }
+
+        database.withTransaction {
+            items.forEach { item -> photoRepository.deleteAllForLink(PhotoLinkedType.INSPECTION_ITEM, item.id) }
+            inspectionDao.delete(inspection) // items cascade via FK
+            timelineSyncer.removeForSource(TimelineEventType.INSPECTION, inspection.id)
+        }
+
+        photoFiles.forEach { runCatching { File(it).delete() } }
     }
 }

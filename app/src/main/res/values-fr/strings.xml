@@ -240,6 +240,8 @@
     <string name="inspection_empty_title">Aucune inspection pour le moment</string>
     <string name="inspection_empty_message">Effectuez une inspection complète pour vérifier l\'état de votre véhicule.</string>
     <string name="inspection_item_notes">Notes et coût estimé</string>
+    <string name="inspection_item_photos">Photos</string>
+    <string name="inspection_photos_save_first">Enregistrez d\'abord l\'inspection pour joindre des photos</string>
     <string name="inspection_category_exterior">Extérieur</string>
     <string name="inspection_category_interior">Intérieur</string>
     <string name="inspection_category_mechanical">Mécanique</string>
@@ -341,7 +343,7 @@
     <string name="licenses_title">Licences open source</string>
     <string name="licenses_body">Rovena est construit avec les logiciels open source suivants, chacun sous licence Apache 2.0 sauf indication contraire :\n\n• AndroidX (Core, AppCompat, Lifecycle, Navigation, Room, WorkManager, DataStore, Biometric)\n• Material Components for Android\n• Kotlin et Kotlin Coroutines (Apache 2.0)\n• Coil - Chargement d\'images (Apache 2.0)</string>
     <string name="action_close">Fermer</string>
-    <string name="lock_pin_hint">Entrez un code PIN (4 chiffres min.)</string>
+    <string name="lock_pin_hint">Entrez un code PIN (6 chiffres min.)</string>
     <string name="lock_pin_confirm_hint">Confirmez le code PIN</string>
     <string name="lock_pin_too_short">Le code PIN doit contenir au moins 4 chiffres</string>
     <string name="lock_pin_mismatch">Les codes PIN ne correspondent pas</string>
@@ -354,6 +356,7 @@
     <string name="backup_error">Une erreur est survenue : %1$s</string>
     <string name="backup_invalid_corrupt">Ce fichier de sauvegarde est corrompu ou illisible.</string>
     <string name="backup_invalid_version">Cette sauvegarde a été créée par une version plus récente de Rovena et ne peut pas être restaurée ici.</string>
+    <string name="backup_invalid_unsafe">Le fichier de sauvegarde n\'est pas valide ou n\'est pas sûr.</string>
     <string name="backup_confirm_title">Restaurer cette sauvegarde ?</string>
     <string name="backup_confirm_message">Choisissez comment restaurer %1$d véhicule(s) à partir de cette sauvegarde.</string>
     <string name="backup_restore_option_replace">Remplacer le garage actuel</string>
@@ -381,5 +384,6 @@
     <string name="lock_use_biometric">Utiliser le déverrouillage biométrique</string>
     <string name="lock_backspace">Retour arrière</string>
     <string name="lock_wrong_pin">Code PIN incorrect</string>
+    <string name="lock_too_many_attempts">Trop de tentatives. Réessayez dans %1$ds.</string>
     <string name="lock_biometric_prompt_title">Déverrouiller Rovena</string>
 </resources>

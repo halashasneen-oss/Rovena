@@ -13,11 +13,21 @@ object BackupVersionValidator {
     /** Oldest backup schema version this build can still read. */
     const val MIN_SUPPORTED_BACKUP_FORMAT_VERSION = 1
 
+    /** Current Room database schema version this build writes/expects. */
+    const val CURRENT_DATABASE_SCHEMA_VERSION = 2
+
+    /** Zip-bomb guard: an archive naming more entries than this is rejected outright. */
+    const val MAX_ZIP_ENTRIES = 10_000
+
+    /** Zip-bomb guard: total decompressed bytes across the whole archive is capped here. */
+    const val MAX_TOTAL_UNCOMPRESSED_BYTES = 2L * 1024 * 1024 * 1024 // 2 GB
+
     data class Manifest(
         val backupFormatVersion: Int,
         val appVersionCode: Int,
         val vehicleCount: Int,
-        val checksumValid: Boolean
+        val checksumValid: Boolean,
+        val databaseSchemaVersion: Int = CURRENT_DATABASE_SCHEMA_VERSION
     )
 
     sealed class ValidationResult {
@@ -25,6 +35,8 @@ object BackupVersionValidator {
         data object CorruptFile : ValidationResult()
         data class UnsupportedVersion(val foundVersion: Int) : ValidationResult()
         data object Empty : ValidationResult()
+        /** Archive failed the Zip Slip / zip-bomb / entry-limit safety checks. */
+        data object UnsafeArchive : ValidationResult()
     }
 
     fun validate(manifest: Manifest?): ValidationResult {

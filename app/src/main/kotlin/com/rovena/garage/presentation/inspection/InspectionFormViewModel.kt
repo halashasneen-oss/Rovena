@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.rovena.garage.AppContainer
 import com.rovena.garage.data.local.entities.InspectionEntity
 import com.rovena.garage.data.local.entities.InspectionItemEntity
+import com.rovena.garage.data.local.entities.VehiclePhotoEntity
 import com.rovena.garage.domain.model.InspectionCategoryGroup
 import com.rovena.garage.domain.model.InspectionItemKey
 import com.rovena.garage.domain.model.InspectionItemStatus
+import com.rovena.garage.domain.model.PhotoLinkedType
 import com.rovena.garage.domain.usecase.InspectionScoreCalculator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +21,8 @@ data class InspectionItemDraft(
     val itemKey: InspectionItemKey,
     val status: InspectionItemStatus = InspectionItemStatus.UNKNOWN,
     val notes: String = "",
-    val estimatedRepairCost: String = ""
+    val estimatedRepairCost: String = "",
+    val photoPaths: List<String> = emptyList()
 )
 
 data class InspectionFormState(
@@ -77,7 +80,8 @@ class InspectionFormViewModel(private val container: AppContainer, private val v
                             default.copy(
                                 status = saved.status,
                                 notes = saved.notes.orEmpty(),
-                                estimatedRepairCost = saved.estimatedRepairCost?.toString().orEmpty()
+                                estimatedRepairCost = saved.estimatedRepairCost?.toString().orEmpty(),
+                                photoPaths = container.photoRepository.getByLinkOnce(PhotoLinkedType.INSPECTION_ITEM, saved.id).map { it.filePath }
                             )
                         } ?: default
                     }
@@ -126,6 +130,21 @@ class InspectionFormViewModel(private val container: AppContainer, private val v
                 )
             }
             val savedId = container.inspectionRepository.saveInspection(inspection, itemEntities)
+
+            // Items are upserted by itemKey (stable ids across edits - see
+            // InspectionRepository.saveInspection), so re-fetch them post-save to get the
+            // real ids each item's staged photos need to be linked/relinked against.
+            val savedItemsByKey = container.inspectionRepository.getItemsOnce(savedId).associateBy { it.itemKey }
+            s.items.forEach { draft ->
+                val savedItemId = savedItemsByKey[draft.itemKey]?.id ?: return@forEach
+                container.photoRepository.deleteAllForLink(PhotoLinkedType.INSPECTION_ITEM, savedItemId)
+                draft.photoPaths.forEach { path ->
+                    container.photoRepository.add(
+                        VehiclePhotoEntity(vehicleId = s.vehicleId, linkedType = PhotoLinkedType.INSPECTION_ITEM, linkedId = savedItemId, filePath = path)
+                    )
+                }
+            }
+
             _state.value = _state.value.copy(isSaved = true, savedInspectionId = savedId, errors = emptyMap())
         }
     }

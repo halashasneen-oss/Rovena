@@ -29,6 +29,12 @@ data class AppSettingsEntity(
     val biometricEnabled: Boolean = false,
     val pinHash: String? = null,
     val pinSalt: String? = null,
+    /** Digit count of the set PIN (never the PIN itself) - lets the lock screen know exactly when a full entry has been typed, instead of guessing by re-checking the hash after every keystroke. */
+    val pinLength: Int? = null,
+    /** Consecutive wrong-PIN attempts since the last success; reset to 0 on a correct unlock. */
+    val pinFailedAttempts: Int = 0,
+    /** Set after too many consecutive wrong attempts; PIN checks are refused until this instant passes. Never permanent. */
+    val pinLockoutUntilMillis: Long? = null,
     val onboardingCompleted: Boolean = false,
     val sampleDataSeeded: Boolean = false,
     val updatedAt: Long = System.currentTimeMillis()

@@ -20,6 +20,7 @@ import com.rovena.garage.databinding.ItemInspectionCheckBinding
 import com.rovena.garage.domain.model.InspectionCategoryGroup
 import com.rovena.garage.domain.model.InspectionItemKey
 import com.rovena.garage.domain.model.InspectionItemStatus
+import com.rovena.garage.presentation.common.PhotoStripController
 import com.rovena.garage.presentation.common.appContainer
 import com.rovena.garage.presentation.common.viewModelFactory
 import com.rovena.garage.utils.DatePickerHelper
@@ -40,6 +41,15 @@ class InspectionFormFragment : Fragment(R.layout.fragment_inspection_form) {
     private val viewModel: InspectionFormViewModel by viewModels {
         viewModelFactory { InspectionFormViewModel(appContainer, vehicleId, recordId) }
     }
+
+    // Shared across all item rows: only one item's photo dialog can be open at a time, and
+    // ActivityResultLauncher registration must happen at Fragment-field init (before the
+    // dynamically-built per-row buttons exist), so one controller is reused for whichever
+    // item's dialog is currently showing - see currentPhotoItemKey.
+    private val photoController = PhotoStripController(this) { paths ->
+        currentPhotoItemKey?.let { key -> viewModel.updateItem(key) { it.copy(photoPaths = paths) } }
+    }
+    private var currentPhotoItemKey: InspectionItemKey? = null
 
     private var isBinding = false
     private var rowsBuilt = false
@@ -104,9 +114,14 @@ class InspectionFormFragment : Fragment(R.layout.fragment_inspection_form) {
             getString(R.string.inspection_good_items, score.goodCount)
         ).joinToString(" · ")
 
-        // Keep chip selection in sync (e.g. after initial load populates saved statuses).
+        // Keep chip selection and photo-count badge in sync (e.g. after initial load
+        // populates saved statuses/photos).
         state.items.forEach { item ->
-            rowBindings[item.itemKey]?.let { row -> syncChipSelection(row, item.status) }
+            rowBindings[item.itemKey]?.let { row ->
+                syncChipSelection(row, item.status)
+                row.itemPhotoCount.text = item.photoPaths.size.toString()
+                row.itemPhotoCount.visibility = if (item.photoPaths.isNotEmpty()) View.VISIBLE else View.GONE
+            }
         }
 
         if (state.isSaved || state.isDeleted) findNavController().popBackStack()
@@ -134,6 +149,9 @@ class InspectionFormFragment : Fragment(R.layout.fragment_inspection_form) {
             viewModel.updateItem(item.itemKey) { it.copy(status = newStatus) }
         }
 
+        row.itemPhotoCount.text = item.photoPaths.size.toString()
+        row.itemPhotoCount.visibility = if (item.photoPaths.isNotEmpty()) View.VISIBLE else View.GONE
+        row.itemPhotoButton.setOnClickListener { onItemPhotoButtonClicked(item.itemKey) }
         row.itemNotesButton.setOnClickListener { showNotesDialog(item.itemKey) }
 
         rowBindings[item.itemKey] = row
@@ -152,6 +170,29 @@ class InspectionFormFragment : Fragment(R.layout.fragment_inspection_form) {
             row.chipAttention.isChecked = status == InspectionItemStatus.ATTENTION
             row.chipProblem.isChecked = status == InspectionItemStatus.PROBLEM
         }
+    }
+
+    /** Photos are linked to the item's real database row (see InspectionRepository.saveInspection), so the inspection must be saved at least once before any item can have photos attached. */
+    private fun onItemPhotoButtonClicked(itemKey: InspectionItemKey) {
+        if (viewModel.state.value.id == 0L) {
+            android.widget.Toast.makeText(requireContext(), getString(R.string.inspection_photos_save_first), android.widget.Toast.LENGTH_SHORT).show()
+            return
+        }
+        val current = viewModel.state.value.items.find { it.itemKey == itemKey } ?: return
+        val strip = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.HORIZONTAL
+            val pad = (16 * resources.displayMetrics.density).toInt()
+            setPadding(pad, 0, pad, pad)
+        }
+        currentPhotoItemKey = itemKey
+        photoController.bind(strip, current.photoPaths)
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(EnumLabels.of(itemKey)))
+            .setView(strip)
+            .setPositiveButton(R.string.action_close, null)
+            .setOnDismissListener { currentPhotoItemKey = null }
+            .show()
     }
 
     private fun showNotesDialog(itemKey: InspectionItemKey) {

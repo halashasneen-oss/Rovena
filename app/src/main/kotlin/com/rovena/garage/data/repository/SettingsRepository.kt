@@ -8,8 +8,17 @@ import com.rovena.garage.domain.model.AppThemeMode
 import com.rovena.garage.domain.model.DistanceUnit
 import com.rovena.garage.domain.model.FuelEconomyUnit
 import com.rovena.garage.utils.PinHasher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+
+sealed class PinVerifyResult {
+    data object Success : PinVerifyResult()
+    data object NoPinSet : PinVerifyResult()
+    data class WrongPin(val attemptsRemaining: Int) : PinVerifyResult()
+    data class LockedOut(val untilMillis: Long) : PinVerifyResult()
+}
 
 class SettingsRepository(private val settingsDao: AppSettingsDao) {
 
@@ -42,18 +51,65 @@ class SettingsRepository(private val settingsDao: AppSettingsDao) {
 
     suspend fun setPin(pin: String) {
         val salt = PinHasher.generateSalt()
-        val hash = PinHasher.hash(pin, salt)
-        update { it.copy(appLockEnabled = true, pinHash = hash, pinSalt = salt) }
+        val hash = withContext(Dispatchers.Default) { PinHasher.hash(pin, salt) }
+        update {
+            it.copy(
+                appLockEnabled = true, pinHash = hash, pinSalt = salt, pinLength = pin.length,
+                pinFailedAttempts = 0, pinLockoutUntilMillis = null
+            )
+        }
     }
 
-    suspend fun clearPin() = update { it.copy(appLockEnabled = false, pinHash = null, pinSalt = null, biometricEnabled = false) }
+    suspend fun clearPin() = update {
+        it.copy(
+            appLockEnabled = false, pinHash = null, pinSalt = null, pinLength = null,
+            biometricEnabled = false, pinFailedAttempts = 0, pinLockoutUntilMillis = null
+        )
+    }
 
-    suspend fun verifyPin(pin: String): Boolean {
+    /**
+     * Verifies [pin] against the stored hash, enforcing a temporary lockout after too many
+     * consecutive wrong attempts (spec #10/#11: never a permanent lockout - it always
+     * expires on its own). A currently-active lockout is checked *before* touching the PIN
+     * hash at all, so a locked-out caller can't burn the (deliberately slow) PBKDF2 cost by
+     * hammering the unlock screen.
+     */
+    suspend fun verifyPin(pin: String): PinVerifyResult {
         val settings = getOrDefault()
-        val hash = settings.pinHash ?: return false
-        val salt = settings.pinSalt ?: return false
-        return PinHasher.verify(pin, salt, hash)
+        val hash = settings.pinHash
+        val salt = settings.pinSalt
+        if (hash == null || salt == null) return PinVerifyResult.NoPinSet
+
+        val now = System.currentTimeMillis()
+        val lockoutUntil = settings.pinLockoutUntilMillis
+        if (lockoutUntil != null && now < lockoutUntil) {
+            return PinVerifyResult.LockedOut(lockoutUntil)
+        }
+
+        val isValid = withContext(Dispatchers.Default) { PinHasher.verify(pin, salt, hash) }
+        if (isValid) {
+            update { it.copy(pinFailedAttempts = 0, pinLockoutUntilMillis = null) }
+            return PinVerifyResult.Success
+        }
+
+        val failedAttempts = settings.pinFailedAttempts + 1
+        return if (failedAttempts >= MAX_FAILED_PIN_ATTEMPTS) {
+            val until = now + LOCKOUT_DURATION_MILLIS
+            update { it.copy(pinFailedAttempts = 0, pinLockoutUntilMillis = until) }
+            PinVerifyResult.LockedOut(until)
+        } else {
+            update { it.copy(pinFailedAttempts = failedAttempts) }
+            PinVerifyResult.WrongPin(MAX_FAILED_PIN_ATTEMPTS - failedAttempts)
+        }
     }
 
     suspend fun setBiometricEnabled(enabled: Boolean) = update { it.copy(biometricEnabled = enabled) }
+
+    /** Backfills [AppSettingsEntity.pinLength] for a PIN set before that field existed, once its length is known from a successful unlock. */
+    suspend fun recordPinLength(length: Int) = update { it.copy(pinLength = length) }
+
+    companion object {
+        const val MAX_FAILED_PIN_ATTEMPTS = 5
+        const val LOCKOUT_DURATION_MILLIS = 30_000L
+    }
 }

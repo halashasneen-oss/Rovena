@@ -1,34 +1,48 @@
 package com.rovena.garage.utils
 
-import android.util.Base64
-import java.security.MessageDigest
 import java.security.SecureRandom
+import java.util.Base64
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
 
 /**
- * Salted-hash PIN storage for App Lock (spec #21). The raw PIN is never
- * persisted anywhere - only a random per-install salt and a SHA-256 hash of
- * `salt + pin` are written to [com.rovena.garage.data.local.entities.AppSettingsEntity].
+ * PIN storage for App Lock (spec #10/#21). The raw PIN is never persisted -
+ * only a random per-install salt and a PBKDF2WithHmacSHA256-derived key are
+ * written to [com.rovena.garage.data.local.entities.AppSettingsEntity].
+ *
+ * PBKDF2 is a real, purpose-built password/PIN key-derivation function: it
+ * is deliberately slow via its iteration count, which is what makes offline
+ * brute-forcing of a stolen hash+salt expensive. A bare repeated-hash loop
+ * (the previous implementation here) is not an equivalent construction - it
+ * has no standardized security analysis behind it.
+ *
+ * Uses only `java.security`/`javax.crypto`/`java.util.Base64` - no Android
+ * framework dependency - so it is directly unit-testable on the plain JVM.
  */
 object PinHasher {
 
-    const val MIN_PIN_LENGTH = 4
-    const val MAX_PIN_LENGTH = 6
-    private const val ITERATIONS = 10_000
+    const val MIN_PIN_LENGTH = 6
+    const val MAX_PIN_LENGTH = 10
+    private const val ITERATIONS = 120_000
+    private const val KEY_LENGTH_BITS = 256
+    private const val ALGORITHM = "PBKDF2WithHmacSHA256"
 
     fun generateSalt(): String {
         val bytes = ByteArray(16)
         SecureRandom().nextBytes(bytes)
-        return Base64.encodeToString(bytes, Base64.NO_WRAP)
+        return Base64.getEncoder().encodeToString(bytes)
     }
 
     fun hash(pin: String, saltBase64: String): String {
-        val salt = Base64.decode(saltBase64, Base64.NO_WRAP)
-        var digestInput = salt + pin.toByteArray(Charsets.UTF_8)
-        val digest = MessageDigest.getInstance("SHA-256")
-        repeat(ITERATIONS) {
-            digestInput = digest.digest(digestInput)
+        val salt = Base64.getDecoder().decode(saltBase64)
+        val spec = PBEKeySpec(pin.toCharArray(), salt, ITERATIONS, KEY_LENGTH_BITS)
+        return try {
+            val factory = SecretKeyFactory.getInstance(ALGORITHM)
+            val derived = factory.generateSecret(spec).encoded
+            Base64.getEncoder().encodeToString(derived)
+        } finally {
+            spec.clearPassword()
         }
-        return Base64.encodeToString(digestInput, Base64.NO_WRAP)
     }
 
     fun verify(pin: String, saltBase64: String, expectedHash: String): Boolean {

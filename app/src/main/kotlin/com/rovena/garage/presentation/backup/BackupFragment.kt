@@ -83,6 +83,7 @@ class BackupFragment : Fragment(R.layout.fragment_backup) {
             is BackupUiEvent.RestoreInvalid -> {
                 val message = when (event.validation) {
                     is BackupVersionValidator.ValidationResult.UnsupportedVersion -> getString(R.string.backup_invalid_version)
+                    is BackupVersionValidator.ValidationResult.UnsafeArchive -> getString(R.string.backup_invalid_unsafe)
                     else -> getString(R.string.backup_invalid_corrupt)
                 }
                 toast(message)

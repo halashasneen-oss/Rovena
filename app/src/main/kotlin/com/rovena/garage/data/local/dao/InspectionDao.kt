@@ -5,7 +5,6 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import androidx.room.Update
 import com.rovena.garage.data.local.entities.InspectionEntity
 import com.rovena.garage.data.local.entities.InspectionItemEntity
@@ -32,6 +31,9 @@ interface InspectionDao {
     @Query("SELECT * FROM inspections WHERE vehicleId = :vehicleId ORDER BY dateMillis DESC")
     fun observeByVehicle(vehicleId: Long): Flow<List<InspectionEntity>>
 
+    @Query("SELECT * FROM inspections WHERE vehicleId = :vehicleId ORDER BY dateMillis DESC")
+    suspend fun getByVehicleOnce(vehicleId: Long): List<InspectionEntity>
+
     @Query("SELECT * FROM inspections WHERE vehicleId = :vehicleId ORDER BY dateMillis DESC LIMIT 1")
     suspend fun getLatest(vehicleId: Long): InspectionEntity?
 
@@ -42,8 +44,8 @@ interface InspectionDao {
 @Dao
 interface InspectionItemDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(items: List<InspectionItemEntity>)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insert(item: InspectionItemEntity): Long
 
     @Update
     suspend fun update(item: InspectionItemEntity)
@@ -59,10 +61,4 @@ interface InspectionItemDao {
 
     @Query("DELETE FROM inspection_items WHERE inspectionId = :inspectionId")
     suspend fun deleteByInspection(inspectionId: Long)
-
-    @Transaction
-    suspend fun replaceAll(inspectionId: Long, items: List<InspectionItemEntity>) {
-        deleteByInspection(inspectionId)
-        insertAll(items)
-    }
 }

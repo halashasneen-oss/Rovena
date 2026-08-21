@@ -1,12 +1,20 @@
 package com.rovena.garage.data.repository
 
+import androidx.room.withTransaction
 import com.rovena.garage.data.local.dao.VehicleDao
+import com.rovena.garage.data.local.database.RovenaDatabase
 import com.rovena.garage.data.local.entities.VehicleEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import java.io.File
 
 class VehicleRepository(
     private val vehicleDao: VehicleDao,
-    private val timelineSyncer: TimelineSyncer
+    private val timelineSyncer: TimelineSyncer,
+    private val database: RovenaDatabase,
+    private val documentRepository: DocumentRepository,
+    private val expenseRepository: ExpenseRepository,
+    private val photoRepository: PhotoRepository
 ) {
     fun observeAll(): Flow<List<VehicleEntity>> = vehicleDao.observeAll()
 
@@ -39,13 +47,34 @@ class VehicleRepository(
         }
     }
 
+    /**
+     * Deletes a vehicle and everything scoped to it. Room cascades all vehicle-scoped
+     * child rows (maintenance, fuel, expenses, documents, inspections, inspection items,
+     * reminders, timeline, photos) via ON DELETE CASCADE inside one transaction, so the
+     * database is never left in a half-deleted state. Cascade only removes the *rows*
+     * though - SQLite has no idea those rows pointed at files on disk - so this also
+     * collects every referenced file path beforehand and deletes them (best-effort)
+     * after the transaction commits, to avoid leaking orphaned photos/documents/receipts.
+     */
     suspend fun deleteVehicle(vehicle: VehicleEntity) {
-        // Room cascades all vehicle-scoped child rows (maintenance, fuel, expenses,
-        // documents, inspections, reminders, timeline, photos) via ON DELETE CASCADE.
-        vehicleDao.delete(vehicle)
-        val remaining = vehicleDao.getAllOnce()
-        if (vehicle.isPrimary && remaining.isNotEmpty()) {
-            vehicleDao.setPrimary(remaining.first().id)
+        val documents = documentRepository.observeByVehicle(vehicle.id).first()
+        val expenses = expenseRepository.observeByVehicle(vehicle.id).first()
+        val photos = photoRepository.observeByVehicle(vehicle.id).first()
+
+        database.withTransaction {
+            vehicleDao.delete(vehicle)
+            val remaining = vehicleDao.getAllOnce()
+            if (vehicle.isPrimary && remaining.isNotEmpty()) {
+                vehicleDao.setPrimary(remaining.first().id)
+            }
+        }
+
+        vehicle.photoPath?.let { runCatching { File(it).delete() } }
+        documents.forEach { doc -> runCatching { File(doc.filePath).delete() } }
+        expenses.forEach { expense -> expense.receiptPhotoPath?.let { runCatching { File(it).delete() } } }
+        photos.forEach { photo ->
+            runCatching { File(photo.filePath).delete() }
+            photo.thumbnailPath?.let { runCatching { File(it).delete() } }
         }
     }
 
