@@ -23,6 +23,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Inspection items must keep a stable row id across edits (see
@@ -30,8 +31,14 @@ import org.robolectric.RobolectricTestRunner
  * and the old delete-all/insert-all persistence would silently orphan every photo the
  * moment the inspection was saved a second time. These tests exercise a real in-memory
  * Room database so the actual upsert-by-itemKey logic is verified, not a mock.
+ *
+ * Uses a bare android.app.Application rather than the real RovenaApp: RovenaApp.onCreate()
+ * schedules ReminderCheckWorker via WorkManager, which isn't initialized under Robolectric's
+ * default test setup and throws - this test only needs a Context to build an in-memory Room
+ * database, not the app's real startup side effects.
  */
 @RunWith(RobolectricTestRunner::class)
+@Config(application = android.app.Application::class)
 class InspectionRepositoryTest {
 
     private lateinit var db: RovenaDatabase

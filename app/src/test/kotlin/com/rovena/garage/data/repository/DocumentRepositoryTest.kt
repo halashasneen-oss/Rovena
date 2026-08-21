@@ -18,14 +18,21 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Document expiry -> reminder lifecycle (spec #8): a document with an expiry date always
  * has exactly one linked reminder, created/updated/deleted in lockstep with the document.
  * Runs against a real in-memory Room database via Robolectric so the actual DAOs, foreign
  * keys, and the transaction wrapping in DocumentRepository are exercised, not a mock.
+ *
+ * Uses a bare android.app.Application rather than the real RovenaApp: RovenaApp.onCreate()
+ * schedules ReminderCheckWorker via WorkManager, which isn't initialized under Robolectric's
+ * default test setup and throws - this test only needs a Context to build an in-memory Room
+ * database, not the app's real startup side effects.
  */
 @RunWith(RobolectricTestRunner::class)
+@Config(application = android.app.Application::class)
 class DocumentRepositoryTest {
 
     private lateinit var db: RovenaDatabase
