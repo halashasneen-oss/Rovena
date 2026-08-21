@@ -49,7 +49,7 @@ class InspectionRepositoryTest {
         repository = InspectionRepository(db.inspectionDao(), db.inspectionItemDao(), TimelineSyncer(db.timelineDao()), db, photoRepository)
         vehicleId = runBlocking {
             db.vehicleDao().insert(
-                VehicleEntity(make = "Honda", model = "Civic", year = 2019, fuelType = FuelType.GASOLINE, transmission = TransmissionType.MANUAL, currentMileageKm = 50_000)
+                VehicleEntity(make = "Honda", model = "Civic", year = 2019, fuelType = FuelType.PETROL, transmission = TransmissionType.MANUAL, currentMileageKm = 50_000)
             )
         }
     }

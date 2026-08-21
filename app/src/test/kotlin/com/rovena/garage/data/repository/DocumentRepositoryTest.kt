@@ -41,7 +41,7 @@ class DocumentRepositoryTest {
         repository = DocumentRepository(db.documentDao(), db.reminderDao(), TimelineSyncer(db.timelineDao()), db)
         vehicleId = runBlocking {
             db.vehicleDao().insert(
-                VehicleEntity(make = "Toyota", model = "Corolla", year = 2020, fuelType = FuelType.GASOLINE, transmission = TransmissionType.AUTOMATIC, currentMileageKm = 10_000)
+                VehicleEntity(make = "Toyota", model = "Corolla", year = 2020, fuelType = FuelType.PETROL, transmission = TransmissionType.AUTOMATIC, currentMileageKm = 10_000)
             )
         }
     }
