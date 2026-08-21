@@ -6,6 +6,19 @@ import com.rovena.garage.domain.model.TimelineEventType
 import kotlinx.coroutines.flow.Flow
 
 class TimelineRepository(private val timelineDao: TimelineDao) {
+
+    /** Freeform note (spec Quick Add - "Add Note"): a plain timeline entry with no linked record. */
+    suspend fun addNote(vehicleId: Long, text: String) {
+        timelineDao.insert(
+            TimelineEventEntity(
+                vehicleId = vehicleId,
+                type = TimelineEventType.VEHICLE_UPDATE,
+                dateMillis = System.currentTimeMillis(),
+                title = text,
+                sourceRecordId = System.nanoTime()
+            )
+        )
+    }
     fun observeByVehicle(vehicleId: Long): Flow<List<TimelineEventEntity>> = timelineDao.observeByVehicle(vehicleId)
 
     fun observeByVehicleAndType(vehicleId: Long, type: TimelineEventType): Flow<List<TimelineEventEntity>> =

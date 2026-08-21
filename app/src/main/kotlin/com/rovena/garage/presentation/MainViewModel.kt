@@ -21,8 +21,10 @@ import kotlinx.coroutines.launch
 class MainViewModel(private val container: AppContainer) : ViewModel() {
 
     val vehicles: StateFlow<List<VehicleEntity>> = container.vehicleRepository.observeAll()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
+    // Eagerly shared (not WhileSubscribed) because MainActivity reads `.value` directly for the
+    // quick-add FAB without collecting - it must stay live even with zero active collectors.
     val currentVehicle: StateFlow<VehicleEntity?> = combine(
         container.userPreferences.currentVehicleId.distinctUntilChanged(),
         vehicles
@@ -32,7 +34,7 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
             savedId != null -> allVehicles.find { it.id == savedId } ?: allVehicles.find { it.isPrimary } ?: allVehicles.first()
             else -> allVehicles.find { it.isPrimary } ?: allVehicles.first()
         }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     fun selectVehicle(vehicleId: Long) {
         viewModelScope.launch { container.userPreferences.setCurrentVehicleId(vehicleId) }

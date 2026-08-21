@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="?attr/colorSurface"
+    android:paddingTop="64dp"
+    android:paddingBottom="24dp">
+
+    <ImageView
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/ic_car_placeholder"
+        android:importantForAccessibility="no"
+        app:tint="@color/rovena_accent"
+        xmlns:app="http://schemas.android.com/apk/res/res-auto" />
+
+    <TextView
+        android:id="@+id/lockTitle"
+        style="?attr/textAppearanceTitleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface"
+        android:text="@string/lock_enter_pin_title" />
+
+    <LinearLayout
+        android:id="@+id/pinDotsContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal" />
+
+    <TextView
+        android:id="@+id/lockError"
+        style="@style/TextAppearance.Rovena.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textColor="@color/rovena_status_critical"
+        android:visibility="invisible" />
+
+    <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:rowCount="4">
+
+        <com.google.android.material.button.MaterialButton android:id="@+id/key1" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="6dp" android:text="1" android:textSize="20sp" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/key2" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="6dp" android:text="2" android:textSize="20sp" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/key3" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="6dp" android:text="3" android:textSize="20sp" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/key4" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="6dp" android:text="4" android:textSize="20sp" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/key5" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="6dp" android:text="5" android:textSize="20sp" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/key6" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="6dp" android:text="6" android:textSize="20sp" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/key7" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="6dp" android:text="7" android:textSize="20sp" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/key8" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="6dp" android:text="8" android:textSize="20sp" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/key9" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="6dp" android:text="9" android:textSize="20sp" />
+        <ImageButton android:id="@+id/keyBiometric" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="6dp" android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_inspection" android:contentDescription="@string/lock_use_biometric" android:visibility="invisible" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/key0" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="6dp" android:text="0" android:textSize="20sp" />
+        <ImageButton android:id="@+id/keyBackspace" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="6dp" android:background="?attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_chevron_right" android:contentDescription="@string/lock_backspace" />
+
+    </GridLayout>
+
+</LinearLayout>

@@ -379,4 +379,24 @@
     <string name="backup_restore_completed_merged">%1$d vehicle(s) added to your garage.</string>
     <string name="backup_last_created">Last backup: %1$s (%2$d vehicles)</string>
     <string name="backup_none_yet">No backups created yet.</string>
+
+    <string name="quick_add_title">Quick Add</string>
+    <string name="quick_action_reminder">Reminder</string>
+    <string name="quick_action_note">Note</string>
+    <string name="quick_add_note_hint">What do you want to remember?</string>
+
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_get_started">Get Started</string>
+    <string name="onboarding_welcome_title">Welcome to Rovena</string>
+    <string name="onboarding_welcome_message">Your digital garage - track maintenance, fuel, expenses, documents, and more, all in one place.</string>
+    <string name="onboarding_privacy_step_title">Your data stays with you</string>
+    <string name="onboarding_privacy_step_message">Rovena works fully offline. No account, no login, no cloud. Everything you add is stored only on this device.</string>
+    <string name="onboarding_language_title">Choose your language</string>
+    <string name="onboarding_add_vehicle_title">Add your first vehicle</string>
+
+    <string name="lock_enter_pin_title">Enter your PIN</string>
+    <string name="lock_use_biometric">Use biometric unlock</string>
+    <string name="lock_backspace">Backspace</string>
+    <string name="lock_wrong_pin">Incorrect PIN</string>
+    <string name="lock_biometric_prompt_title">Unlock Rovena</string>
 </resources>

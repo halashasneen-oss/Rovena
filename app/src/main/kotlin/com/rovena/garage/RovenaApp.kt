@@ -6,6 +6,9 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.rovena.garage.domain.model.AppThemeMode
 import com.rovena.garage.presentation.reminders.ReminderCheckWorker
 import kotlinx.coroutines.CoroutineScope
@@ -20,11 +23,29 @@ class RovenaApp : Application() {
     /** App-wide coroutine scope for fire-and-forget work (theme application, notification channel setup). */
     val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
+    /**
+     * True whenever the app (any Activity) needs to pass App Lock again
+     * before showing content - starts true so a cold process launch with
+     * App Lock enabled always locks, and is re-armed whenever the whole app
+     * (not just one Activity, e.g. a document picker) leaves the foreground.
+     */
+    var requiresReauth: Boolean = true
+        private set
+
+    fun markAuthenticated() {
+        requiresReauth = false
+    }
+
     override fun onCreate() {
         super.onCreate()
         createNotificationChannels()
         applyPersistedTheme()
         ReminderCheckWorker.schedule(this)
+        ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onStop(owner: LifecycleOwner) {
+                requiresReauth = true
+            }
+        })
     }
 
     private fun createNotificationChannels() {

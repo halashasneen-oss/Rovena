@@ -8,25 +8,23 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-enum class StartDestination { ONBOARDING, LOCK, MAIN }
+enum class StartDestination { ONBOARDING, MAIN }
 
-/** Decides, once, what MainActivity should show first: onboarding, the PIN/biometric lock, or the app itself. */
+/**
+ * Decides, once, whether MainActivity should show onboarding or the app
+ * itself. Whether the PIN/biometric lock screen is also required is a
+ * separate, ongoing check (see `RovenaApp.requiresReauth`) since it must be
+ * re-evaluated every time the app returns to the foreground, not just once.
+ */
 class AppStartViewModel(container: AppContainer) : ViewModel() {
 
     private val _destination = MutableStateFlow<StartDestination?>(null)
     val destination: StateFlow<StartDestination?> = _destination.asStateFlow()
 
-    /** Set true once the lock screen has been passed this process lifetime, so backgrounding briefly doesn't re-lock every resume. */
-    var unlockedThisSession: Boolean = false
-
     init {
         viewModelScope.launch {
             val settings = container.settingsRepository.getOrDefault()
-            _destination.value = when {
-                !settings.onboardingCompleted -> StartDestination.ONBOARDING
-                settings.appLockEnabled && !unlockedThisSession -> StartDestination.LOCK
-                else -> StartDestination.MAIN
-            }
+            _destination.value = if (!settings.onboardingCompleted) StartDestination.ONBOARDING else StartDestination.MAIN
         }
     }
 }

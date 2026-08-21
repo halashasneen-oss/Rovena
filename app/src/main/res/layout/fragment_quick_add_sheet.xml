@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        style="?attr/textAppearanceTitleMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface"
+        android:text="@string/quick_add_title" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:useDefaultMargins="false">
+
+        <include android:id="@+id/optionFuel" layout="@layout/item_quick_action" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" />
+        <include android:id="@+id/optionMaintenance" layout="@layout/item_quick_action" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" />
+        <include android:id="@+id/optionExpense" layout="@layout/item_quick_action" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" />
+        <include android:id="@+id/optionDocument" layout="@layout/item_quick_action" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" />
+        <include android:id="@+id/optionInspection" layout="@layout/item_quick_action" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" />
+        <include android:id="@+id/optionReminder" layout="@layout/item_quick_action" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" />
+        <include android:id="@+id/optionNote" layout="@layout/item_quick_action" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" />
+    </GridLayout>
+
+</LinearLayout>

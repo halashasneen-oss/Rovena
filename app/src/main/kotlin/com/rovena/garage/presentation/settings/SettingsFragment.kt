@@ -166,13 +166,16 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             val pad = (20 * resources.displayMetrics.density).toInt()
             setPadding(pad, pad, pad, pad)
         }
+        val maxLengthFilter = arrayOf<android.text.InputFilter>(android.text.InputFilter.LengthFilter(PinHasher.MAX_PIN_LENGTH))
         val pinInput = EditText(requireContext()).apply {
             hint = getString(R.string.lock_pin_hint)
             inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_PASSWORD
+            filters = maxLengthFilter
         }
         val confirmInput = EditText(requireContext()).apply {
             hint = getString(R.string.lock_pin_confirm_hint)
             inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_VARIATION_PASSWORD
+            filters = maxLengthFilter
         }
         container.addView(pinInput)
         container.addView(confirmInput)
@@ -187,7 +190,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 val pin = pinInput.text.toString()
                 val confirm = confirmInput.text.toString()
-                if (pin.length < PinHasher.MIN_PIN_LENGTH) {
+                if (pin.length !in PinHasher.MIN_PIN_LENGTH..PinHasher.MAX_PIN_LENGTH) {
                     pinInput.error = getString(R.string.lock_pin_too_short)
                     return@setOnClickListener
                 }
