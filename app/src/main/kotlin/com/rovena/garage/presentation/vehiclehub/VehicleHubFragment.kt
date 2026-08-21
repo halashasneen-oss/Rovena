@@ -51,6 +51,7 @@ class VehicleHubFragment : Fragment(R.layout.fragment_vehicle_hub) {
         binding.emptyState.emptyAction.setOnClickListener {
             findNavController().navigate(R.id.vehicleFormFragment, bundleOf("vehicleId" to 0L))
         }
+        binding.generatePdfButton.setOnClickListener { generatePdf() }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -124,6 +125,15 @@ class VehicleHubFragment : Fragment(R.layout.fragment_vehicle_hub) {
         section.hubSectionTitle.text = title
         section.hubSectionSubtitle.text = subtitle
         section.hubSectionRoot.setOnClickListener { onClick() }
+    }
+
+    private fun generatePdf() {
+        val vehicleId = viewModel.uiState.value.vehicle?.id ?: return
+        viewLifecycleOwner.lifecycleScope.launch {
+            val vehicle = appContainer.vehicleRepository.getById(vehicleId) ?: return@launch
+            val file = com.rovena.garage.utils.VehicleSummaryPdfGenerator.generate(requireContext(), appContainer, vehicle)
+            com.rovena.garage.utils.PdfViewerLauncher.open(this@VehicleHubFragment, file)
+        }
     }
 
     override fun onDestroyView() {

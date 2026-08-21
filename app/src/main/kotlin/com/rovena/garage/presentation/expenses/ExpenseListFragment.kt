@@ -18,7 +18,9 @@ import com.rovena.garage.domain.model.AppCurrency
 import com.rovena.garage.presentation.common.appContainer
 import com.rovena.garage.presentation.common.resolveVehicleId
 import com.rovena.garage.presentation.common.viewModelFactory
+import com.rovena.garage.utils.ExpensePdfGenerator
 import com.rovena.garage.utils.Formatters
+import com.rovena.garage.utils.PdfViewerLauncher
 import kotlinx.coroutines.launch
 
 class ExpenseListFragment : Fragment(R.layout.fragment_generic_list) {
@@ -53,6 +55,9 @@ class ExpenseListFragment : Fragment(R.layout.fragment_generic_list) {
             findNavController().navigate(R.id.expenseFormFragment, bundleOf("vehicleId" to vehicleId, "recordId" to 0L))
         }
 
+        binding.pdfButton.visibility = View.VISIBLE
+        binding.pdfButton.setOnClickListener { generatePdf() }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
@@ -61,8 +66,18 @@ class ExpenseListFragment : Fragment(R.layout.fragment_generic_list) {
                     val empty = !state.isLoading && state.records.isEmpty()
                     binding.emptyState.root.visibility = if (empty) View.VISIBLE else View.GONE
                     binding.listRecycler.visibility = if (empty) View.GONE else View.VISIBLE
+                    binding.pdfButton.isEnabled = state.records.isNotEmpty()
                 }
             }
+        }
+    }
+
+    private fun generatePdf() {
+        val vehicleId = viewModel.uiState.value.vehicleId ?: return
+        viewLifecycleOwner.lifecycleScope.launch {
+            val vehicle = appContainer.vehicleRepository.getById(vehicleId) ?: return@launch
+            val file = ExpensePdfGenerator.generate(requireContext(), vehicle, viewModel.uiState.value.records)
+            PdfViewerLauncher.open(this@ExpenseListFragment, file)
         }
     }
 

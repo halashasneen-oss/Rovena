@@ -46,6 +46,16 @@
                 android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold"
                 tools:text="1,240 JOD" />
+
+            <ImageButton
+                android:id="@+id/pdfButton"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_document"
+                android:contentDescription="@string/action_generate_pdf"
+                android:visibility="gone" />
         </LinearLayout>
 
         <com.google.android.material.chip.ChipGroup
