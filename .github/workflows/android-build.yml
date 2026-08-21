@@ -45,13 +45,22 @@ jobs:
           java-version: '17'
 
       - name: Install required Android SDK packages
-        # ubuntu-latest GitHub-hosted runners ship with the Android SDK and
-        # cmdline-tools/sdkmanager pre-installed at $ANDROID_HOME already -
-        # this just ensures the exact compileSdk/build-tools versions this
-        # project targets are present.
+        # ubuntu-latest GitHub-hosted runners ship with the Android SDK
+        # pre-installed at $ANDROID_HOME/$ANDROID_SDK_ROOT already, but the
+        # cmdline-tools/sdkmanager binary isn't on PATH by default - find it
+        # and use it directly to ensure the exact compileSdk/build-tools
+        # versions this project targets are present.
         run: |
-          yes | sdkmanager --licenses > /dev/null || true
-          sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          SDKMANAGER="$(find "$ANDROID_HOME" -name sdkmanager -type f 2>/dev/null | sort -V | tail -1)"
+          if [ -z "$SDKMANAGER" ]; then
+            echo "::error::sdkmanager not found under $ANDROID_HOME"
+            find "$ANDROID_HOME" -maxdepth 3
+            exit 1
+          fi
+          echo "Using sdkmanager at $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          "$SDKMANAGER" "platforms;android-34" "build-tools;34.0.0" "platform-tools"
 
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v4
