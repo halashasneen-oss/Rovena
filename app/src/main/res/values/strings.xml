@@ -254,4 +254,26 @@
     <string name="reminder_notification_body_overdue">Overdue</string>
     <string name="document_expiry_notification_title">%1$s expiring soon</string>
     <string name="document_expiry_notification_body">Expires %1$s</string>
+    <string name="inspection_empty_title">No inspections yet</string>
+    <string name="inspection_empty_message">Start a professional walkaround inspection to check your vehicle\'s condition.</string>
+    <string name="inspection_item_notes">Notes and estimated cost</string>
+    <string name="inspection_category_exterior">Exterior</string>
+    <string name="inspection_category_interior">Interior</string>
+    <string name="inspection_category_mechanical">Mechanical</string>
+    <string name="inspection_score_label">Inspection Score</string>
+    <string name="inspection_issues_found">%1$d issues found</string>
+    <string name="inspection_attention_items">%1$d need attention</string>
+    <string name="inspection_good_items">%1$d good</string>
+    <string name="inspection_notes_dialog_title">Notes</string>
+    <string name="inspection_field_estimated_cost">Estimated repair cost</string>
+    <string name="action_generate_pdf">Generate PDF Report</string>
+    <string name="pdf_inspection_report_title">Vehicle Inspection Report</string>
+    <string name="pdf_generated_on">Generated on %1$s</string>
+    <string name="pdf_vehicle">Vehicle</string>
+    <string name="pdf_footer_privacy">Generated locally by Rovena. This vehicle\'s data never leaves this device.</string>
+    <string name="pdf_vehicle_summary_title">Vehicle Summary Report</string>
+    <string name="pdf_maintenance_report_title">Maintenance History Report</string>
+    <string name="pdf_expense_report_title">Expense Report</string>
+    <string name="pdf_fuel_report_title">Fuel Report</string>
+    <string name="pdf_total">Total</string>
 </resources>
