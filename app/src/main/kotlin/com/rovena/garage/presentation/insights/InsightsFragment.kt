@@ -12,10 +12,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.rovena.garage.R
 import com.rovena.garage.databinding.FragmentInsightsBinding
+import com.rovena.garage.databinding.ItemInsightRowBinding
 import com.rovena.garage.databinding.ItemLegendRowBinding
 import com.rovena.garage.domain.model.AppCurrency
 import com.rovena.garage.domain.model.DistanceUnit
 import com.rovena.garage.domain.model.FuelEconomyUnit
+import com.rovena.garage.domain.usecase.VehicleInsightGenerator
 import com.rovena.garage.presentation.common.appContainer
 import com.rovena.garage.presentation.common.charts.BarChartView
 import com.rovena.garage.presentation.common.charts.DonutChartView
@@ -77,6 +79,18 @@ class InsightsFragment : Fragment(R.layout.fragment_insights) {
         bindStat(binding.statAvgMonthly, getString(R.string.insights_avg_monthly),
             state.expenseStats?.averageMonthlyCost?.let { Formatters.currency(requireContext(), it, AppCurrency.JOD, null) } ?: getString(R.string.not_enough_data))
 
+        if (state.insights.isEmpty()) {
+            binding.insightsCard.visibility = View.GONE
+        } else {
+            binding.insightsCard.visibility = View.VISIBLE
+            binding.insightsList.removeAllViews()
+            state.insights.forEach { insight ->
+                val row = ItemInsightRowBinding.inflate(LayoutInflater.from(requireContext()), binding.insightsList, false)
+                row.insightText.text = getString(R.string.insight_bullet, insightText(insight))
+                binding.insightsList.addView(row.root)
+            }
+        }
+
         binding.monthlySpendChart.bars = state.monthlySpend.map {
             BarChartView.Bar(it.month.month.getDisplayName(TextStyle.SHORT, Locale.getDefault()), it.total.toFloat())
         }
@@ -119,6 +133,15 @@ class InsightsFragment : Fragment(R.layout.fragment_insights) {
     private fun bindStat(included: com.rovena.garage.databinding.ItemStatCardBinding, label: String, value: String) {
         included.statLabel.text = label
         included.statValue.text = value
+    }
+
+    private fun insightText(insight: VehicleInsightGenerator.Insight): String = when (insight) {
+        is VehicleInsightGenerator.Insight.FuelEconomyChanged ->
+            if (insight.improved) getString(R.string.insight_fuel_economy_improved, insight.percent)
+            else getString(R.string.insight_fuel_economy_worsened, insight.percent)
+        is VehicleInsightGenerator.Insight.MaintenanceCostChanged ->
+            if (insight.increased) getString(R.string.insight_maintenance_cost_increased, insight.percent)
+            else getString(R.string.insight_maintenance_cost_decreased, insight.percent)
     }
 
     override fun onDestroyView() {

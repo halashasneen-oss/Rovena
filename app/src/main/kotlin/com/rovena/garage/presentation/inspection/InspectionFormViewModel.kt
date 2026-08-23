@@ -5,16 +5,23 @@ import androidx.lifecycle.viewModelScope
 import com.rovena.garage.AppContainer
 import com.rovena.garage.data.local.entities.InspectionEntity
 import com.rovena.garage.data.local.entities.InspectionItemEntity
+import com.rovena.garage.data.local.entities.ReminderEntity
 import com.rovena.garage.data.local.entities.VehiclePhotoEntity
 import com.rovena.garage.domain.model.InspectionCategoryGroup
 import com.rovena.garage.domain.model.InspectionItemKey
 import com.rovena.garage.domain.model.InspectionItemStatus
+import com.rovena.garage.domain.model.MaintenanceCategory
 import com.rovena.garage.domain.model.PhotoLinkedType
+import com.rovena.garage.domain.model.ReminderBasis
+import com.rovena.garage.domain.usecase.InspectionMaintenanceSuggester
 import com.rovena.garage.domain.usecase.InspectionScoreCalculator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+
+/** One PROBLEM inspection item with a suggested follow-up maintenance category - see InspectionMaintenanceSuggester. */
+data class MaintenanceSuggestion(val itemKey: InspectionItemKey, val category: MaintenanceCategory)
 
 data class InspectionItemDraft(
     val categoryGroup: InspectionCategoryGroup,
@@ -37,6 +44,8 @@ data class InspectionFormState(
     val isSaved: Boolean = false,
     val isDeleted: Boolean = false,
     val savedInspectionId: Long = 0,
+    /** PROBLEM items from the save that just happened, mapped to a suggested maintenance category - populated only on save(), never on load. */
+    val maintenanceSuggestions: List<MaintenanceSuggestion> = emptyList(),
     val errors: Map<String, Int> = emptyMap()
 ) {
     companion object {
@@ -145,7 +154,38 @@ class InspectionFormViewModel(private val container: AppContainer, private val v
                 }
             }
 
-            _state.value = _state.value.copy(isSaved = true, savedInspectionId = savedId, errors = emptyMap())
+            val suggestions = s.items
+                .filter { it.status == InspectionItemStatus.PROBLEM }
+                .mapNotNull { item -> InspectionMaintenanceSuggester.suggestedCategory(item.itemKey)?.let { MaintenanceSuggestion(item.itemKey, it) } }
+
+            _state.value = _state.value.copy(isSaved = true, savedInspectionId = savedId, maintenanceSuggestions = suggestions, errors = emptyMap())
+        }
+    }
+
+    /**
+     * Creates one due-now reminder per confirmed suggestion (spec: Inspection ->
+     * Maintenance task suggestion flow). Only ever called after the user
+     * explicitly confirms in the Fragment's dialog - never automatically.
+     * [titleFor] resolves each category's localized display name, which this
+     * ViewModel has no Context to do itself.
+     *
+     * Deliberately `suspend` rather than `viewModelScope.launch`-ing internally:
+     * the caller (the Fragment, from its own lifecycleScope) awaits this before
+     * navigating back, so the writes are guaranteed to finish before this
+     * ViewModel's scope can be cancelled by the resulting navigation.
+     */
+    suspend fun addSuggestedReminders(confirmed: List<MaintenanceSuggestion>, titleFor: (MaintenanceCategory) -> String) {
+        val vehicleId = _state.value.vehicleId
+        confirmed.forEach { suggestion ->
+            container.reminderRepository.addOrUpdate(
+                ReminderEntity(
+                    vehicleId = vehicleId,
+                    title = titleFor(suggestion.category),
+                    basis = ReminderBasis.DATE,
+                    dueDateMillis = System.currentTimeMillis(),
+                    linkedMaintenanceCategory = suggestion.category
+                )
+            )
         }
     }
 

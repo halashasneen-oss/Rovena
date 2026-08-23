@@ -35,6 +35,18 @@
                 <include android:id="@+id/statAvgMonthly" layout="@layout/item_stat_card" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="6dp" />
             </LinearLayout>
 
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/insightsCard"
+                style="?attr/materialCardViewStyle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp" android:visibility="gone">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                    <TextView style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/insights_smart_insights" />
+                    <LinearLayout
+                        android:id="@+id/insightsList"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical" android:layout_marginTop="8dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <com.google.android.material.card.MaterialCardView style="?attr/materialCardViewStyle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
                     <TextView style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/insights_monthly_spending" />

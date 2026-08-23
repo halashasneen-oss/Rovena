@@ -288,6 +288,9 @@
     <string name="inspection_issues_found">%1$d problema(s) encontrado(s)</string>
     <string name="inspection_attention_items">%1$d requieren atención</string>
     <string name="inspection_good_items">%1$d en buen estado</string>
+    <string name="inspection_suggestion_dialog_message">Esta inspección detectó problemas en los siguientes elementos. Agrega un recordatorio para los que quieras seguir.</string>
+    <string name="inspection_suggestion_add_reminders">Agregar recordatorios</string>
+    <string name="action_skip">Omitir</string>
     <string name="inspection_notes_dialog_title">Notas</string>
     <string name="inspection_field_estimated_cost">Costo de reparación estimado</string>
     <string name="action_generate_pdf">Generar informe PDF</string>
@@ -328,6 +331,12 @@
     <string name="insights_avg_consumption">Consumo promedio</string>
     <string name="insights_cost_per_km">Costo / KM</string>
     <string name="insights_avg_monthly">Costo mensual promedio</string>
+    <string name="insights_smart_insights">Perspectivas</string>
+    <string name="insight_bullet">•  %1$s</string>
+    <string name="insight_fuel_economy_improved">El consumo de combustible ha mejorado un %1$d%% recientemente.</string>
+    <string name="insight_fuel_economy_worsened">El consumo de combustible ha empeorado un %1$d%% recientemente.</string>
+    <string name="insight_maintenance_cost_increased">Los costos de mantenimiento han aumentado un %1$d%% en los últimos 3 meses.</string>
+    <string name="insight_maintenance_cost_decreased">Los costos de mantenimiento han disminuido un %1$d%% en los últimos 3 meses.</string>
 
     <string name="settings_section_garage">Garaje</string>
     <string name="settings_row_manage_vehicles">Gestionar vehículos</string>

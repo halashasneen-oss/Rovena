@@ -53,6 +53,7 @@ class InspectionFormFragment : Fragment(R.layout.fragment_inspection_form) {
 
     private var isBinding = false
     private var rowsBuilt = false
+    private var saveOutcomeHandled = false
     private val rowBindings = mutableMapOf<InspectionItemKey, ItemInspectionCheckBinding>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -124,7 +125,49 @@ class InspectionFormFragment : Fragment(R.layout.fragment_inspection_form) {
             }
         }
 
-        if (state.isSaved || state.isDeleted) findNavController().popBackStack()
+        if (state.isDeleted && !saveOutcomeHandled) {
+            saveOutcomeHandled = true
+            findNavController().popBackStack()
+        } else if (state.isSaved && !saveOutcomeHandled) {
+            saveOutcomeHandled = true
+            if (state.maintenanceSuggestions.isEmpty()) {
+                findNavController().popBackStack()
+            } else {
+                showMaintenanceSuggestionDialog(state.maintenanceSuggestions)
+            }
+        }
+    }
+
+    /**
+     * Spec: Inspection -> Maintenance task suggestion flow. Never creates
+     * anything without this explicit confirmation - "Skip" (and the back/
+     * outside-tap dismiss, handled the same way as Skip) leaves the inspection
+     * saved with no reminders added, exactly as if the flagged problems had
+     * simply been noted for later.
+     */
+    private fun showMaintenanceSuggestionDialog(suggestions: List<MaintenanceSuggestion>) {
+        val labels = suggestions.map { getString(EnumLabels.of(it.category)) }.toTypedArray()
+        val checked = BooleanArray(suggestions.size) { true }
+
+        // AlertDialog's message panel and its multi-choice-items list panel are mutually
+        // exclusive (the list replaces the message view entirely) - the explanatory
+        // sentence goes in the title instead of a separate setMessage() that would
+        // silently never render.
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.inspection_suggestion_dialog_message)
+            .setMultiChoiceItems(labels, checked) { _, which, isChecked -> checked[which] = isChecked }
+            .setPositiveButton(R.string.inspection_suggestion_add_reminders) { _, _ ->
+                val confirmed = suggestions.filterIndexed { index, _ -> checked[index] }
+                viewLifecycleOwner.lifecycleScope.launch {
+                    if (confirmed.isNotEmpty()) {
+                        viewModel.addSuggestedReminders(confirmed) { category -> getString(EnumLabels.of(category)) }
+                    }
+                    findNavController().popBackStack()
+                }
+            }
+            .setNegativeButton(R.string.action_skip) { _, _ -> findNavController().popBackStack() }
+            .setOnCancelListener { findNavController().popBackStack() }
+            .show()
     }
 
     private fun buildRows(state: InspectionFormState) {

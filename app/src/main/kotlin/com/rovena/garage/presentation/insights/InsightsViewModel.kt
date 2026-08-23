@@ -6,6 +6,7 @@ import com.rovena.garage.AppContainer
 import com.rovena.garage.domain.model.ExpenseCategory
 import com.rovena.garage.domain.usecase.ExpenseAggregator
 import com.rovena.garage.domain.usecase.FuelStatsCalculator
+import com.rovena.garage.domain.usecase.VehicleInsightGenerator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,6 +33,8 @@ data class InsightsUiState(
     val categoryBreakdown: List<CategorySlice> = emptyList(),
     val totalDistanceKm: Int? = null,
     val maintenanceCount: Int = 0,
+    /** Local, rules-based observations from [VehicleInsightGenerator] - e.g. a fuel-economy or maintenance-cost trend worth calling out. */
+    val insights: List<VehicleInsightGenerator.Insight> = emptyList(),
     val isLoading: Boolean = true
 )
 
@@ -86,11 +89,16 @@ class InsightsViewModel(private val container: AppContainer, vehicleIdFlow: Flow
                 .take(6)
                 .map { CategorySlice(it.key, it.value) }
 
+            val insights = VehicleInsightGenerator.generate(
+                litersPer100KmChronological = fuelStats.intervals.map { it.litersPer100Km },
+                monthlyMaintenanceCostChronological = maintenanceMonthlySpend.map { it.total }
+            )
+
             InsightsUiState(
                 vehicleId = vehicle.id, hasVehicle = true, fuelStats = fuelStats, expenseStats = expenseStats,
                 monthlySpend = monthlySpend, maintenanceMonthlySpend = maintenanceMonthlySpend,
                 categoryBreakdown = categoryBreakdown, totalDistanceKm = totalDistance,
-                maintenanceCount = maintenance.size, isLoading = false
+                maintenanceCount = maintenance.size, insights = insights, isLoading = false
             )
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), InsightsUiState())

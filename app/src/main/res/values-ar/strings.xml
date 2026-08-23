@@ -288,6 +288,9 @@
     <string name="inspection_issues_found">تم العثور على %1$d مشكلة</string>
     <string name="inspection_attention_items">%1$d يحتاج انتباه</string>
     <string name="inspection_good_items">%1$d بحالة جيدة</string>
+    <string name="inspection_suggestion_dialog_message">رصد هذا الفحص مشاكل في العناصر أدناه. أضف تذكيرًا لأي منها ترغب بمتابعته.</string>
+    <string name="inspection_suggestion_add_reminders">إضافة تذكيرات</string>
+    <string name="action_skip">تخطي</string>
     <string name="inspection_notes_dialog_title">ملاحظات</string>
     <string name="inspection_field_estimated_cost">تكلفة الإصلاح التقديرية</string>
     <string name="action_generate_pdf">إنشاء تقرير PDF</string>
@@ -328,6 +331,12 @@
     <string name="insights_avg_consumption">متوسط الاستهلاك</string>
     <string name="insights_cost_per_km">التكلفة / كم</string>
     <string name="insights_avg_monthly">متوسط التكلفة الشهرية</string>
+    <string name="insights_smart_insights">رؤى</string>
+    <string name="insight_bullet">•  %1$s</string>
+    <string name="insight_fuel_economy_improved">تحسّن استهلاك الوقود بنسبة %1$d%% مؤخرًا.</string>
+    <string name="insight_fuel_economy_worsened">ساء استهلاك الوقود بنسبة %1$d%% مؤخرًا.</string>
+    <string name="insight_maintenance_cost_increased">ارتفعت تكاليف الصيانة بنسبة %1$d%% خلال آخر 3 أشهر.</string>
+    <string name="insight_maintenance_cost_decreased">انخفضت تكاليف الصيانة بنسبة %1$d%% خلال آخر 3 أشهر.</string>
 
     <string name="settings_section_garage">المرآب</string>
     <string name="settings_row_manage_vehicles">إدارة السيارات</string>
