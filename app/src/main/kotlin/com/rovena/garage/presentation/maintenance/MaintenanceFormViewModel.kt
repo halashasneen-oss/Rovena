@@ -3,10 +3,10 @@ package com.rovena.garage.presentation.maintenance
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rovena.garage.AppContainer
-import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.MaintenanceRecordEntity
 import com.rovena.garage.domain.model.MaintenanceCategory
 import com.rovena.garage.domain.model.PhotoLinkedType
+import com.rovena.garage.domain.usecase.InputValidator
 import com.rovena.garage.utils.EnumLabels
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -91,8 +91,8 @@ class MaintenanceFormViewModel(
         val s = _state.value
         val mileage = s.mileage.toIntOrNull()
         val errors = mutableMapOf<String, Int>()
-        if (mileage == null || mileage < 0) errors["mileage"] = R.string.error_invalid_mileage
-        if (s.description.isBlank()) errors["description"] = R.string.error_required
+        InputValidator.mileageKm(mileage)?.let { errors["mileage"] = EnumLabels.of(it) }
+        InputValidator.requiredText(s.description)?.let { errors["description"] = EnumLabels.of(it) }
         if (errors.isNotEmpty()) {
             _state.value = s.copy(errors = errors)
             return

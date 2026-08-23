@@ -13,6 +13,7 @@ import com.rovena.garage.domain.model.InspectionItemStatus
 import com.rovena.garage.domain.model.MaintenanceCategory
 import com.rovena.garage.domain.model.PhotoLinkedType
 import com.rovena.garage.domain.model.ReminderBasis
+import com.rovena.garage.domain.usecase.InputValidator
 import com.rovena.garage.domain.usecase.InspectionMaintenanceSuggester
 import com.rovena.garage.domain.usecase.InspectionScoreCalculator
 import com.rovena.garage.utils.EnumLabels
@@ -132,13 +133,13 @@ class InspectionFormViewModel(private val container: AppContainer, private val v
     fun save() {
         val s = _state.value
         val mileage = s.mileage.toIntOrNull()
-        if (mileage == null || mileage < 0) {
-            _state.value = s.copy(errors = mapOf("mileage" to com.rovena.garage.R.string.error_invalid_mileage))
+        InputValidator.mileageKm(mileage)?.let {
+            _state.value = s.copy(errors = mapOf("mileage" to EnumLabels.of(it)))
             return
         }
         viewModelScope.launch {
             val inspection = InspectionEntity(
-                id = s.id, vehicleId = s.vehicleId, dateMillis = s.dateMillis, mileageKm = mileage,
+                id = s.id, vehicleId = s.vehicleId, dateMillis = s.dateMillis, mileageKm = mileage!!,
                 notes = s.notes.trim().ifBlank { null }
             )
             val itemEntities = s.items.map {

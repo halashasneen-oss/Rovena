@@ -6,6 +6,8 @@ import com.rovena.garage.AppContainer
 import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.DocumentEntity
 import com.rovena.garage.domain.model.DocumentType
+import com.rovena.garage.domain.usecase.InputValidator
+import com.rovena.garage.utils.EnumLabels
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -56,7 +58,7 @@ class DocumentFormViewModel(private val container: AppContainer, private val veh
     fun save() {
         val s = _state.value
         val errors = mutableMapOf<String, Int>()
-        if (s.name.isBlank()) errors["name"] = R.string.error_required
+        InputValidator.requiredText(s.name)?.let { errors["name"] = EnumLabels.of(it) }
         if (s.filePath == null) errors["file"] = R.string.error_file_required
         if (errors.isNotEmpty()) {
             _state.value = s.copy(errors = errors)

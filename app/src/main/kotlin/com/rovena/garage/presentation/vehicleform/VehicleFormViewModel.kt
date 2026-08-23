@@ -6,6 +6,7 @@ import com.rovena.garage.AppContainer
 import com.rovena.garage.data.local.entities.VehicleEntity
 import com.rovena.garage.domain.model.FuelType
 import com.rovena.garage.domain.model.TransmissionType
+import com.rovena.garage.domain.usecase.InputValidator
 import com.rovena.garage.utils.EnumLabels
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -91,10 +92,10 @@ class VehicleFormViewModel(private val container: AppContainer, private val edit
         val errors = mutableMapOf<String, Int>()
         val year = s.year.toIntOrNull()
         val mileage = s.mileage.toIntOrNull()
-        if (s.make.isBlank()) errors["make"] = com.rovena.garage.R.string.error_required
-        if (s.model.isBlank()) errors["model"] = com.rovena.garage.R.string.error_required
-        if (year == null || year < 1900 || year > 2100) errors["year"] = com.rovena.garage.R.string.error_invalid_year
-        if (mileage == null || mileage < 0) errors["mileage"] = com.rovena.garage.R.string.error_invalid_mileage
+        InputValidator.requiredText(s.make)?.let { errors["make"] = EnumLabels.of(it) }
+        InputValidator.requiredText(s.model)?.let { errors["model"] = EnumLabels.of(it) }
+        InputValidator.vehicleYear(year)?.let { errors["year"] = EnumLabels.of(it) }
+        InputValidator.mileageKm(mileage)?.let { errors["mileage"] = EnumLabels.of(it) }
 
         if (errors.isNotEmpty()) {
             _state.value = s.copy(errors = errors)

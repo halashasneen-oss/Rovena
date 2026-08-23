@@ -6,6 +6,8 @@ import com.rovena.garage.AppContainer
 import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.ReminderEntity
 import com.rovena.garage.domain.model.ReminderBasis
+import com.rovena.garage.domain.usecase.InputValidator
+import com.rovena.garage.utils.EnumLabels
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -57,7 +59,7 @@ class ReminderFormViewModel(private val container: AppContainer, private val veh
     fun save() {
         val s = _state.value
         val errors = mutableMapOf<String, Int>()
-        if (s.title.isBlank()) errors["title"] = R.string.error_required
+        InputValidator.requiredText(s.title)?.let { errors["title"] = EnumLabels.of(it) }
         val dueMileage = s.dueMileage.toIntOrNull()
         val hasMileageTrigger = s.basis != ReminderBasis.DATE && dueMileage != null
         val hasDateTrigger = s.basis != ReminderBasis.MILEAGE && s.dueDateMillis != null

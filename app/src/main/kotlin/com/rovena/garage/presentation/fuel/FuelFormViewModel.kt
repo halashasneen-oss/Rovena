@@ -3,9 +3,9 @@ package com.rovena.garage.presentation.fuel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rovena.garage.AppContainer
-import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.FuelRecordEntity
 import com.rovena.garage.domain.model.FuelType
+import com.rovena.garage.domain.usecase.InputValidator
 import com.rovena.garage.domain.usecase.MileageValidator
 import com.rovena.garage.utils.EnumLabels
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -93,9 +93,9 @@ class FuelFormViewModel(private val container: AppContainer, private val vehicle
         val mileage = s.mileage.toIntOrNull()
         val liters = s.liters.toDoubleOrNull()
         val total = s.totalCost.toDoubleOrNull()
-        if (mileage == null || mileage < 0) errors["mileage"] = R.string.error_invalid_mileage
-        if (liters == null || liters <= 0) errors["liters"] = R.string.error_required
-        if (total == null || total < 0) errors["totalCost"] = R.string.error_required
+        InputValidator.mileageKm(mileage)?.let { errors["mileage"] = EnumLabels.of(it) }
+        InputValidator.positiveQuantity(liters)?.let { errors["liters"] = EnumLabels.of(it) }
+        InputValidator.cost(total)?.let { errors["totalCost"] = EnumLabels.of(it) }
         if (errors.isNotEmpty()) {
             _state.value = s.copy(errors = errors)
             return
