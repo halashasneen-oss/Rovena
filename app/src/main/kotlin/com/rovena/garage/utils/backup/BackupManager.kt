@@ -27,6 +27,9 @@ sealed class BackupResult {
     data class Error(val message: String) : BackupResult()
 }
 
+/** User-facing progress stages for a backup/restore operation in flight (spec: backup security - always show progress, never let the UI look frozen). */
+enum class BackupStage { PREPARING, CREATING, VALIDATING, RESTORING, VERIFYING }
+
 data class BackupInspection(
     val manifest: BackupVersionValidator.Manifest?,
     val validation: BackupVersionValidator.ValidationResult,
@@ -62,15 +65,28 @@ object BackupManager {
      * then encrypted (see [BackupEncryption]) into [destination] as a
      * `.rovena.secure` file, rather than writing the zip there directly.
      */
-    suspend fun createBackup(context: Context, container: AppContainer, destination: Uri, password: String? = null): BackupResult = withContext(Dispatchers.IO) {
+    suspend fun createBackup(
+        context: Context,
+        container: AppContainer,
+        destination: Uri,
+        password: String? = null,
+        onProgress: (BackupStage) -> Unit = {}
+    ): BackupResult = withContext(Dispatchers.IO) {
         val tempZipFile = if (password != null) File.createTempFile("rovena_backup_", ".tmp", context.cacheDir) else null
         try {
+            onProgress(BackupStage.PREPARING)
             // Flush WAL into the main database file so the copy is a complete, consistent snapshot.
             container.database.openHelper.writableDatabase.query("PRAGMA wal_checkpoint(FULL)").close()
 
             val dbFile = context.getDatabasePath(RovenaDatabase.DATABASE_NAME)
             val vehicleCount = container.vehicleRepository.getAllOnce().size
             val checksum = sha256(dbFile)
+
+            val filePaths = listOf("documents", "photos", "receipts")
+                .map { File(context.filesDir, it) }
+                .filter { it.exists() }
+                .flatMap { it.listFiles()?.toList() ?: emptyList() }
+            val totalSizeBytes = dbFile.length() + filePaths.sumOf { it.length() }
 
             val manifest = JSONObject().apply {
                 put("backupFormatVersion", BackupVersionValidator.CURRENT_BACKUP_FORMAT_VERSION)
@@ -79,6 +95,8 @@ object BackupManager {
                 put("appVersionName", BuildConfig.VERSION_NAME)
                 put("createdAtMillis", System.currentTimeMillis())
                 put("vehicleCount", vehicleCount)
+                put("fileCount", filePaths.size)
+                put("totalSizeBytes", totalSizeBytes)
                 put("checksum", checksum)
             }
 
@@ -105,6 +123,7 @@ object BackupManager {
                 }
             }
 
+            onProgress(BackupStage.CREATING)
             if (password != null && tempZipFile != null) {
                 tempZipFile.outputStream().use { writeZip(it) }
                 val encrypted = BackupEncryption.encrypt(tempZipFile.readBytes(), password)
@@ -147,9 +166,15 @@ object BackupManager {
      * as before (never fully buffered in memory) - only an encrypted archive
      * is read fully into memory, which AES-GCM decryption requires anyway.
      */
-    suspend fun inspect(context: Context, source: Uri, password: String? = null): BackupInspection = withContext(Dispatchers.IO) {
+    suspend fun inspect(
+        context: Context,
+        source: Uri,
+        password: String? = null,
+        onProgress: (BackupStage) -> Unit = {}
+    ): BackupInspection = withContext(Dispatchers.IO) {
         val workDir = File(context.cacheDir, "restore_${UUID.randomUUID()}").apply { mkdirs() }
         try {
+            onProgress(BackupStage.VALIDATING)
             val magicPeek = context.contentResolver.openInputStream(source)?.use { input ->
                 val buffer = ByteArray(BackupEncryption.MAGIC.size)
                 if (input.read(buffer) == buffer.size) buffer else null
@@ -231,26 +256,91 @@ object BackupManager {
 
     /**
      * Replaces all current data with the backup's contents. Caller must have already
-     * confirmed with the user. The live documents/photos/receipts directories are
-     * cleared first so the result faithfully matches the backup with no leftover files
-     * from records that no longer exist after the swap.
+     * confirmed with the user.
+     *
+     * Transactional-style safety (spec #7): the backup's database is verified to
+     * actually open through Room - with the real migration chain - *before* a
+     * single byte of the live database or live files is touched. Only then is the
+     * current live state snapshotted into a rollback copy, and only after that
+     * snapshot succeeds does the actual swap happen. If anything from the swap
+     * onward throws, the rollback copy is restored so the user's original garage
+     * comes back exactly as it was - the original data is never deleted-then-hoped
+     * to be replaced; it is preserved until the new data has proven itself.
      */
-    suspend fun restoreReplacing(context: Context, extractedDir: File): BackupResult = withContext(Dispatchers.IO) {
+    suspend fun restoreReplacing(context: Context, extractedDir: File, onProgress: (BackupStage) -> Unit = {}): BackupResult = withContext(Dispatchers.IO) {
+        val dbFile = context.getDatabasePath(RovenaDatabase.DATABASE_NAME)
+        val rollbackDir = File(context.cacheDir, "restore_rollback_${UUID.randomUUID()}")
+        var swapped = false
         try {
+            onProgress(BackupStage.VALIDATING)
+            val backupDbFile = File(extractedDir, ENTRY_DATABASE)
+            if (!backupDbFile.exists()) return@withContext BackupResult.Error("Backup database missing")
+            verifyDatabaseOpens(context, backupDbFile)
+
+            // Snapshot current live state now that the incoming data has proven it
+            // opens cleanly - this is the last point at which nothing has been
+            // touched yet, so a failure snapshotting itself is still perfectly safe.
+            rollbackDir.mkdirs()
             RovenaDatabase.closeInstance()
-            val dbFile = context.getDatabasePath(RovenaDatabase.DATABASE_NAME)
+            if (dbFile.exists()) dbFile.copyTo(File(rollbackDir, ENTRY_DATABASE), overwrite = true)
+            listOf("documents", "photos", "receipts").forEach { subDir ->
+                val liveDir = File(context.filesDir, subDir)
+                if (liveDir.exists()) liveDir.copyRecursively(File(rollbackDir, subDir), overwrite = true)
+            }
+
+            onProgress(BackupStage.RESTORING)
             File(dbFile.path + "-wal").delete()
             File(dbFile.path + "-shm").delete()
-            File(extractedDir, ENTRY_DATABASE).copyTo(dbFile, overwrite = true)
+            backupDbFile.copyTo(dbFile, overwrite = true)
+            swapped = true
 
+            // The live documents/photos/receipts directories are cleared so the result
+            // faithfully matches the backup with no leftover files from records that no
+            // longer exist after the swap - safe now because the rollback copy above
+            // already has everything needed to restore them if a later step fails.
             listOf("documents", "photos", "receipts").forEach { subDir ->
                 File(context.filesDir, subDir).deleteRecursively()
             }
             restoreFilesInto(context, extractedDir)
+
+            onProgress(BackupStage.VERIFYING)
+            verifyDatabaseOpens(context, dbFile)
+
             extractedDir.deleteRecursively()
             BackupResult.Success(0)
         } catch (e: Exception) {
+            if (swapped) {
+                runCatching {
+                    RovenaDatabase.closeInstance()
+                    val rollbackDbFile = File(rollbackDir, ENTRY_DATABASE)
+                    if (rollbackDbFile.exists()) {
+                        File(dbFile.path + "-wal").delete()
+                        File(dbFile.path + "-shm").delete()
+                        rollbackDbFile.copyTo(dbFile, overwrite = true)
+                    }
+                    listOf("documents", "photos", "receipts").forEach { subDir ->
+                        File(context.filesDir, subDir).deleteRecursively()
+                        val rollbackSubDir = File(rollbackDir, subDir)
+                        if (rollbackSubDir.exists()) rollbackSubDir.copyRecursively(File(context.filesDir, subDir), overwrite = true)
+                    }
+                }
+            }
             BackupResult.Error(e.message ?: "Unknown error")
+        } finally {
+            rollbackDir.deleteRecursively()
+        }
+    }
+
+    /** Opens [dbFile] through the app's real Room builder (with its full migration chain) and forces it to actually read, then closes it - throws if the file is unreadable or fails to migrate. Never mutates [RovenaDatabase]'s cached singleton. */
+    private fun verifyDatabaseOpens(context: Context, dbFile: File) {
+        val db = Room.databaseBuilder(context, RovenaDatabase::class.java, dbFile.absolutePath)
+            .allowMainThreadQueries()
+            .addMigrations(*com.rovena.garage.data.local.database.Migrations.ALL)
+            .build()
+        try {
+            db.vehicleDao().getAllOnce()
+        } finally {
+            db.close()
         }
     }
 
@@ -263,9 +353,10 @@ object BackupManager {
      * UUID names (never the backup's original filename) so they can never collide with
      * an existing file already used by the current garage.
      */
-    suspend fun restoreAsNewGarage(context: Context, container: AppContainer, extractedDir: File): BackupResult = withContext(Dispatchers.IO) {
+    suspend fun restoreAsNewGarage(context: Context, container: AppContainer, extractedDir: File, onProgress: (BackupStage) -> Unit = {}): BackupResult = withContext(Dispatchers.IO) {
         var sourceDb: RovenaDatabase? = null
         try {
+            onProgress(BackupStage.RESTORING)
             val sourceDbFile = File(extractedDir, ENTRY_DATABASE)
             sourceDb = Room.databaseBuilder(context, RovenaDatabase::class.java, sourceDbFile.absolutePath)
                 .allowMainThreadQueries()

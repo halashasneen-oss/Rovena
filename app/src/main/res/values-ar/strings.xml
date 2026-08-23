@@ -452,6 +452,11 @@
     <string name="backup_restore_completed_merged">تمت إضافة %1$d سيارة إلى مرآبك.</string>
     <string name="backup_last_created">آخر نسخة احتياطية: %1$s (%2$d سيارة)</string>
     <string name="backup_none_yet">لم يتم إنشاء أي نسخة احتياطية بعد.</string>
+    <string name="backup_progress_preparing">جارٍ التحضير…</string>
+    <string name="backup_progress_creating">جارٍ إنشاء النسخة الاحتياطية…</string>
+    <string name="backup_progress_validating">جارٍ التحقق…</string>
+    <string name="backup_progress_restoring">جارٍ الاستعادة…</string>
+    <string name="backup_progress_verifying">جارٍ التأكد…</string>
     <string name="backup_encrypt_dialog_title">تشفير هذه النسخة الاحتياطية؟</string>
     <string name="backup_encrypt_dialog_message">يمكنك اختياريًا حماية هذه النسخة بكلمة مرور - ستحتاجها لاستعادتها. اتركها فارغة لنسخة احتياطية عادية غير مشفّرة.</string>
     <string name="backup_password_hint">كلمة المرور (اختياري)</string>

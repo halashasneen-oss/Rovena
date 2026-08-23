@@ -10,6 +10,7 @@ import com.rovena.garage.domain.usecase.BackupVersionValidator
 import com.rovena.garage.utils.backup.BackupInspection
 import com.rovena.garage.utils.backup.BackupManager
 import com.rovena.garage.utils.backup.BackupResult
+import com.rovena.garage.utils.backup.BackupStage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -36,13 +37,19 @@ class BackupViewModel(private val container: AppContainer) : ViewModel() {
     private val _events = MutableStateFlow<BackupUiEvent?>(null)
     val events: StateFlow<BackupUiEvent?> = _events.asStateFlow()
 
+    /** Current stage of an in-flight backup/restore operation, or null when idle - drives a non-dismissible progress dialog so a multi-second operation never looks frozen (spec: backup security). */
+    private val _progress = MutableStateFlow<BackupStage?>(null)
+    val progress: StateFlow<BackupStage?> = _progress.asStateFlow()
+
     fun consumeEvent() {
         _events.value = null
     }
 
     fun createBackup(context: Context, destination: Uri, password: String? = null) {
         viewModelScope.launch {
-            when (val result = BackupManager.createBackup(context, container, destination, password)) {
+            val result = BackupManager.createBackup(context, container, destination, password) { _progress.value = it }
+            _progress.value = null
+            when (result) {
                 is BackupResult.Success -> _events.value = BackupUiEvent.BackupCreated(result.vehicleCount)
                 is BackupResult.Error -> _events.value = BackupUiEvent.BackupError(result.message)
                 is BackupResult.Invalid -> Unit
@@ -52,7 +59,8 @@ class BackupViewModel(private val container: AppContainer) : ViewModel() {
 
     fun inspectBackup(context: Context, source: Uri, password: String? = null) {
         viewModelScope.launch {
-            val inspection = BackupManager.inspect(context, source, password)
+            val inspection = BackupManager.inspect(context, source, password) { _progress.value = it }
+            _progress.value = null
             when (inspection.validation) {
                 BackupVersionValidator.ValidationResult.Valid -> _events.value = BackupUiEvent.RestorePending(inspection)
                 BackupVersionValidator.ValidationResult.PasswordRequired ->
@@ -67,7 +75,9 @@ class BackupViewModel(private val container: AppContainer) : ViewModel() {
     fun restoreReplacing(context: Context, inspection: BackupInspection) {
         val dir = inspection.extractedDir ?: return
         viewModelScope.launch {
-            when (val result = BackupManager.restoreReplacing(context, dir)) {
+            val result = BackupManager.restoreReplacing(context, dir) { _progress.value = it }
+            _progress.value = null
+            when (result) {
                 is BackupResult.Success -> _events.value = BackupUiEvent.RestoreCompletedNeedsRestart
                 is BackupResult.Error -> _events.value = BackupUiEvent.BackupError(result.message)
                 is BackupResult.Invalid -> Unit
@@ -78,7 +88,9 @@ class BackupViewModel(private val container: AppContainer) : ViewModel() {
     fun restoreAsNewGarage(context: Context, inspection: BackupInspection) {
         val dir = inspection.extractedDir ?: return
         viewModelScope.launch {
-            when (val result = BackupManager.restoreAsNewGarage(context, container, dir)) {
+            val result = BackupManager.restoreAsNewGarage(context, container, dir) { _progress.value = it }
+            _progress.value = null
+            when (result) {
                 is BackupResult.Success -> {
                     container.backupMetadataRepository.record(
                         BackupMetadataEntity(

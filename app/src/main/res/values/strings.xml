@@ -469,6 +469,11 @@
     <string name="backup_restore_completed_merged">%1$d vehicle(s) added to your garage.</string>
     <string name="backup_last_created">Last backup: %1$s (%2$d vehicles)</string>
     <string name="backup_none_yet">No backups created yet.</string>
+    <string name="backup_progress_preparing">Preparing…</string>
+    <string name="backup_progress_creating">Creating backup…</string>
+    <string name="backup_progress_validating">Validating…</string>
+    <string name="backup_progress_restoring">Restoring…</string>
+    <string name="backup_progress_verifying">Verifying…</string>
     <string name="backup_encrypt_dialog_title">Encrypt this backup?</string>
     <string name="backup_encrypt_dialog_message">Optionally protect this backup with a password - you\'ll need it to restore. Leave blank for a regular, unencrypted backup.</string>
     <string name="backup_password_hint">Password (optional)</string>

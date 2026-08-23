@@ -24,6 +24,7 @@ import com.rovena.garage.presentation.common.appContainer
 import com.rovena.garage.presentation.common.viewModelFactory
 import com.rovena.garage.utils.Formatters
 import com.rovena.garage.utils.backup.BackupInspection
+import com.rovena.garage.utils.backup.BackupStage
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -39,6 +40,9 @@ class BackupFragment : Fragment(R.layout.fragment_backup) {
     // picker returns - SAF's document-creation flow is a separate Activity round-trip, so this
     // can't just be a local variable at the call site.
     private var pendingBackupPassword: String? = null
+
+    /** Non-dismissible "please wait" dialog shown for the duration of any in-flight backup/restore operation (spec: backup security - never let a multi-second op look frozen). */
+    private var progressDialog: androidx.appcompat.app.AlertDialog? = null
 
     private val createDocument = registerForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
         uri ?: return@registerForActivityResult
@@ -81,6 +85,52 @@ class BackupFragment : Fragment(R.layout.fragment_backup) {
                 viewModel.events.collect { event -> event?.let { handleEvent(it) } }
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.progress.collect { stage -> showProgress(stage) }
+            }
+        }
+    }
+
+    private fun showProgress(stage: BackupStage?) {
+        if (stage == null) {
+            progressDialog?.dismiss()
+            progressDialog = null
+            return
+        }
+        val message = getString(
+            when (stage) {
+                BackupStage.PREPARING -> R.string.backup_progress_preparing
+                BackupStage.CREATING -> R.string.backup_progress_creating
+                BackupStage.VALIDATING -> R.string.backup_progress_validating
+                BackupStage.RESTORING -> R.string.backup_progress_restoring
+                BackupStage.VERIFYING -> R.string.backup_progress_verifying
+            }
+        )
+        if (progressDialog == null) {
+            progressDialog = MaterialAlertDialogBuilder(requireContext())
+                .setView(
+                    android.widget.LinearLayout(requireContext()).apply {
+                        orientation = LinearLayout.HORIZONTAL
+                        val pad = (24 * resources.displayMetrics.density).toInt()
+                        setPadding(pad, pad, pad, pad)
+                        gravity = android.view.Gravity.CENTER_VERTICAL
+                        addView(android.widget.ProgressBar(requireContext()))
+                        addView(
+                            android.widget.TextView(requireContext()).apply {
+                                text = message
+                                val margin = (16 * resources.displayMetrics.density).toInt()
+                                setPadding(margin, 0, 0, 0)
+                                tag = "progressText"
+                            }
+                        )
+                    }
+                )
+                .setCancelable(false)
+                .show()
+        }
+        progressDialog?.window?.decorView?.findViewWithTag<android.widget.TextView>("progressText")?.text = message
     }
 
     private fun handleEvent(event: BackupUiEvent) {
@@ -184,6 +234,8 @@ class BackupFragment : Fragment(R.layout.fragment_backup) {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        progressDialog?.dismiss()
+        progressDialog = null
         _binding = null
     }
 }
