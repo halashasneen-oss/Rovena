@@ -14,6 +14,7 @@ import com.rovena.garage.data.repository.SettingsRepository
 import com.rovena.garage.data.repository.TimelineRepository
 import com.rovena.garage.data.repository.TimelineSyncer
 import com.rovena.garage.data.repository.UserPreferences
+import com.rovena.garage.data.repository.VehicleNoteRepository
 import com.rovena.garage.data.repository.VehicleRepository
 
 /**
@@ -72,6 +73,10 @@ class AppContainer(context: Context) {
 
     val backupMetadataRepository: BackupMetadataRepository by lazy {
         BackupMetadataRepository(database.backupMetadataDao())
+    }
+
+    val vehicleNoteRepository: VehicleNoteRepository by lazy {
+        VehicleNoteRepository(database.vehicleNoteDao())
     }
 
     val userPreferences: UserPreferences by lazy { UserPreferences(appContext) }

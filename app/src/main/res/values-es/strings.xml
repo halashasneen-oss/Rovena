@@ -196,6 +196,12 @@
     <string name="hub_section_insights">Estadísticas</string>
     <string name="hub_section_timeline">Cronología</string>
     <string name="hub_section_reminders">Recordatorios</string>
+    <string name="hub_section_notes">Notas</string>
+    <string name="note_empty_title">Aún no hay notas</string>
+    <string name="note_empty_message">Anota cualquier cosa que valga la pena recordar sobre este vehículo - particularidades, contactos, recordatorios personales.</string>
+    <string name="note_hint">Nota</string>
+    <string name="note_add_title">Añadir nota</string>
+    <string name="note_edit_title">Editar nota</string>
     <string name="hub_records_count">%d registros</string>
     <string name="hub_documents_expired">%d vencido(s)</string>
     <string name="hub_active_reminders">%d activo(s)</string>

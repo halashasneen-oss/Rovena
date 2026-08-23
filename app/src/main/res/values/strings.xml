@@ -213,6 +213,12 @@
     <string name="hub_section_insights">Insights</string>
     <string name="hub_section_timeline">Timeline</string>
     <string name="hub_section_reminders">Reminders</string>
+    <string name="hub_section_notes">Notes</string>
+    <string name="note_empty_title">No notes yet</string>
+    <string name="note_empty_message">Jot down anything worth remembering about this vehicle - quirks, contacts, reminders to yourself.</string>
+    <string name="note_hint">Note</string>
+    <string name="note_add_title">Add Note</string>
+    <string name="note_edit_title">Edit Note</string>
     <string name="hub_records_count">%d records</string>
     <string name="hub_documents_expired">%d expired</string>
     <string name="hub_active_reminders">%d active</string>

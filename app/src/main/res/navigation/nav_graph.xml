@@ -150,6 +150,14 @@
         <argument android:name="recordId" app:argType="long" android:defaultValue="0L" />
     </fragment>
 
+    <!-- Vehicle Notes -->
+    <fragment
+        android:id="@+id/vehicleNoteListFragment"
+        android:name="com.rovena.garage.presentation.notes.VehicleNoteListFragment"
+        android:label="@string/hub_section_notes">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+
     <!-- Backup / Restore -->
     <fragment
         android:id="@+id/backupFragment"

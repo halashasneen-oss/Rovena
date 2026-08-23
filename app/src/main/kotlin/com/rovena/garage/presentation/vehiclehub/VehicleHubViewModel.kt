@@ -26,6 +26,7 @@ data class VehicleHubUiState(
     val documentCount: Int = 0,
     val hasExpiredDocument: Boolean = false,
     val reminderCount: Int = 0,
+    val noteCount: Int = 0,
     val isLoading: Boolean = true
 )
 
@@ -48,8 +49,9 @@ class VehicleHubViewModel(private val container: AppContainer, argVehicleId: Lon
                 container.reminderRepository.observeActiveCount(id),
                 container.maintenanceRepository.observeByVehicle(id),
                 container.documentRepository.observeByVehicle(id),
-                container.inspectionRepository.observeLatestConditionScores(id)
-            ) { reminderCount, maintenance, documents, conditionScores ->
+                container.inspectionRepository.observeLatestConditionScores(id),
+                container.vehicleNoteRepository.observeCount(id)
+            ) { reminderCount, maintenance, documents, conditionScores, noteCount ->
                 val vehicle = partial.vehicle ?: return@combine VehicleHubUiState(isLoading = false)
                 val overdue = maintenance.count {
                     (it.nextDueMileageKm != null && it.nextDueMileageKm <= vehicle.currentMileageKm) ||
@@ -88,6 +90,7 @@ class VehicleHubViewModel(private val container: AppContainer, argVehicleId: Lon
                     documentCount = partial.documentCount,
                     hasExpiredDocument = hasExpired,
                     reminderCount = reminderCount,
+                    noteCount = noteCount,
                     isLoading = false
                 )
             }

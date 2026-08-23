@@ -34,6 +34,7 @@ Every feature in the original specification has a real, working implementation �
 - App Lock: PBKDF2WithHmacSHA256-hashed PIN (6+ digits) with temporary lockout after repeated failures, + BiometricPrompt, process-lifecycle-aware re-lock that can't be bypassed via back navigation, deep links, notifications, or recreation
 - Settings: garage, notifications, security, appearance (light/dark/system), data, units, currency (7 fixed + custom), language, about/privacy/terms/licenses
 - Full localization: English, Arabic (RTL), French, Spanish — 350/350 keys translated in every locale
+- Vehicle Notes: a persistent, editable list of freeform non-diagnostic notes per vehicle (quirks, contacts, reminders to self) — distinct from the Quick Add "Note" action below, which drops a one-off entry into the Timeline instead
 - Quick Add bottom sheet (Fuel/Maintenance/Expense/Document/Inspection/Reminder/Note)
 - PDF report generation for Vehicle Summary, Maintenance History, Expense Report, Fuel Report, and Inspection Report — all rendered locally via `android.graphics.pdf.PdfDocument`, no internet, no third-party PDF library
 - Debug-only sample data generator (BMW 320i) gated behind the `dev` product flavor, never seeded automatically
@@ -68,7 +69,7 @@ SQLite (via Room)
 
 ## Database structure
 
-Room database `rovena.db`, schema version 2, 12 entities:
+Room database `rovena.db`, schema version 3, 13 entities:
 
 | Entity | Purpose | Vehicle-scoped |
 |---|---|---|
@@ -81,12 +82,13 @@ Room database `rovena.db`, schema version 2, 12 entities:
 | `ReminderEntity` | Mileage/date/both, recurring, linked to documents' expiry | ✓ |
 | `TimelineEventEntity` | Auto-generated unified feed row per record | ✓ |
 | `VehiclePhotoEntity` | Generic photo attachment, polymorphic `linkedType`/`linkedId` | ✓ |
+| `VehicleNoteEntity` | Freeform, non-diagnostic notes (quirks, contacts, reminders to self) | ✓ |
 | `AppSettingsEntity` | Single-row (`id = 0`) app configuration | — (global) |
 | `BackupMetadataEntity` | History log of backup/restore operations | — (global) |
 
 All custom enums are stored as their `name` (a `String` column) via `Converters`, not as ordinals — this keeps the schema legible if you open the `.db` file directly and is stable across enum reordering. `AppSettingsEntity` holds durable, backed-up settings; the currently-selected vehicle and onboarding progress live in a small Jetpack DataStore (`UserPreferences`) instead, since that's session/UI state, not data worth including in a backup.
 
-**Migrations**: `Migrations.ALL` (in `data/local/database/Migrations.kt`) holds one real `Migration(from, to)` per schema bump so far - `MIGRATION_1_2` adds the PIN lockout columns described in [Security](#security) via plain `ALTER TABLE ADD COLUMN` statements, registered in `RovenaDatabase` via `Room.databaseBuilder(...).addMigrations(*Migrations.ALL)`. There is deliberately no `fallbackToDestructiveMigration()`: a missing migration should fail loudly, never silently erase a user's vehicle history. Every future schema change gets its own migration appended to `ALL`, never a silent version bump.
+**Migrations**: `Migrations.ALL` (in `data/local/database/Migrations.kt`) holds one real `Migration(from, to)` per schema bump so far - `MIGRATION_1_2` adds the PIN lockout columns described in [Security](#security) via plain `ALTER TABLE ADD COLUMN` statements, `MIGRATION_2_3` adds the `vehicle_notes` table - registered in `RovenaDatabase` via `Room.databaseBuilder(...).addMigrations(*Migrations.ALL)`. There is deliberately no `fallbackToDestructiveMigration()`: a missing migration should fail loudly, never silently erase a user's vehicle history. `BackupManager.restoreAsNewGarage()` opens a second, separate `RovenaDatabase` instance against the *extracted backup's* `database.db` file to read it - that instance registers the same `Migrations.ALL` too, so restoring a backup made by an older app version (an older schema on disk) migrates it forward instead of throwing. Every future schema change gets its own migration appended to `ALL`, never a silent version bump.
 
 ---
 

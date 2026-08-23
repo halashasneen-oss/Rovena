@@ -226,6 +226,10 @@ object BackupManager {
             val sourceDbFile = File(extractedDir, ENTRY_DATABASE)
             sourceDb = Room.databaseBuilder(context, RovenaDatabase::class.java, sourceDbFile.absolutePath)
                 .allowMainThreadQueries()
+                // A backup made by an older app version carries an older schema on disk -
+                // without these, opening it here would throw rather than silently corrupt
+                // data (no destructive fallback, by design - see RovenaDatabase.build()).
+                .addMigrations(*com.rovena.garage.data.local.database.Migrations.ALL)
                 .build()
 
             // "subDir/originalFileName" (e.g. "photos/car.jpg") -> freshly copied absolute
@@ -262,6 +266,10 @@ object BackupManager {
 
                 sourceDb.reminderDao().getActiveOnce(oldVehicle.id).forEach {
                     container.reminderRepository.addOrUpdate(it.copy(id = 0, vehicleId = newVehicleId))
+                }
+
+                sourceDb.vehicleNoteDao().getByVehicleOnce(oldVehicle.id).forEach {
+                    container.vehicleNoteRepository.addOrUpdate(it.copy(id = 0, vehicleId = newVehicleId))
                 }
 
                 val documentIdMap = mutableMapOf<Long, Long>()

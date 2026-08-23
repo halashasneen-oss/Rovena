@@ -24,5 +24,24 @@ object Migrations {
         }
     }
 
-    val ALL: Array<Migration> = arrayOf(MIGRATION_1_2)
+    /** Adds the vehicle_notes table (spec: Vehicle Notes - freeform, non-diagnostic notes). */
+    val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS `vehicle_notes` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    `vehicleId` INTEGER NOT NULL,
+                    `text` TEXT NOT NULL,
+                    `createdAtMillis` INTEGER NOT NULL,
+                    `updatedAtMillis` INTEGER NOT NULL,
+                    FOREIGN KEY(`vehicleId`) REFERENCES `vehicles`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+                )
+                """.trimIndent()
+            )
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_vehicle_notes_vehicleId` ON `vehicle_notes` (`vehicleId`)")
+        }
+    }
+
+    val ALL: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3)
 }

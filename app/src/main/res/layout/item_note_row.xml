@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/noteRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:minHeight="60dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?attr/selectableItemBackground"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="10dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/noteText"
+            style="?attr/textAppearanceBodyLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:textColor="?attr/colorOnSurface"
+            tools:text="Rear left tire has a slow leak - check pressure monthly until replaced." />
+
+        <TextView
+            android:id="@+id/noteDate"
+            style="@style/TextAppearance.Rovena.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Aug 15, 2026" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/noteMoreButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_more"
+        android:contentDescription="@string/action_more_options" />
+
+</LinearLayout>
