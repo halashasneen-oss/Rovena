@@ -55,6 +55,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         setupRow(binding.rowManageVehicles, getString(R.string.settings_row_manage_vehicles), getString(R.string.settings_row_manage_vehicles_subtitle), showSwitch = false) {
             findNavController().navigate(R.id.nav_garage)
         }
+        setupRow(binding.rowNotificationPreferences, getString(R.string.settings_row_notification_preferences), getString(R.string.settings_row_notification_preferences_subtitle), showSwitch = false) {
+            findNavController().navigate(R.id.notificationPreferencesFragment)
+        }
         setupRow(binding.rowBackup, getString(R.string.settings_row_backup), getString(R.string.settings_row_backup_subtitle), showSwitch = false) {
             findNavController().navigate(R.id.backupFragment)
         }
@@ -94,6 +97,13 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         binding.rowNotifications.rowSwitch.setOnCheckedChangeListener(null)
         binding.rowNotifications.rowSwitch.isChecked = settings.notificationsEnabled
         binding.rowNotifications.rowSwitch.setOnCheckedChangeListener { _, checked -> onNotificationsToggled(checked) }
+
+        binding.rowNotificationPreferences.root.isEnabled = settings.notificationsEnabled
+        binding.rowNotificationPreferences.rowTitle.alpha = if (settings.notificationsEnabled) 1f else 0.5f
+        binding.rowNotificationPreferences.rowSubtitle.text = if (settings.notificationsEnabled)
+            getString(R.string.settings_row_notification_preferences_subtitle)
+        else
+            getString(R.string.settings_row_notification_preferences_subtitle_disabled)
 
         binding.rowAppLock.rowSwitch.setOnCheckedChangeListener(null)
         binding.rowAppLock.rowSwitch.isChecked = settings.appLockEnabled

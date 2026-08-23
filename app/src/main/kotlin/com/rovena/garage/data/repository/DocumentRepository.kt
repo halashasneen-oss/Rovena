@@ -7,6 +7,7 @@ import com.rovena.garage.data.local.database.RovenaDatabase
 import com.rovena.garage.data.local.entities.DocumentEntity
 import com.rovena.garage.data.local.entities.ReminderEntity
 import com.rovena.garage.domain.model.ReminderBasis
+import com.rovena.garage.domain.model.ReminderCategory
 import com.rovena.garage.domain.model.TimelineEventType
 import kotlinx.coroutines.flow.Flow
 
@@ -68,14 +69,16 @@ class DocumentRepository(
             val candidate = existingReminder?.copy(
                 vehicleId = toSave.vehicleId,
                 title = toSave.name,
-                dueDateMillis = toSave.expiryDateMillis
+                dueDateMillis = toSave.expiryDateMillis,
+                category = ReminderCategory.DOCUMENT
             ) ?: ReminderEntity(
                 vehicleId = toSave.vehicleId,
                 title = toSave.name,
                 basis = ReminderBasis.DATE,
                 dueDateMillis = toSave.expiryDateMillis,
                 isRecurring = false,
-                isActive = true
+                isActive = true,
+                category = ReminderCategory.DOCUMENT
             )
             val reminder = ReminderRepository.resetStageIfDateChanged(existingReminder, candidate)
             reminderId = if (reminderId == null) reminderDao.insert(reminder) else {

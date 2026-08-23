@@ -49,6 +49,26 @@ class SettingsViewModel(private val container: AppContainer) : ViewModel() {
         viewModelScope.launch { container.settingsRepository.setNotificationsEnabled(enabled) }
     }
 
+    fun setNotifyCriticalEnabled(enabled: Boolean) {
+        viewModelScope.launch { container.settingsRepository.setNotifyCriticalEnabled(enabled) }
+    }
+
+    fun setNotifyImportantEnabled(enabled: Boolean) {
+        viewModelScope.launch { container.settingsRepository.setNotifyImportantEnabled(enabled) }
+    }
+
+    fun setNotifyUpcomingEnabled(enabled: Boolean) {
+        viewModelScope.launch { container.settingsRepository.setNotifyUpcomingEnabled(enabled) }
+    }
+
+    fun setNotifyDocumentCategoryEnabled(enabled: Boolean) {
+        viewModelScope.launch { container.settingsRepository.setNotifyDocumentCategoryEnabled(enabled) }
+    }
+
+    fun setNotifyGeneralCategoryEnabled(enabled: Boolean) {
+        viewModelScope.launch { container.settingsRepository.setNotifyGeneralCategoryEnabled(enabled) }
+    }
+
     fun setPin(pin: String) {
         viewModelScope.launch { container.settingsRepository.setPin(pin) }
     }

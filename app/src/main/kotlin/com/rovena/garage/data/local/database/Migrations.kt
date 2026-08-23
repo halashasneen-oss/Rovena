@@ -73,5 +73,17 @@ object Migrations {
         }
     }
 
-    val ALL: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+    /** Adds reminder category (spec: per-category notification toggles) and the tiered-severity toggle columns on app_settings. */
+    val MIGRATION_5_6 = object : Migration(5, 6) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE reminders ADD COLUMN category TEXT NOT NULL DEFAULT 'GENERAL'")
+            db.execSQL("ALTER TABLE app_settings ADD COLUMN notifyCriticalEnabled INTEGER NOT NULL DEFAULT 1")
+            db.execSQL("ALTER TABLE app_settings ADD COLUMN notifyImportantEnabled INTEGER NOT NULL DEFAULT 1")
+            db.execSQL("ALTER TABLE app_settings ADD COLUMN notifyUpcomingEnabled INTEGER NOT NULL DEFAULT 1")
+            db.execSQL("ALTER TABLE app_settings ADD COLUMN notifyDocumentCategoryEnabled INTEGER NOT NULL DEFAULT 1")
+            db.execSQL("ALTER TABLE app_settings ADD COLUMN notifyGeneralCategoryEnabled INTEGER NOT NULL DEFAULT 1")
+        }
+    }
+
+    val ALL: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
 }

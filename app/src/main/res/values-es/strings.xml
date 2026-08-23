@@ -334,6 +334,23 @@
     <string name="settings_row_notifications">Activar recordatorios</string>
     <string name="settings_row_notifications_on">Activado</string>
     <string name="settings_row_notifications_off">Desactivado</string>
+    <string name="settings_row_notification_preferences">Preferencias de notificación</string>
+    <string name="settings_row_notification_preferences_subtitle">Niveles de importancia y categorías</string>
+    <string name="settings_row_notification_preferences_subtitle_disabled">Active primero \"Activar recordatorios\"</string>
+
+    <string name="notification_prefs_title">Preferencias de notificación</string>
+    <string name="notification_prefs_section_severity">Niveles de importancia</string>
+    <string name="notification_prefs_severity_critical">Crítico</string>
+    <string name="notification_prefs_severity_critical_subtitle">Vencido, o vence hoy o mañana</string>
+    <string name="notification_prefs_severity_important">Importante</string>
+    <string name="notification_prefs_severity_important_subtitle">Vence en 7 días</string>
+    <string name="notification_prefs_severity_upcoming">Próximo</string>
+    <string name="notification_prefs_severity_upcoming_subtitle">Vence en 30 días</string>
+    <string name="notification_prefs_section_categories">Categorías</string>
+    <string name="notification_prefs_category_documents">Documentos</string>
+    <string name="notification_prefs_category_documents_subtitle">Vencimiento de matrícula, seguro, inspección y otros documentos</string>
+    <string name="notification_prefs_category_general">Recordatorios generales</string>
+    <string name="notification_prefs_category_general_subtitle">Recordatorios que creaste manualmente</string>
 
     <string name="settings_section_security">Seguridad</string>
     <string name="settings_row_app_lock">Bloqueo de la aplicación</string>

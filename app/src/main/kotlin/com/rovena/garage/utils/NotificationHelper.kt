@@ -9,6 +9,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.rovena.garage.R
 import com.rovena.garage.RovenaApp
+import com.rovena.garage.domain.model.NotificationSeverity
 import com.rovena.garage.presentation.MainActivity
 import com.rovena.garage.presentation.reminders.NotificationActionReceiver
 
@@ -20,7 +21,7 @@ object NotificationHelper {
             android.content.pm.PackageManager.PERMISSION_GRANTED
     }
 
-    fun showReminderNotification(context: Context, reminderId: Long, title: String, body: String) {
+    fun showReminderNotification(context: Context, reminderId: Long, title: String, body: String, severity: NotificationSeverity = NotificationSeverity.IMPORTANT) {
         if (!hasPermission(context)) return
 
         val contentIntent = PendingIntent.getActivity(
@@ -46,7 +47,13 @@ object NotificationHelper {
             .setAutoCancel(true)
             .setContentIntent(contentIntent)
             .addAction(0, context.getString(R.string.reminder_mark_done), markDoneIntent)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(
+                when (severity) {
+                    NotificationSeverity.CRITICAL -> NotificationCompat.PRIORITY_HIGH
+                    NotificationSeverity.IMPORTANT -> NotificationCompat.PRIORITY_DEFAULT
+                    NotificationSeverity.UPCOMING -> NotificationCompat.PRIORITY_LOW
+                }
+            )
             .build()
 
         NotificationManagerCompat.from(context).notify(NOTIFICATION_ID_BASE + reminderId.toInt(), notification)

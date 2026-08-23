@@ -8,8 +8,12 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.rovena.garage.R
 import com.rovena.garage.RovenaApp
+import com.rovena.garage.data.local.entities.AppSettingsEntity
 import com.rovena.garage.domain.model.DueStatus
+import com.rovena.garage.domain.model.NotificationSeverity
+import com.rovena.garage.domain.model.ReminderCategory
 import com.rovena.garage.domain.usecase.DueStatusCalculator
+import com.rovena.garage.domain.usecase.NotificationSeverityCalculator
 import com.rovena.garage.domain.usecase.ReminderStageCalculator
 import com.rovena.garage.utils.NotificationHelper
 import java.time.Instant
@@ -33,11 +37,23 @@ import java.util.concurrent.TimeUnit
  *   the same fixed real-world cadence a calendar staged schedule assumes.
  * - A reminder with **both** triggers is handled via the date-staged path
  *   only, to avoid two independent notification streams for one reminder.
+ *
+ * **Severity + category gating** (spec: tiered notification severity):
+ * every notification this worker would post is classified into a
+ * [NotificationSeverity] (via [NotificationSeverityCalculator]) and a
+ * [ReminderCategory], then checked against the matching Settings toggles
+ * before it's actually shown - a muted tier/category still updates
+ * `lastNotifiedStageDays`/`lastNotifiedAtMillis` as if it had fired, so
+ * un-muting later doesn't cause a burst of backlogged notifications for
+ * stages that already passed while muted.
  */
 class ReminderCheckWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
         val container = (applicationContext as RovenaApp).container
+        val settings = container.settingsRepository.getOrDefault()
+        if (!settings.notificationsEnabled) return Result.success()
+
         val reminders = container.reminderRepository.getAllActiveOnce()
         val today = LocalDate.now()
 
@@ -45,11 +61,11 @@ class ReminderCheckWorker(context: Context, params: WorkerParameters) : Coroutin
             val vehicle = container.vehicleRepository.getById(reminder.vehicleId) ?: continue
 
             if (reminder.dueDateMillis != null) {
-                notifyStagedIfDue(container, vehicle, reminder, today)
+                notifyStagedIfDue(container, settings, vehicle, reminder, today)
                 continue
             }
 
-            notifyMileageIfDue(container, vehicle, reminder, today)
+            notifyMileageIfDue(container, settings, vehicle, reminder, today)
         }
 
         return Result.success()
@@ -57,6 +73,7 @@ class ReminderCheckWorker(context: Context, params: WorkerParameters) : Coroutin
 
     private suspend fun notifyStagedIfDue(
         container: com.rovena.garage.AppContainer,
+        settings: AppSettingsEntity,
         vehicle: com.rovena.garage.data.local.entities.VehicleEntity,
         reminder: com.rovena.garage.data.local.entities.ReminderEntity,
         today: LocalDate
@@ -73,12 +90,16 @@ class ReminderCheckWorker(context: Context, params: WorkerParameters) : Coroutin
         } else {
             applicationContext.getString(R.string.reminder_notification_body_days, remainingDays.toInt())
         }
-        postNotification(reminder.id, reminder.title, vehicle, statusBody)
+        val severity = NotificationSeverityCalculator.forStage(stage)
+        if (isAllowed(settings, severity, reminder.category)) {
+            postNotification(reminder.id, reminder.title, vehicle, statusBody, severity)
+        }
         container.reminderRepository.markNotifiedStage(reminder.id, stage)
     }
 
     private suspend fun notifyMileageIfDue(
         container: com.rovena.garage.AppContainer,
+        settings: AppSettingsEntity,
         vehicle: com.rovena.garage.data.local.entities.VehicleEntity,
         reminder: com.rovena.garage.data.local.entities.ReminderEntity,
         today: LocalDate
@@ -103,15 +124,32 @@ class ReminderCheckWorker(context: Context, params: WorkerParameters) : Coroutin
             remainingKm != null -> applicationContext.getString(R.string.reminder_notification_body_km, remainingKm)
             else -> ""
         }
-        postNotification(reminder.id, reminder.title, vehicle, statusBody)
+        val severity = NotificationSeverityCalculator.forDueStatus(evaluation.status)
+        if (isAllowed(settings, severity, reminder.category)) {
+            postNotification(reminder.id, reminder.title, vehicle, statusBody, severity)
+        }
         container.reminderRepository.markNotified(reminder.id)
+    }
+
+    private fun isAllowed(settings: AppSettingsEntity, severity: NotificationSeverity, category: ReminderCategory): Boolean {
+        val severityAllowed = when (severity) {
+            NotificationSeverity.CRITICAL -> settings.notifyCriticalEnabled
+            NotificationSeverity.IMPORTANT -> settings.notifyImportantEnabled
+            NotificationSeverity.UPCOMING -> settings.notifyUpcomingEnabled
+        }
+        val categoryAllowed = when (category) {
+            ReminderCategory.DOCUMENT -> settings.notifyDocumentCategoryEnabled
+            ReminderCategory.GENERAL -> settings.notifyGeneralCategoryEnabled
+        }
+        return severityAllowed && categoryAllowed
     }
 
     private fun postNotification(
         reminderId: Long,
         reminderTitle: String,
         vehicle: com.rovena.garage.data.local.entities.VehicleEntity,
-        statusBody: String
+        statusBody: String,
+        severity: NotificationSeverity
     ) {
         // Multi-vehicle garages: without the vehicle name, a reminder notification is
         // ambiguous about which car it refers to.
@@ -121,7 +159,8 @@ class ReminderCheckWorker(context: Context, params: WorkerParameters) : Coroutin
             applicationContext,
             reminderId,
             applicationContext.getString(R.string.reminder_notification_title, reminderTitle),
-            body
+            body,
+            severity
         )
     }
 

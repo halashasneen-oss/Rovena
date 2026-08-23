@@ -334,6 +334,23 @@
     <string name="settings_row_notifications">تفعيل التذكيرات</string>
     <string name="settings_row_notifications_on">مفعّل</string>
     <string name="settings_row_notifications_off">معطّل</string>
+    <string name="settings_row_notification_preferences">تفضيلات الإشعارات</string>
+    <string name="settings_row_notification_preferences_subtitle">مستويات الأهمية والفئات</string>
+    <string name="settings_row_notification_preferences_subtitle_disabled">فعّل \"تفعيل التذكيرات\" أولاً</string>
+
+    <string name="notification_prefs_title">تفضيلات الإشعارات</string>
+    <string name="notification_prefs_section_severity">مستويات الأهمية</string>
+    <string name="notification_prefs_severity_critical">عاجل</string>
+    <string name="notification_prefs_severity_critical_subtitle">متأخر، أو مستحق اليوم أو غدًا</string>
+    <string name="notification_prefs_severity_important">مهم</string>
+    <string name="notification_prefs_severity_important_subtitle">مستحق خلال 7 أيام</string>
+    <string name="notification_prefs_severity_upcoming">قادم</string>
+    <string name="notification_prefs_severity_upcoming_subtitle">مستحق خلال 30 يومًا</string>
+    <string name="notification_prefs_section_categories">الفئات</string>
+    <string name="notification_prefs_category_documents">المستندات</string>
+    <string name="notification_prefs_category_documents_subtitle">انتهاء صلاحية الترخيص والتأمين والفحص والمستندات الأخرى</string>
+    <string name="notification_prefs_category_general">التذكيرات العامة</string>
+    <string name="notification_prefs_category_general_subtitle">التذكيرات التي أضفتها بنفسك</string>
 
     <string name="settings_section_security">الأمان</string>
     <string name="settings_row_app_lock">قفل التطبيق</string>

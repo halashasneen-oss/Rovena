@@ -178,4 +178,10 @@
         android:name="com.rovena.garage.presentation.backup.BackupFragment"
         android:label="@string/settings_section_data" />
 
+    <!-- Notification preferences -->
+    <fragment
+        android:id="@+id/notificationPreferencesFragment"
+        android:name="com.rovena.garage.presentation.settings.NotificationPreferencesFragment"
+        android:label="@string/notification_prefs_title" />
+
 </navigation>

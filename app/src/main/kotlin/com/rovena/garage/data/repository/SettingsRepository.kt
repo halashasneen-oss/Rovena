@@ -45,6 +45,16 @@ class SettingsRepository(private val settingsDao: AppSettingsDao) {
 
     suspend fun setNotificationsEnabled(enabled: Boolean) = update { it.copy(notificationsEnabled = enabled) }
 
+    suspend fun setNotifyCriticalEnabled(enabled: Boolean) = update { it.copy(notifyCriticalEnabled = enabled) }
+
+    suspend fun setNotifyImportantEnabled(enabled: Boolean) = update { it.copy(notifyImportantEnabled = enabled) }
+
+    suspend fun setNotifyUpcomingEnabled(enabled: Boolean) = update { it.copy(notifyUpcomingEnabled = enabled) }
+
+    suspend fun setNotifyDocumentCategoryEnabled(enabled: Boolean) = update { it.copy(notifyDocumentCategoryEnabled = enabled) }
+
+    suspend fun setNotifyGeneralCategoryEnabled(enabled: Boolean) = update { it.copy(notifyGeneralCategoryEnabled = enabled) }
+
     suspend fun setOnboardingCompleted(completed: Boolean) = update { it.copy(onboardingCompleted = completed) }
 
     suspend fun setSampleDataSeeded(seeded: Boolean) = update { it.copy(sampleDataSeeded = seeded) }

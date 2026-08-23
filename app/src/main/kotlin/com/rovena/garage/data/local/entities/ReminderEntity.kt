@@ -6,6 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.rovena.garage.domain.model.MaintenanceCategory
 import com.rovena.garage.domain.model.ReminderBasis
+import com.rovena.garage.domain.model.ReminderCategory
 
 @Entity(
     tableName = "reminders",
@@ -46,6 +47,8 @@ data class ReminderEntity(
      * fresh deadline gets its own fresh countdown.
      */
     val lastNotifiedStageDays: Int? = null,
+    /** DOCUMENT for a document-expiry-auto-generated reminder, GENERAL otherwise - drives the per-category notification toggles in Settings. */
+    val category: ReminderCategory = ReminderCategory.GENERAL,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 )

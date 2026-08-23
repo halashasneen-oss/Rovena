@@ -22,6 +22,7 @@
 
         <TextView style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:layout_marginTop="16dp" android:text="@string/settings_section_notifications" />
         <include android:id="@+id/rowNotifications" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <include android:id="@+id/rowNotificationPreferences" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
 
         <TextView style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:layout_marginTop="16dp" android:text="@string/settings_section_security" />
         <include android:id="@+id/rowAppLock" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />

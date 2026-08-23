@@ -16,6 +16,7 @@ import com.rovena.garage.domain.model.InspectionItemStatus
 import com.rovena.garage.domain.model.MaintenanceCategory
 import com.rovena.garage.domain.model.PhotoLinkedType
 import com.rovena.garage.domain.model.ReminderBasis
+import com.rovena.garage.domain.model.ReminderCategory
 import com.rovena.garage.domain.model.TimelineEventType
 import com.rovena.garage.domain.model.TransmissionType
 
@@ -56,6 +57,9 @@ class Converters {
 
     @TypeConverter fun fromReminderBasis(v: ReminderBasis): String = v.name
     @TypeConverter fun toReminderBasis(v: String): ReminderBasis = enumValueOf(v)
+
+    @TypeConverter fun fromReminderCategory(v: ReminderCategory): String = v.name
+    @TypeConverter fun toReminderCategory(v: String): ReminderCategory = enumValueOf(v)
 
     @TypeConverter fun fromTimelineEventType(v: TimelineEventType): String = v.name
     @TypeConverter fun toTimelineEventType(v: String): TimelineEventType = enumValueOf(v)

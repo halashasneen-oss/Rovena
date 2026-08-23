@@ -25,6 +25,13 @@ data class AppSettingsEntity(
     val currency: AppCurrency = AppCurrency.JOD,
     val customCurrencyCode: String? = null,
     val notificationsEnabled: Boolean = true,
+    /** Per-severity notification mute toggles (spec: tiered notification severity). All default on, so upgrading never silently mutes anything the user was already seeing. */
+    val notifyCriticalEnabled: Boolean = true,
+    val notifyImportantEnabled: Boolean = true,
+    val notifyUpcomingEnabled: Boolean = true,
+    /** Per-category notification mute toggles - see [com.rovena.garage.domain.model.ReminderCategory]. */
+    val notifyDocumentCategoryEnabled: Boolean = true,
+    val notifyGeneralCategoryEnabled: Boolean = true,
     val appLockEnabled: Boolean = false,
     val biometricEnabled: Boolean = false,
     val pinHash: String? = null,

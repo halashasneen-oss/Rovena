@@ -351,6 +351,23 @@
     <string name="settings_row_notifications">Enable Reminders</string>
     <string name="settings_row_notifications_on">On</string>
     <string name="settings_row_notifications_off">Off</string>
+    <string name="settings_row_notification_preferences">Notification Preferences</string>
+    <string name="settings_row_notification_preferences_subtitle">Severity levels and categories</string>
+    <string name="settings_row_notification_preferences_subtitle_disabled">Turn on Enable Reminders first</string>
+
+    <string name="notification_prefs_title">Notification Preferences</string>
+    <string name="notification_prefs_section_severity">Severity levels</string>
+    <string name="notification_prefs_severity_critical">Critical</string>
+    <string name="notification_prefs_severity_critical_subtitle">Overdue, due today, or due tomorrow</string>
+    <string name="notification_prefs_severity_important">Important</string>
+    <string name="notification_prefs_severity_important_subtitle">Due within 7 days</string>
+    <string name="notification_prefs_severity_upcoming">Upcoming</string>
+    <string name="notification_prefs_severity_upcoming_subtitle">Due within 30 days</string>
+    <string name="notification_prefs_section_categories">Categories</string>
+    <string name="notification_prefs_category_documents">Documents</string>
+    <string name="notification_prefs_category_documents_subtitle">Registration, insurance, inspection, and other document expiry</string>
+    <string name="notification_prefs_category_general">General reminders</string>
+    <string name="notification_prefs_category_general_subtitle">Reminders you created manually</string>
 
     <string name="settings_section_security">Security</string>
     <string name="settings_row_app_lock">App Lock</string>

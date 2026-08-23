@@ -334,6 +334,23 @@
     <string name="settings_row_notifications">Activer les rappels</string>
     <string name="settings_row_notifications_on">Activé</string>
     <string name="settings_row_notifications_off">Désactivé</string>
+    <string name="settings_row_notification_preferences">Préférences de notification</string>
+    <string name="settings_row_notification_preferences_subtitle">Niveaux d\'importance et catégories</string>
+    <string name="settings_row_notification_preferences_subtitle_disabled">Activez d\'abord \"Activer les rappels\"</string>
+
+    <string name="notification_prefs_title">Préférences de notification</string>
+    <string name="notification_prefs_section_severity">Niveaux d\'importance</string>
+    <string name="notification_prefs_severity_critical">Critique</string>
+    <string name="notification_prefs_severity_critical_subtitle">En retard, ou à échéance aujourd\'hui ou demain</string>
+    <string name="notification_prefs_severity_important">Important</string>
+    <string name="notification_prefs_severity_important_subtitle">Échéance sous 7 jours</string>
+    <string name="notification_prefs_severity_upcoming">À venir</string>
+    <string name="notification_prefs_severity_upcoming_subtitle">Échéance sous 30 jours</string>
+    <string name="notification_prefs_section_categories">Catégories</string>
+    <string name="notification_prefs_category_documents">Documents</string>
+    <string name="notification_prefs_category_documents_subtitle">Expiration de l\'immatriculation, l\'assurance, le contrôle technique et autres documents</string>
+    <string name="notification_prefs_category_general">Rappels généraux</string>
+    <string name="notification_prefs_category_general_subtitle">Rappels que vous avez créés vous-même</string>
 
     <string name="settings_section_security">Sécurité</string>
     <string name="settings_row_app_lock">Verrouillage de l\'application</string>
