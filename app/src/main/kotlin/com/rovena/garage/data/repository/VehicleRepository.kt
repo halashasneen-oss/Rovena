@@ -4,6 +4,7 @@ import androidx.room.withTransaction
 import com.rovena.garage.data.local.dao.VehicleDao
 import com.rovena.garage.data.local.database.RovenaDatabase
 import com.rovena.garage.data.local.entities.VehicleEntity
+import com.rovena.garage.domain.usecase.MileageValidator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.io.File
@@ -84,6 +85,19 @@ class VehicleRepository(
 
     suspend fun updateMileage(vehicleId: Long, mileageKm: Int) {
         vehicleDao.updateMileage(vehicleId, mileageKm)
+    }
+
+    /**
+     * Single canonical odometer-plausibility check, shared by every form that
+     * captures a mileage reading (Fuel, Maintenance, Inspection, Vehicle edit).
+     * Uses [VehicleEntity.currentMileageKm] as the "previous" reading, since
+     * every mileage-capturing repository already keeps that field bumped to
+     * the highest mileage seen across all of a vehicle's records - see
+     * FuelRepository.addOrUpdate / MaintenanceRepository.bumpVehicleMileageIfHigher.
+     */
+    suspend fun checkMileage(vehicleId: Long, newMileageKm: Int): MileageValidator.MileageCheck {
+        val vehicle = vehicleDao.getById(vehicleId) ?: return MileageValidator.MileageCheck.Ok
+        return MileageValidator.check(newMileageKm, vehicle.currentMileageKm)
     }
 
     fun search(query: String): Flow<List<VehicleEntity>> = vehicleDao.search(query)

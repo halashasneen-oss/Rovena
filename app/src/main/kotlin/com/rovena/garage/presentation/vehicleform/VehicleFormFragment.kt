@@ -152,6 +152,9 @@ class VehicleFormFragment : Fragment(R.layout.fragment_vehicle_form) {
         binding.makeLayout.error = state.errors["make"]?.let { getString(it) }
         binding.modelLayout.error = state.errors["model"]?.let { getString(it) }
         binding.yearLayout.error = state.errors["year"]?.let { getString(it) }
+        val mileageWarningText = state.mileageWarning?.let { com.rovena.garage.utils.Formatters.mileageWarningText(requireContext(), it) }
+        binding.mileageWarning.text = mileageWarningText
+        binding.mileageWarning.visibility = if (mileageWarningText != null) View.VISIBLE else View.GONE
         binding.mileageLayout.error = state.errors["mileage"]?.let { getString(it) }
 
         if (state.isSaved) {

@@ -7,6 +7,7 @@ import com.rovena.garage.data.local.entities.MaintenanceRecordEntity
 import com.rovena.garage.domain.model.MaintenanceCategory
 import com.rovena.garage.domain.model.PhotoLinkedType
 import com.rovena.garage.domain.usecase.InputValidator
+import com.rovena.garage.domain.usecase.MileageValidator
 import com.rovena.garage.utils.EnumLabels
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,6 +30,7 @@ data class MaintenanceFormState(
     val nextDueMileage: String = "",
     val nextDueDateMillis: Long? = null,
     val photoPaths: List<String> = emptyList(),
+    val mileageWarning: MileageValidator.MileageCheck? = null,
     val isLoading: Boolean = true,
     val isSaved: Boolean = false,
     val isDeleted: Boolean = false,
@@ -84,7 +86,17 @@ class MaintenanceFormViewModel(
     }
 
     fun update(transform: (MaintenanceFormState) -> MaintenanceFormState) {
-        _state.value = transform(_state.value)
+        val newState = transform(_state.value)
+        _state.value = newState
+        val mileage = newState.mileage.toIntOrNull()
+        if (mileage != null) {
+            viewModelScope.launch {
+                val check = container.vehicleRepository.checkMileage(vehicleId, mileage)
+                _state.value = _state.value.copy(mileageWarning = check.takeUnless { it is MileageValidator.MileageCheck.Ok })
+            }
+        } else {
+            _state.value = _state.value.copy(mileageWarning = null)
+        }
     }
 
     fun save() {

@@ -147,6 +147,15 @@
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/mileageWarning"
+            style="@style/TextAppearance.Rovena.Caption"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/rovena_status_attention"
+            android:text="@string/mileage_warning_lower"
+            android:visibility="gone" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

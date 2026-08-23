@@ -6,6 +6,7 @@ import com.rovena.garage.domain.model.AppCurrency
 import com.rovena.garage.domain.model.DistanceUnit
 import com.rovena.garage.domain.model.FuelEconomyUnit
 import com.rovena.garage.domain.usecase.CurrencyAggregator
+import com.rovena.garage.domain.usecase.MileageValidator
 import java.text.NumberFormat
 import java.time.Instant
 import java.time.ZoneId
@@ -15,6 +16,15 @@ import kotlin.math.roundToInt
 
 /** Locale-aware number/date/unit formatting shared by every screen. */
 object Formatters {
+
+    /** Null when the check found nothing worth flagging (Ok, or no previous reading yet). */
+    fun mileageWarningText(context: Context, check: MileageValidator.MileageCheck): String? = when (check) {
+        is MileageValidator.MileageCheck.Ok -> null
+        is MileageValidator.MileageCheck.LowerThanPrevious ->
+            context.getString(R.string.mileage_warning_lower, check.previousMileageKm, check.enteredMileageKm)
+        is MileageValidator.MileageCheck.UnrealisticJump ->
+            context.getString(R.string.mileage_warning_jump, check.previousMileageKm, check.enteredMileageKm, check.deltaKm)
+    }
 
     fun mileage(context: Context, km: Int, unit: DistanceUnit): String {
         val locale = context.resources.configuration.locales[0]

@@ -264,7 +264,8 @@
     <string name="fuel_stats_avg">المتوسط %1$s</string>
     <string name="fuel_stats_best">الأفضل %1$s</string>
     <string name="fuel_stats_worst">الأسوأ %1$s</string>
-    <string name="mileage_warning_lower">المسافة المقطوعة الحالية أقل من السجل السابق. يرجى التحقق من القيمة.</string>
+    <string name="mileage_warning_lower">المسافة المقطوعة الحالية (%2$d) أقل من السجل السابق (%1$d). يرجى التحقق من القيمة.</string>
+    <string name="mileage_warning_jump">قفزة كبيرة غير معتادة عن السجل السابق: من %1$d إلى %2$d (+%3$d كم). يرجى التحقق من القيمة.</string>
     <string name="expense_empty_title">لا توجد مصاريف بعد</string>
     <string name="expense_empty_message">تتبّع غسيل السيارة والمواقف والمخالفات والمزيد.</string>
     <string name="expense_field_category">الفئة</string>

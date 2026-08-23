@@ -54,6 +54,15 @@
             <com.google.android.material.textfield.TextInputEditText android:id="@+id/mileageInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <TextView
+            android:id="@+id/mileageWarning"
+            style="@style/TextAppearance.Rovena.Caption"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/rovena_status_attention"
+            android:text="@string/mileage_warning_lower"
+            android:visibility="gone" />
+
         <TextView style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="@string/inspection_category_exterior" />
         <LinearLayout android:id="@+id/exteriorContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
 

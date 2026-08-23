@@ -26,7 +26,7 @@ data class FuelFormState(
     val station: String = "",
     val isFullTank: Boolean = true,
     val notes: String = "",
-    val mileageWarning: Boolean = false,
+    val mileageWarning: MileageValidator.MileageCheck? = null,
     val isLoading: Boolean = true,
     val isSaved: Boolean = false,
     val isDeleted: Boolean = false,
@@ -71,9 +71,11 @@ class FuelFormViewModel(private val container: AppContainer, private val vehicle
         val mileage = newState.mileage.toIntOrNull()
         if (mileage != null) {
             viewModelScope.launch {
-                val warning = container.fuelRepository.checkMileage(vehicleId, mileage) is MileageValidator.MileageCheck.LowerThanPrevious
-                _state.value = _state.value.copy(mileageWarning = warning)
+                val check = container.vehicleRepository.checkMileage(vehicleId, mileage)
+                _state.value = _state.value.copy(mileageWarning = check.takeUnless { it is MileageValidator.MileageCheck.Ok })
             }
+        } else {
+            _state.value = _state.value.copy(mileageWarning = null)
         }
     }
 

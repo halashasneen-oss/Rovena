@@ -98,6 +98,9 @@ class InspectionFormFragment : Fragment(R.layout.fragment_inspection_form) {
         isBinding = false
 
         binding.dateButton.text = Formatters.date(requireContext(), state.dateMillis)
+        val mileageWarningText = state.mileageWarning?.let { Formatters.mileageWarningText(requireContext(), it) }
+        binding.mileageWarning.text = mileageWarningText
+        binding.mileageWarning.visibility = if (mileageWarningText != null) View.VISIBLE else View.GONE
         binding.mileageLayout.error = state.errors["mileage"]?.let { getString(it) }
         binding.deleteButton.visibility = if (state.id != 0L) View.VISIBLE else View.GONE
         binding.pdfButton.visibility = if (state.id != 0L) View.VISIBLE else View.GONE

@@ -104,6 +104,9 @@ class MaintenanceFormFragment : Fragment(R.layout.fragment_maintenance_form) {
             photoController.bind(binding.photoStripContainer, state.photoPaths)
         }
 
+        val mileageWarningText = state.mileageWarning?.let { Formatters.mileageWarningText(requireContext(), it) }
+        binding.mileageWarning.text = mileageWarningText
+        binding.mileageWarning.visibility = if (mileageWarningText != null) View.VISIBLE else View.GONE
         binding.mileageLayout.error = state.errors["mileage"]?.let { getString(it) }
         binding.descriptionLayout.error = state.errors["description"]?.let { getString(it) }
         binding.deleteButton.visibility = if (state.id != 0L) View.VISIBLE else View.GONE

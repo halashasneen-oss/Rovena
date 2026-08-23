@@ -281,7 +281,8 @@
     <string name="fuel_stats_avg">Avg %1$s</string>
     <string name="fuel_stats_best">Best %1$s</string>
     <string name="fuel_stats_worst">Worst %1$s</string>
-    <string name="mileage_warning_lower">Current mileage is lower than your previous record. Please check the value.</string>
+    <string name="mileage_warning_lower">Current mileage (%2$d) is lower than your previous record (%1$d). Please check the value.</string>
+    <string name="mileage_warning_jump">Unusually large jump from your previous record: %1$d to %2$d (+%3$d km). Please check the value.</string>
     <string name="expense_empty_title">No expenses yet</string>
     <string name="expense_empty_message">Track car washes, parking, fines, and more.</string>
     <string name="expense_field_category">Category</string>

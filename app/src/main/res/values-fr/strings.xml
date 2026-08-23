@@ -264,7 +264,8 @@
     <string name="fuel_stats_avg">Moy. %1$s</string>
     <string name="fuel_stats_best">Meilleur %1$s</string>
     <string name="fuel_stats_worst">Pire %1$s</string>
-    <string name="mileage_warning_lower">Le kilométrage actuel est inférieur au précédent. Veuillez vérifier la valeur.</string>
+    <string name="mileage_warning_lower">Le kilométrage actuel (%2$d) est inférieur au précédent (%1$d). Veuillez vérifier la valeur.</string>
+    <string name="mileage_warning_jump">Écart inhabituellement important par rapport au précédent relevé : de %1$d à %2$d (+%3$d km). Veuillez vérifier la valeur.</string>
     <string name="expense_empty_title">Aucune dépense pour le moment</string>
     <string name="expense_empty_message">Suivez les lavages, le stationnement, les amendes et plus encore.</string>
     <string name="expense_field_category">Catégorie</string>

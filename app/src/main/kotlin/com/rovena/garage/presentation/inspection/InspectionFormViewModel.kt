@@ -16,6 +16,7 @@ import com.rovena.garage.domain.model.ReminderBasis
 import com.rovena.garage.domain.usecase.InputValidator
 import com.rovena.garage.domain.usecase.InspectionMaintenanceSuggester
 import com.rovena.garage.domain.usecase.InspectionScoreCalculator
+import com.rovena.garage.domain.usecase.MileageValidator
 import com.rovena.garage.utils.EnumLabels
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,6 +50,7 @@ data class InspectionFormState(
     val savedInspectionId: Long = 0,
     /** PROBLEM items from the save that just happened, mapped to a suggested maintenance category - populated only on save(), never on load. */
     val maintenanceSuggestions: List<MaintenanceSuggestion> = emptyList(),
+    val mileageWarning: MileageValidator.MileageCheck? = null,
     val errors: Map<String, Int> = emptyMap()
 ) {
     companion object {
@@ -121,7 +123,17 @@ class InspectionFormViewModel(private val container: AppContainer, private val v
     }
 
     fun update(transform: (InspectionFormState) -> InspectionFormState) {
-        _state.value = transform(_state.value)
+        val newState = transform(_state.value)
+        _state.value = newState
+        val mileage = newState.mileage.toIntOrNull()
+        if (mileage != null) {
+            viewModelScope.launch {
+                val check = container.vehicleRepository.checkMileage(vehicleId, mileage)
+                _state.value = _state.value.copy(mileageWarning = check.takeUnless { it is MileageValidator.MileageCheck.Ok })
+            }
+        } else {
+            _state.value = _state.value.copy(mileageWarning = null)
+        }
     }
 
     fun updateItem(itemKey: InspectionItemKey, transform: (InspectionItemDraft) -> InspectionItemDraft) {

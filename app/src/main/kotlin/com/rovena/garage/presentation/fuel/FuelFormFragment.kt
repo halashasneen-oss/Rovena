@@ -88,7 +88,9 @@ class FuelFormFragment : Fragment(R.layout.fragment_fuel_form) {
         binding.dateButton.text = Formatters.date(requireContext(), state.dateMillis)
         isBinding = false
 
-        binding.mileageWarning.visibility = if (state.mileageWarning) View.VISIBLE else View.GONE
+        val mileageWarningText = state.mileageWarning?.let { Formatters.mileageWarningText(requireContext(), it) }
+        binding.mileageWarning.text = mileageWarningText
+        binding.mileageWarning.visibility = if (mileageWarningText != null) View.VISIBLE else View.GONE
         binding.mileageLayout.error = state.errors["mileage"]?.let { getString(it) }
         binding.litersLayout.error = state.errors["liters"]?.let { getString(it) }
         binding.totalCostLayout.error = state.errors["totalCost"]?.let { getString(it) }

@@ -264,7 +264,8 @@
     <string name="fuel_stats_avg">Prom. %1$s</string>
     <string name="fuel_stats_best">Mejor %1$s</string>
     <string name="fuel_stats_worst">Peor %1$s</string>
-    <string name="mileage_warning_lower">El kilometraje actual es menor que tu registro anterior. Por favor verifica el valor.</string>
+    <string name="mileage_warning_lower">El kilometraje actual (%2$d) es menor que tu registro anterior (%1$d). Por favor verifica el valor.</string>
+    <string name="mileage_warning_jump">Salto inusualmente grande desde tu registro anterior: de %1$d a %2$d (+%3$d km). Por favor verifica el valor.</string>
     <string name="expense_empty_title">Aún no hay gastos</string>
     <string name="expense_empty_message">Registra lavados, estacionamiento, multas y más.</string>
     <string name="expense_field_category">Categoría</string>

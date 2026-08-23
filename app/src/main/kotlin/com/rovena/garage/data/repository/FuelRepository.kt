@@ -5,7 +5,6 @@ import com.rovena.garage.data.local.dao.VehicleDao
 import com.rovena.garage.data.local.entities.FuelRecordEntity
 import com.rovena.garage.domain.model.TimelineEventType
 import com.rovena.garage.domain.usecase.FuelStatsCalculator
-import com.rovena.garage.domain.usecase.MileageValidator
 import kotlinx.coroutines.flow.Flow
 import java.time.Instant
 import java.time.ZoneId
@@ -28,11 +27,6 @@ class FuelRepository(
     fun searchAcrossGarage(query: String): Flow<List<FuelRecordEntity>> = fuelDao.searchAcrossGarage(query)
 
     suspend fun getById(id: Long): FuelRecordEntity? = fuelDao.getById(id)
-
-    suspend fun checkMileage(vehicleId: Long, newMileageKm: Int): MileageValidator.MileageCheck {
-        val latest = fuelDao.getLatest(vehicleId)
-        return MileageValidator.check(newMileageKm, latest?.mileageKm)
-    }
 
     suspend fun addOrUpdate(record: FuelRecordEntity): Long {
         val id = if (record.id == 0L) {
