@@ -182,6 +182,11 @@
     <string name="error_required">Este campo es obligatorio</string>
     <string name="error_invalid_year">Ingresa un año válido</string>
     <string name="error_invalid_mileage">Ingresa un kilometraje válido</string>
+    <string name="error_negative_cost">Ingresa un importe válido (0 o más)</string>
+    <string name="error_not_positive_quantity">Ingresa un valor mayor que 0</string>
+    <string name="error_not_positive_engine_size">Ingresa una cilindrada válida</string>
+    <string name="error_implausible_date">Ingresa una fecha válida</string>
+    <string name="error_invalid_vin">Ingresa un número de bastidor (VIN) válido</string>
     <string name="vehicle_primary_badge">Vehículo principal</string>
     <string name="action_more_options">Más opciones</string>
     <string name="action_edit">Editar</string>

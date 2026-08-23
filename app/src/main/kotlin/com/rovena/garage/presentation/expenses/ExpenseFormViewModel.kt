@@ -3,9 +3,9 @@ package com.rovena.garage.presentation.expenses
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rovena.garage.AppContainer
-import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.ExpenseEntity
 import com.rovena.garage.domain.model.ExpenseCategory
+import com.rovena.garage.domain.usecase.InputValidator
 import com.rovena.garage.utils.EnumLabels
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -67,7 +67,9 @@ class ExpenseFormViewModel(private val container: AppContainer, private val vehi
         val s = _state.value
         val errors = mutableMapOf<String, Int>()
         val amount = s.amount.toDoubleOrNull()
-        if (amount == null || amount < 0) errors["amount"] = R.string.error_required
+        InputValidator.cost(amount)?.let { errors["amount"] = EnumLabels.of(it) }
+        val mileage = s.mileage.toIntOrNull()
+        InputValidator.optionalMileageKm(mileage)?.let { errors["mileage"] = EnumLabels.of(it) }
         if (errors.isNotEmpty()) {
             _state.value = s.copy(errors = errors)
             return
@@ -76,7 +78,7 @@ class ExpenseFormViewModel(private val container: AppContainer, private val vehi
             val entity = ExpenseEntity(
                 id = s.id, vehicleId = s.vehicleId, dateMillis = s.dateMillis, amount = amount!!, currencyCode = s.currencyCode,
                 category = s.category, description = s.description.trim().ifBlank { null },
-                mileageKm = s.mileage.toIntOrNull(), vendor = s.vendor.trim().ifBlank { null },
+                mileageKm = mileage, vendor = s.vendor.trim().ifBlank { null },
                 notes = s.notes.trim().ifBlank { null }, receiptPhotoPath = s.receiptPhotoPath
             )
             container.expenseRepository.addOrUpdate(entity)

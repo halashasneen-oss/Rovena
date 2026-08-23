@@ -14,6 +14,7 @@ import com.rovena.garage.domain.model.InspectionItemStatus
 import com.rovena.garage.domain.model.MaintenanceCategory
 import com.rovena.garage.domain.model.ReminderBasis
 import com.rovena.garage.domain.model.TransmissionType
+import com.rovena.garage.domain.usecase.InputValidator
 
 /** Central lookup from every fixed-vocabulary enum to its localized string resource. */
 object EnumLabels {
@@ -168,6 +169,18 @@ object EnumLabels {
     fun currencySymbolOrCode(currency: AppCurrency, customCode: String?): String = when (currency) {
         AppCurrency.CUSTOM -> customCode?.takeIf { it.isNotBlank() } ?: "?"
         else -> currency.code
+    }
+
+    @StringRes
+    fun of(error: InputValidator.Error): Int = when (error) {
+        InputValidator.Error.REQUIRED -> R.string.error_required
+        InputValidator.Error.NEGATIVE_MILEAGE -> R.string.error_invalid_mileage
+        InputValidator.Error.NEGATIVE_COST -> R.string.error_negative_cost
+        InputValidator.Error.NOT_POSITIVE_QUANTITY -> R.string.error_not_positive_quantity
+        InputValidator.Error.NOT_POSITIVE_ENGINE_SIZE -> R.string.error_not_positive_engine_size
+        InputValidator.Error.IMPLAUSIBLE_DATE -> R.string.error_implausible_date
+        InputValidator.Error.INVALID_YEAR -> R.string.error_invalid_year
+        InputValidator.Error.INVALID_VIN -> R.string.error_invalid_vin
     }
 
     /**

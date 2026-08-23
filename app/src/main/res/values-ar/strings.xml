@@ -182,6 +182,11 @@
     <string name="error_required">هذا الحقل مطلوب</string>
     <string name="error_invalid_year">أدخل سنة صحيحة</string>
     <string name="error_invalid_mileage">أدخل مسافة مقطوعة صحيحة</string>
+    <string name="error_negative_cost">أدخل مبلغًا صحيحًا (0 أو أكثر)</string>
+    <string name="error_not_positive_quantity">أدخل قيمة أكبر من 0</string>
+    <string name="error_not_positive_engine_size">أدخل سعة محرك صحيحة</string>
+    <string name="error_implausible_date">أدخل تاريخًا صحيحًا</string>
+    <string name="error_invalid_vin">أدخل رقم هيكل (VIN) صحيح</string>
     <string name="vehicle_primary_badge">السيارة الرئيسية</string>
     <string name="action_more_options">خيارات إضافية</string>
     <string name="action_edit">تعديل</string>

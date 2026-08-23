@@ -99,6 +99,7 @@ class ExpenseFormFragment : Fragment(R.layout.fragment_expense_form) {
 
         binding.receiptButton.text = if (state.receiptPhotoPath != null) getString(R.string.expense_field_receipt_attached) else getString(R.string.expense_field_receipt)
         binding.amountLayout.error = state.errors["amount"]?.let { getString(it) }
+        binding.mileageLayout.error = state.errors["mileage"]?.let { getString(it) }
         binding.deleteButton.visibility = if (state.id != 0L) View.VISIBLE else View.GONE
 
         if (state.isSaved || state.isDeleted) findNavController().popBackStack()

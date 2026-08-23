@@ -198,6 +198,11 @@
     <string name="error_required">This field is required</string>
     <string name="error_invalid_year">Enter a valid year</string>
     <string name="error_invalid_mileage">Enter a valid mileage</string>
+    <string name="error_negative_cost">Enter a valid amount (0 or more)</string>
+    <string name="error_not_positive_quantity">Enter a value greater than 0</string>
+    <string name="error_not_positive_engine_size">Enter a valid engine size</string>
+    <string name="error_implausible_date">Enter a valid date</string>
+    <string name="error_invalid_vin">Enter a valid VIN</string>
     <string name="vehicle_primary_badge">Primary vehicle</string>
     <string name="action_more_options">More options</string>
     <string name="action_edit">Edit</string>

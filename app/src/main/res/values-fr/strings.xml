@@ -182,6 +182,11 @@
     <string name="error_required">Ce champ est requis</string>
     <string name="error_invalid_year">Entrez une année valide</string>
     <string name="error_invalid_mileage">Entrez un kilométrage valide</string>
+    <string name="error_negative_cost">Entrez un montant valide (0 ou plus)</string>
+    <string name="error_not_positive_quantity">Entrez une valeur supérieure à 0</string>
+    <string name="error_not_positive_engine_size">Entrez une cylindrée valide</string>
+    <string name="error_implausible_date">Entrez une date valide</string>
+    <string name="error_invalid_vin">Entrez un numéro de châssis (VIN) valide</string>
     <string name="vehicle_primary_badge">Véhicule principal</string>
     <string name="action_more_options">Plus d\'options</string>
     <string name="action_edit">Modifier</string>
