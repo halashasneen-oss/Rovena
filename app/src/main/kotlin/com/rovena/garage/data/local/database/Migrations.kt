@@ -43,5 +43,28 @@ object Migrations {
         }
     }
 
-    val ALL: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3)
+    /** Adds the parts table (spec: Parts History + Warranty Tracking). */
+    val MIGRATION_3_4 = object : Migration(3, 4) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS `parts` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    `vehicleId` INTEGER NOT NULL,
+                    `name` TEXT NOT NULL,
+                    `installedDateMillis` INTEGER NOT NULL,
+                    `installedMileageKm` INTEGER DEFAULT NULL,
+                    `warrantyExpiryDateMillis` INTEGER DEFAULT NULL,
+                    `warrantyExpiryMileageKm` INTEGER DEFAULT NULL,
+                    `notes` TEXT DEFAULT NULL,
+                    `createdAt` INTEGER NOT NULL,
+                    FOREIGN KEY(`vehicleId`) REFERENCES `vehicles`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+                )
+                """.trimIndent()
+            )
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_parts_vehicleId` ON `parts` (`vehicleId`)")
+        }
+    }
+
+    val ALL: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
 }

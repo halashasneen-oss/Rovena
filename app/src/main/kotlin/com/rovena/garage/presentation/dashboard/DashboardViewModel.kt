@@ -69,7 +69,8 @@ private data class RecordSet2(
     val timeline: List<TimelineEventEntity>,
     val documents: List<DocumentEntity>,
     val settings: com.rovena.garage.data.local.entities.AppSettingsEntity,
-    val conditionScores: com.rovena.garage.data.repository.InspectionConditionScores
+    val conditionScores: com.rovena.garage.data.repository.InspectionConditionScores,
+    val parts: List<com.rovena.garage.data.local.entities.PartEntity>
 )
 
 class DashboardViewModel(private val container: AppContainer) : ViewModel() {
@@ -96,11 +97,12 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
                     container.timelineRepository.observeRecent(vehicle.id, 6),
                     container.documentRepository.observeByVehicle(vehicle.id),
                     container.settingsRepository.observe(),
-                    container.inspectionRepository.observeLatestConditionScores(vehicle.id)
-                ) { timeline, documents, settings, conditionScores -> RecordSet2(timeline, documents, settings, conditionScores) }
+                    container.inspectionRepository.observeLatestConditionScores(vehicle.id),
+                    container.partRepository.observeByVehicle(vehicle.id)
+                ) { timeline, documents, settings, conditionScores, parts -> RecordSet2(timeline, documents, settings, conditionScores, parts) }
 
                 combine(set1, set2) { s1, s2 ->
-                    buildState(s1.vehicle ?: vehicle, s1.maintenance, s1.fuel, s1.expenses, s1.reminders, s2.timeline, s2.documents, s2.settings, s2.conditionScores)
+                    buildState(s1.vehicle ?: vehicle, s1.maintenance, s1.fuel, s1.expenses, s1.reminders, s2.timeline, s2.documents, s2.settings, s2.conditionScores, s2.parts)
                 }
             }
         }
@@ -115,7 +117,8 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
         timeline: List<TimelineEventEntity>,
         documents: List<DocumentEntity>,
         settings: com.rovena.garage.data.local.entities.AppSettingsEntity,
-        conditionScores: com.rovena.garage.data.repository.InspectionConditionScores
+        conditionScores: com.rovena.garage.data.repository.InspectionConditionScores,
+        parts: List<com.rovena.garage.data.local.entities.PartEntity>
     ): DashboardUiState {
         val today = LocalDate.now()
         val nowMillis = System.currentTimeMillis()
@@ -226,7 +229,20 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
             )
         }
 
-        val attentionCandidates = maintenanceCandidates + documentCandidates + reminderCandidates
+        val partWarrantyCandidates = parts.mapNotNull { part ->
+            if (part.warrantyExpiryDateMillis == null && part.warrantyExpiryMileageKm == null) return@mapNotNull null
+            val eval = DueStatusCalculator.evaluate(
+                currentMileageKm = vehicle.currentMileageKm, today = today,
+                dueMileageKm = part.warrantyExpiryMileageKm, dueDate = part.warrantyExpiryDateMillis?.toLocalDate(),
+                averageKmPerDay = averageKmPerDay
+            ) ?: return@mapNotNull null
+            AttentionCandidate(
+                PriorityEngine.AttentionItem(PriorityEngine.AttentionSourceType.PART_WARRANTY, part.id, part.name, eval.status, eval.remainingKm, eval.remainingDays),
+                estimatedDateMillisFor(eval.remainingDays, eval.estimatedDueDate)
+            )
+        }
+
+        val attentionCandidates = maintenanceCandidates + documentCandidates + reminderCandidates + partWarrantyCandidates
         val estimateByKey = attentionCandidates.associate { (it.attentionItem.type to it.attentionItem.sourceId) to it.estimatedDateMillis }
         val priorityResult = PriorityEngine.build(attentionCandidates.map { it.attentionItem })
 

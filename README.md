@@ -38,6 +38,7 @@ Every feature in the original specification has a real, working implementation �
 - Global Search: compact, offline, garage-wide search across every vehicle, maintenance record, fuel fill-up, expense, and document, reachable from the Garage screen
 - "Needs Your Attention" unified priority list on the Dashboard, ranking overdue/due-soon maintenance, expiring documents, and due reminders together with an overall vehicle status (Healthy/Attention/Urgent)
 - Mileage Intelligence: labeled `"≈ <date>"` estimates for mileage-only due items, projected from the vehicle's own logged driving pace
+- Parts History + Warranty Tracking: log replaced parts with install date/mileage and an optional warranty (date, mileage, or both) - warranty expiry feeds the same "Needs Your Attention" priority engine as maintenance/documents/reminders
 - Quick Add bottom sheet (Fuel/Maintenance/Expense/Document/Inspection/Reminder/Note)
 - PDF report generation for Vehicle Summary, Maintenance History, Expense Report, Fuel Report, and Inspection Report — all rendered locally via `android.graphics.pdf.PdfDocument`, no internet, no third-party PDF library
 - Debug-only sample data generator (BMW 320i) gated behind the `dev` product flavor, never seeded automatically
@@ -72,7 +73,7 @@ SQLite (via Room)
 
 ## Database structure
 
-Room database `rovena.db`, schema version 3, 13 entities:
+Room database `rovena.db`, schema version 4, 14 entities:
 
 | Entity | Purpose | Vehicle-scoped |
 |---|---|---|
@@ -86,12 +87,13 @@ Room database `rovena.db`, schema version 3, 13 entities:
 | `TimelineEventEntity` | Auto-generated unified feed row per record | ✓ |
 | `VehiclePhotoEntity` | Generic photo attachment, polymorphic `linkedType`/`linkedId` | ✓ |
 | `VehicleNoteEntity` | Freeform, non-diagnostic notes (quirks, contacts, reminders to self) | ✓ |
+| `PartEntity` | Installed parts with install date/mileage and optional warranty | ✓ |
 | `AppSettingsEntity` | Single-row (`id = 0`) app configuration | — (global) |
 | `BackupMetadataEntity` | History log of backup/restore operations | — (global) |
 
 All custom enums are stored as their `name` (a `String` column) via `Converters`, not as ordinals — this keeps the schema legible if you open the `.db` file directly and is stable across enum reordering. `AppSettingsEntity` holds durable, backed-up settings; the currently-selected vehicle and onboarding progress live in a small Jetpack DataStore (`UserPreferences`) instead, since that's session/UI state, not data worth including in a backup.
 
-**Migrations**: `Migrations.ALL` (in `data/local/database/Migrations.kt`) holds one real `Migration(from, to)` per schema bump so far - `MIGRATION_1_2` adds the PIN lockout columns described in [Security](#security) via plain `ALTER TABLE ADD COLUMN` statements, `MIGRATION_2_3` adds the `vehicle_notes` table - registered in `RovenaDatabase` via `Room.databaseBuilder(...).addMigrations(*Migrations.ALL)`. There is deliberately no `fallbackToDestructiveMigration()`: a missing migration should fail loudly, never silently erase a user's vehicle history. `BackupManager.restoreAsNewGarage()` opens a second, separate `RovenaDatabase` instance against the *extracted backup's* `database.db` file to read it - that instance registers the same `Migrations.ALL` too, so restoring a backup made by an older app version (an older schema on disk) migrates it forward instead of throwing. Every future schema change gets its own migration appended to `ALL`, never a silent version bump.
+**Migrations**: `Migrations.ALL` (in `data/local/database/Migrations.kt`) holds one real `Migration(from, to)` per schema bump so far - `MIGRATION_1_2` adds the PIN lockout columns described in [Security](#security) via plain `ALTER TABLE ADD COLUMN` statements, `MIGRATION_2_3` adds the `vehicle_notes` table, `MIGRATION_3_4` adds the `parts` table - registered in `RovenaDatabase` via `Room.databaseBuilder(...).addMigrations(*Migrations.ALL)`. There is deliberately no `fallbackToDestructiveMigration()`: a missing migration should fail loudly, never silently erase a user's vehicle history. `BackupManager.restoreAsNewGarage()` opens a second, separate `RovenaDatabase` instance against the *extracted backup's* `database.db` file to read it - that instance registers the same `Migrations.ALL` too, so restoring a backup made by an older app version (an older schema on disk) migrates it forward instead of throwing. Every future schema change gets its own migration appended to `ALL`, never a silent version bump.
 
 ---
 
@@ -286,9 +288,10 @@ A follow-up enhancement pass targeting a coherent, verifiable slice of a much la
 - **"Needs Your Attention" unified priority engine**: `PriorityEngine` (domain, unit-tested) combines overdue/due-soon maintenance, expiring/expired documents, and due/overdue reminders into one ranked list and an overall vehicle status (Healthy/Attention/Urgent), replacing the Dashboard's old reminders-only "Upcoming Tasks" list - maintenance and document-expiry items that needed attention were previously invisible there just because they came from a different table.
 - **Vehicle Notes**: a new persistent, editable per-vehicle list of freeform non-diagnostic notes (quirks, contacts, reminders to self) - distinct from the existing Quick Add "Note" action, which drops a one-off entry into the Timeline instead. New `vehicle_notes` table, schema bumped to v3.
 - **Global Search**: a compact, offline, garage-wide search (reachable via the search icon on the Garage screen) across every vehicle, maintenance record, fuel fill-up, expense, and document - not scoped to the currently-selected vehicle. The per-vehicle `search()` DAO queries this reuses already existed but were never wired to any screen before this; new `searchAcrossGarage()` siblings extend the same queries across the whole garage.
+- **Parts History + Warranty Tracking**: a new "Parts" section per vehicle logs replaced parts with install date/mileage and an optional warranty (date, mileage, or both). Warranty expiry is evaluated through the exact same `DueStatusCalculator` used everywhere else and feeds straight into the "Needs Your Attention" priority engine above, rather than being a disconnected bolt-on list. New `parts` table, schema bumped to v4.
 - **Verified, not changed**: audited whether Maintenance and Expense records could double-count the same cost. They are only ever written by the user through their own independent forms — there is no code path that auto-creates one from the other — so the dashboard's `fuel + maintenance + expense` monthly total is not structurally double-counting. The only residual risk is a user manually logging the same real-world cost twice, which is a UX/education matter rather than a defect.
 
-**Deliberately deferred this pass** (disclosed rather than silently dropped, matching the previous QA pass's approach): the general-purpose Vehicle Intelligence "insight" text generator, Smart Daily/Weekly summaries, the optional encrypted `.rovena.secure` backup format, Parts History/Warranty/Service-Plan tracking, a dedicated Vehicle Sale Report, centralized notification-scheduler hardening (reboot/timezone/dedup survival beyond what `ReminderCheckWorker` already does), and Inspection→Maintenance-task suggestion flows. These are substantial, independently scoped features better suited to their own focused passes than a partial, unverified implementation squeezed into this one.
+**Deliberately deferred this pass** (disclosed rather than silently dropped, matching the previous QA pass's approach): the general-purpose Vehicle Intelligence "insight" text generator, Smart Daily/Weekly summaries, the optional encrypted `.rovena.secure` backup format, generic Service Plans/bundles, a dedicated Vehicle Sale Report, centralized notification-scheduler hardening (reboot/timezone/dedup survival beyond what `ReminderCheckWorker` already does), and Inspection→Maintenance-task suggestion flows. These are substantial, independently scoped features better suited to their own focused passes than a partial, unverified implementation squeezed into this one.
 
 ---
 

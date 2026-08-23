@@ -125,6 +125,10 @@ class VehicleHubFragment : Fragment(R.layout.fragment_vehicle_hub) {
             getString(R.string.hub_records_count, state.noteCount)) {
             findNavController().navigate(R.id.vehicleNoteListFragment, bundleOf("vehicleId" to vehicle.id))
         }
+        bindSection(binding.sectionParts, R.drawable.ic_part, getString(R.string.hub_section_parts),
+            getString(R.string.hub_records_count, state.partCount)) {
+            findNavController().navigate(R.id.partListFragment, bundleOf("vehicleId" to vehicle.id))
+        }
     }
 
     private fun showHealthDetailDialog() {

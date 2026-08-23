@@ -19,7 +19,7 @@ import com.rovena.garage.domain.model.DueStatus
  */
 object PriorityEngine {
 
-    enum class AttentionSourceType { MAINTENANCE, DOCUMENT, REMINDER }
+    enum class AttentionSourceType { MAINTENANCE, DOCUMENT, REMINDER, PART_WARRANTY }
 
     data class AttentionItem(
         val type: AttentionSourceType,

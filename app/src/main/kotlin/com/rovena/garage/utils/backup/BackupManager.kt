@@ -272,6 +272,10 @@ object BackupManager {
                     container.vehicleNoteRepository.addOrUpdate(it.copy(id = 0, vehicleId = newVehicleId))
                 }
 
+                sourceDb.partDao().getByVehicleOnce(oldVehicle.id).forEach {
+                    container.partRepository.addOrUpdate(it.copy(id = 0, vehicleId = newVehicleId))
+                }
+
                 val documentIdMap = mutableMapOf<Long, Long>()
                 sourceDb.documentDao().getByVehicleOnce(oldVehicle.id).forEach { old ->
                     val (newId, _) = container.documentRepository.addOrUpdate(

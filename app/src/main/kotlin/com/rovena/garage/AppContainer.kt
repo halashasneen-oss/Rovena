@@ -8,6 +8,7 @@ import com.rovena.garage.data.repository.ExpenseRepository
 import com.rovena.garage.data.repository.FuelRepository
 import com.rovena.garage.data.repository.InspectionRepository
 import com.rovena.garage.data.repository.MaintenanceRepository
+import com.rovena.garage.data.repository.PartRepository
 import com.rovena.garage.data.repository.PhotoRepository
 import com.rovena.garage.data.repository.ReminderRepository
 import com.rovena.garage.data.repository.SettingsRepository
@@ -77,6 +78,10 @@ class AppContainer(context: Context) {
 
     val vehicleNoteRepository: VehicleNoteRepository by lazy {
         VehicleNoteRepository(database.vehicleNoteDao())
+    }
+
+    val partRepository: PartRepository by lazy {
+        PartRepository(database.partDao())
     }
 
     val userPreferences: UserPreferences by lazy { UserPreferences(appContext) }

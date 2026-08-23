@@ -27,6 +27,7 @@ data class VehicleHubUiState(
     val hasExpiredDocument: Boolean = false,
     val reminderCount: Int = 0,
     val noteCount: Int = 0,
+    val partCount: Int = 0,
     val isLoading: Boolean = true
 )
 
@@ -45,13 +46,20 @@ class VehicleHubViewModel(private val container: AppContainer, argVehicleId: Lon
         ) { vehicle, maintenanceCount, fuelCount, expenseCount, documentCount ->
             HubPartial(vehicle, maintenanceCount, fuelCount, expenseCount, documentCount)
         }.flatMapLatest { partial ->
-            combine(
+            val innerPartial = combine(
                 container.reminderRepository.observeActiveCount(id),
                 container.maintenanceRepository.observeByVehicle(id),
                 container.documentRepository.observeByVehicle(id),
-                container.inspectionRepository.observeLatestConditionScores(id),
-                container.vehicleNoteRepository.observeCount(id)
-            ) { reminderCount, maintenance, documents, conditionScores, noteCount ->
+                container.inspectionRepository.observeLatestConditionScores(id)
+            ) { reminderCount, maintenance, documents, conditionScores ->
+                InnerPartial(reminderCount, maintenance, documents, conditionScores)
+            }
+            combine(
+                innerPartial,
+                container.vehicleNoteRepository.observeCount(id),
+                container.partRepository.observeCount(id)
+            ) { inner, noteCount, partCount ->
+                val (reminderCount, maintenance, documents, conditionScores) = inner
                 val vehicle = partial.vehicle ?: return@combine VehicleHubUiState(isLoading = false)
                 val overdue = maintenance.count {
                     (it.nextDueMileageKm != null && it.nextDueMileageKm <= vehicle.currentMileageKm) ||
@@ -91,6 +99,7 @@ class VehicleHubViewModel(private val container: AppContainer, argVehicleId: Lon
                     hasExpiredDocument = hasExpired,
                     reminderCount = reminderCount,
                     noteCount = noteCount,
+                    partCount = partCount,
                     isLoading = false
                 )
             }
@@ -103,5 +112,12 @@ class VehicleHubViewModel(private val container: AppContainer, argVehicleId: Lon
         val fuelCount: Int,
         val expenseCount: Int,
         val documentCount: Int
+    )
+
+    private data class InnerPartial(
+        val reminderCount: Int,
+        val maintenance: List<com.rovena.garage.data.local.entities.MaintenanceRecordEntity>,
+        val documents: List<com.rovena.garage.data.local.entities.DocumentEntity>,
+        val conditionScores: com.rovena.garage.data.repository.InspectionConditionScores
     )
 }

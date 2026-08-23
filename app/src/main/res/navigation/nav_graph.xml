@@ -164,6 +164,14 @@
         android:name="com.rovena.garage.presentation.search.GlobalSearchFragment"
         android:label="@string/search_hint" />
 
+    <!-- Parts + Warranty -->
+    <fragment
+        android:id="@+id/partListFragment"
+        android:name="com.rovena.garage.presentation.parts.PartListFragment"
+        android:label="@string/hub_section_parts">
+        <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
+    </fragment>
+
     <!-- Backup / Restore -->
     <fragment
         android:id="@+id/backupFragment"
