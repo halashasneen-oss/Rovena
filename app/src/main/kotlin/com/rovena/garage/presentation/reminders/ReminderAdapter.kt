@@ -6,9 +6,12 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.rovena.garage.R
 import com.rovena.garage.databinding.ItemReminderRowBinding
 import com.rovena.garage.utils.EnumLabels
+import com.rovena.garage.utils.Formatters
 import com.rovena.garage.utils.StatusColors
+import java.time.ZoneId
 
 class ReminderAdapter(
     private val onToggleComplete: (ReminderRowUi) -> Unit,
@@ -45,7 +48,14 @@ class ReminderAdapter(
                     remainingDays != null -> "$statusLabel · ${remainingDays}d"
                     else -> statusLabel
                 }
-                binding.reminderDetail.text = detail
+                // A mileage-only reminder has no date of its own - if we have enough driving
+                // history to project one, show it as a labeled estimate rather than leaving
+                // the user with just a raw km countdown.
+                val estimateSuffix = if (remainingDays == null && eval.estimatedDueDate != null) {
+                    val millis = eval.estimatedDueDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                    " · " + context.getString(R.string.mileage_estimated_date, Formatters.dateShort(context, millis))
+                } else ""
+                binding.reminderDetail.text = detail + estimateSuffix
                 binding.reminderDetail.setTextColor(ContextCompat.getColor(context, StatusColors.of(eval.status)))
             } else {
                 binding.reminderDetail.visibility = android.view.View.GONE

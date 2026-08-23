@@ -16,6 +16,7 @@ import com.rovena.garage.domain.model.MaintenanceCategory
 import com.rovena.garage.domain.usecase.DueStatusCalculator
 import com.rovena.garage.domain.usecase.FuelStatsCalculator
 import com.rovena.garage.domain.usecase.HealthScoreCalculator
+import com.rovena.garage.domain.usecase.MileageIntelligenceCalculator
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -32,7 +33,9 @@ data class UpcomingTaskUi(
     val title: String,
     val status: DueStatus,
     val remainingKm: Int?,
-    val remainingDays: Long?
+    val remainingDays: Long?,
+    /** Estimated calendar date (epoch millis) this mileage-based task is expected to become due, based on the vehicle's own logged driving pace. Null when there's not enough history, or the task is already date-based (remainingDays is set) and doesn't need an estimate. */
+    val estimatedDateMillis: Long? = null
 )
 
 data class DashboardUiState(
@@ -140,6 +143,20 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
         )
         val health = HealthScoreCalculator.fromVehicleInputs(healthInputs)
 
+        // Driving pace from the vehicle's own logged odometer readings (fuel fill-ups +
+        // maintenance records), used to project a labeled estimated date for mileage-only
+        // due items that have no explicit date of their own (spec: Mileage Intelligence).
+        val odometerReadings = fuel.map { MileageIntelligenceCalculator.OdometerReading(it.dateMillis.toLocalDate(), it.mileageKm) } +
+            maintenance.map { MileageIntelligenceCalculator.OdometerReading(it.dateMillis.toLocalDate(), it.mileageKm) }
+        val averageKmPerDay = MileageIntelligenceCalculator.averageKmPerDay(odometerReadings)
+
+        fun estimatedDateMillisFor(remainingDays: Long?, estimatedDueDate: LocalDate?): Long? {
+            // Only surface an estimate for tasks that don't already have a real date of
+            // their own - a date-based task's estimatedDueDate just echoes its known date.
+            if (remainingDays != null || estimatedDueDate == null) return null
+            return estimatedDueDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        }
+
         val nextServiceEval = maintenance
             .filter { it.nextDueMileageKm != null || it.nextDueDateMillis != null }
             .mapNotNull { record ->
@@ -147,13 +164,17 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
                     currentMileageKm = vehicle.currentMileageKm,
                     today = today,
                     dueMileageKm = record.nextDueMileageKm,
-                    dueDate = record.nextDueDateMillis?.toLocalDate()
+                    dueDate = record.nextDueDateMillis?.toLocalDate(),
+                    averageKmPerDay = averageKmPerDay
                 )?.let { record to it }
             }
             .minByOrNull { (_, eval) -> eval.remainingKm?.toLong() ?: eval.remainingDays ?: Long.MAX_VALUE }
 
         val nextService = nextServiceEval?.let { (record, eval) ->
-            UpcomingTaskUi(record.category.name, eval.status, eval.remainingKm, eval.remainingDays)
+            UpcomingTaskUi(
+                record.category.name, eval.status, eval.remainingKm, eval.remainingDays,
+                estimatedDateMillisFor(eval.remainingDays, eval.estimatedDueDate)
+            )
         }
 
         val upcomingTasks = reminders.mapNotNull { reminder ->
@@ -161,8 +182,14 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
                 currentMileageKm = vehicle.currentMileageKm,
                 today = today,
                 dueMileageKm = reminder.dueMileageKm,
-                dueDate = reminder.dueDateMillis?.toLocalDate()
-            )?.let { eval -> UpcomingTaskUi(reminder.title, eval.status, eval.remainingKm, eval.remainingDays) }
+                dueDate = reminder.dueDateMillis?.toLocalDate(),
+                averageKmPerDay = averageKmPerDay
+            )?.let { eval ->
+                UpcomingTaskUi(
+                    reminder.title, eval.status, eval.remainingKm, eval.remainingDays,
+                    estimatedDateMillisFor(eval.remainingDays, eval.estimatedDueDate)
+                )
+            }
         }.sortedBy { it.status.ordinal }
 
         val fuelEntries = fuel.sortedBy { it.mileageKm }.map {

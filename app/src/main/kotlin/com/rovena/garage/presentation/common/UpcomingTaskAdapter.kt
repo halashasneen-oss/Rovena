@@ -6,9 +6,11 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.rovena.garage.R
 import com.rovena.garage.databinding.ItemUpcomingTaskBinding
 import com.rovena.garage.presentation.dashboard.UpcomingTaskUi
 import com.rovena.garage.utils.EnumLabels
+import com.rovena.garage.utils.Formatters
 import com.rovena.garage.utils.StatusColors
 
 class UpcomingTaskAdapter : ListAdapter<UpcomingTaskUi, UpcomingTaskAdapter.VH>(DIFF) {
@@ -32,7 +34,10 @@ class UpcomingTaskAdapter : ListAdapter<UpcomingTaskUi, UpcomingTaskAdapter.VH>(
                 task.remainingDays != null && task.remainingDays >= 0 -> "$statusLabel · ${task.remainingDays}d"
                 else -> statusLabel
             }
-            binding.taskStatus.text = detail
+            val estimateSuffix = task.estimatedDateMillis?.let {
+                " · " + context.getString(R.string.mileage_estimated_date, Formatters.dateShort(context, it))
+            }.orEmpty()
+            binding.taskStatus.text = detail + estimateSuffix
             binding.taskStatus.setTextColor(color)
         }
     }

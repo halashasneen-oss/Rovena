@@ -123,6 +123,7 @@
     <string name="health_detail_title">Health Score Details</string>
     <string name="health_detail_no_data">No data yet</string>
     <string name="health_detail_confidence">Data confidence: %1$d%% of expected data available. Categories with no data are excluded from the score rather than penalized.</string>
+    <string name="mileage_estimated_date">≈ %1$s</string>
 
     <!-- Due statuses -->
     <string name="due_status_upcoming">Upcoming</string>

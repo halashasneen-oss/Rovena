@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.rovena.garage.AppContainer
 import com.rovena.garage.data.local.entities.ReminderEntity
 import com.rovena.garage.domain.usecase.DueStatusCalculator
+import com.rovena.garage.domain.usecase.MileageIntelligenceCalculator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,16 +33,23 @@ class ReminderListViewModel(private val container: AppContainer, vehicleIdFlow: 
         if (vehicleId == null) return@flatMapLatest flowOf(ReminderListUiState(isLoading = false))
         combine(
             container.reminderRepository.observeByVehicle(vehicleId),
-            container.vehicleRepository.observeById(vehicleId)
-        ) { reminders, vehicle ->
+            container.vehicleRepository.observeById(vehicleId),
+            container.fuelRepository.observeByVehicle(vehicleId),
+            container.maintenanceRepository.observeByVehicle(vehicleId)
+        ) { reminders, vehicle, fuel, maintenance ->
             val today = LocalDate.now()
+            val odometerReadings = fuel.map { MileageIntelligenceCalculator.OdometerReading(it.dateMillis.toLocalDateSystem(), it.mileageKm) } +
+                maintenance.map { MileageIntelligenceCalculator.OdometerReading(it.dateMillis.toLocalDateSystem(), it.mileageKm) }
+            val averageKmPerDay = MileageIntelligenceCalculator.averageKmPerDay(odometerReadings)
+
             val rows = reminders.map { r ->
                 val eval = if (vehicle != null) {
                     DueStatusCalculator.evaluate(
                         currentMileageKm = vehicle.currentMileageKm,
                         today = today,
                         dueMileageKm = r.dueMileageKm,
-                        dueDate = r.dueDateMillis?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() }
+                        dueDate = r.dueDateMillis?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() },
+                        averageKmPerDay = averageKmPerDay
                     )
                 } else null
                 ReminderRowUi(r, eval)
@@ -57,4 +65,6 @@ class ReminderListViewModel(private val container: AppContainer, vehicleIdFlow: 
     fun delete(reminder: ReminderEntity) {
         viewModelScope.launch { container.reminderRepository.delete(reminder) }
     }
+
+    private fun Long.toLocalDateSystem(): LocalDate = Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault()).toLocalDate()
 }

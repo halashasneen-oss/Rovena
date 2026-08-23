@@ -114,6 +114,7 @@
     <string name="health_detail_title">تفاصيل مؤشر الصحة</string>
     <string name="health_detail_no_data">لا توجد بيانات بعد</string>
     <string name="health_detail_confidence">موثوقية البيانات: %1$d%% من البيانات المتوقعة متوفرة. الفئات التي لا تحتوي على بيانات تُستبعد من الحساب ولا يتم معاقبتها.</string>
+    <string name="mileage_estimated_date">≈ %1$s</string>
 
     <string name="due_status_upcoming">قادم</string>
     <string name="due_status_due_soon">مستحق قريباً</string>
