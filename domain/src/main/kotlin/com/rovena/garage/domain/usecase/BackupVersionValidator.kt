@@ -37,6 +37,10 @@ object BackupVersionValidator {
         data object Empty : ValidationResult()
         /** Archive failed the Zip Slip / zip-bomb / entry-limit safety checks. */
         data object UnsafeArchive : ValidationResult()
+        /** A `.rovena.secure` archive whose password hasn't been supplied yet. */
+        data object PasswordRequired : ValidationResult()
+        /** A `.rovena.secure` archive whose supplied password failed to decrypt it. */
+        data object WrongPassword : ValidationResult()
     }
 
     fun validate(manifest: Manifest?): ValidationResult {

@@ -1,10 +1,14 @@
 package com.rovena.garage.presentation.backup
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -31,9 +35,15 @@ class BackupFragment : Fragment(R.layout.fragment_backup) {
 
     private val viewModel: BackupViewModel by viewModels { viewModelFactory { BackupViewModel(appContainer) } }
 
+    // Set by showEncryptDialog() just before launching createDocument, then consumed once the
+    // picker returns - SAF's document-creation flow is a separate Activity round-trip, so this
+    // can't just be a local variable at the call site.
+    private var pendingBackupPassword: String? = null
+
     private val createDocument = registerForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
         uri ?: return@registerForActivityResult
-        viewModel.createBackup(requireContext(), uri)
+        viewModel.createBackup(requireContext(), uri, pendingBackupPassword)
+        pendingBackupPassword = null
     }
 
     private val openDocument = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
@@ -50,10 +60,7 @@ class BackupFragment : Fragment(R.layout.fragment_backup) {
         super.onViewCreated(view, savedInstanceState)
         binding.backButton.setOnClickListener { findNavController().popBackStack() }
 
-        binding.createBackupButton.setOnClickListener {
-            val fileName = "rovena_backup_${SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(System.currentTimeMillis())}.rovena"
-            createDocument.launch(fileName)
-        }
+        binding.createBackupButton.setOnClickListener { showEncryptDialog() }
         binding.restoreBackupButton.setOnClickListener {
             openDocument.launch(arrayOf("*/*"))
         }
@@ -89,10 +96,66 @@ class BackupFragment : Fragment(R.layout.fragment_backup) {
                 toast(message)
             }
             is BackupUiEvent.RestorePending -> showRestoreChoiceDialog(event.inspection)
+            is BackupUiEvent.RestorePasswordNeeded -> showRestorePasswordDialog(event.source, event.wrongPasswordRetry)
             is BackupUiEvent.RestoreCompletedMerged -> toast(getString(R.string.backup_restore_completed_merged, event.vehicleCount))
             BackupUiEvent.RestoreCompletedNeedsRestart -> restartApp()
         }
         viewModel.consumeEvent()
+    }
+
+    /**
+     * Always shown before creating a backup - encryption is opt-in per backup
+     * rather than a persisted setting, since whether a given backup needs a
+     * password (e.g. it's about to be shared or uploaded somewhere) is a
+     * per-export decision, not an app-wide default.
+     */
+    private fun showEncryptDialog() {
+        val passwordInput = EditText(requireContext()).apply {
+            hint = getString(R.string.backup_password_hint)
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+        val container = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            val pad = (20 * resources.displayMetrics.density).toInt()
+            setPadding(pad, pad, pad, pad)
+            addView(passwordInput)
+        }
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.backup_encrypt_dialog_title)
+            .setMessage(R.string.backup_encrypt_dialog_message)
+            .setView(container)
+            .setPositiveButton(R.string.backup_create_button) { _, _ ->
+                val password = passwordInput.text.toString().ifBlank { null }
+                pendingBackupPassword = password
+                val extension = if (password != null) "rovena.secure" else "rovena"
+                val fileName = "rovena_backup_${SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(System.currentTimeMillis())}.$extension"
+                createDocument.launch(fileName)
+            }
+            .setNegativeButton(R.string.action_cancel, null)
+            .show()
+    }
+
+    private fun showRestorePasswordDialog(source: Uri, wrongPasswordRetry: Boolean) {
+        val passwordInput = EditText(requireContext()).apply {
+            hint = getString(R.string.backup_restore_password_hint)
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            if (wrongPasswordRetry) error = getString(R.string.backup_restore_wrong_password)
+        }
+        val container = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            val pad = (20 * resources.displayMetrics.density).toInt()
+            setPadding(pad, pad, pad, pad)
+            addView(passwordInput)
+        }
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.backup_restore_password_title)
+            .setMessage(R.string.backup_restore_password_message)
+            .setView(container)
+            .setPositiveButton(R.string.action_continue) { _, _ ->
+                viewModel.inspectBackup(requireContext(), source, passwordInput.text.toString())
+            }
+            .setNegativeButton(R.string.action_cancel, null)
+            .show()
     }
 
     private fun showRestoreChoiceDialog(inspection: BackupInspection) {

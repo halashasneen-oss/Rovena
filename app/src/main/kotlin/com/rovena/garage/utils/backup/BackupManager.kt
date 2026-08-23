@@ -57,7 +57,13 @@ object BackupManager {
     private const val FILES_PREFIX = "files/"
     private const val COPY_BUFFER_SIZE = 8192
 
-    suspend fun createBackup(context: Context, container: AppContainer, destination: Uri): BackupResult = withContext(Dispatchers.IO) {
+    /**
+     * When [password] is non-null, the zip is built into a temp file first and
+     * then encrypted (see [BackupEncryption]) into [destination] as a
+     * `.rovena.secure` file, rather than writing the zip there directly.
+     */
+    suspend fun createBackup(context: Context, container: AppContainer, destination: Uri, password: String? = null): BackupResult = withContext(Dispatchers.IO) {
+        val tempZipFile = if (password != null) File.createTempFile("rovena_backup_", ".tmp", context.cacheDir) else null
         try {
             // Flush WAL into the main database file so the copy is a complete, consistent snapshot.
             container.database.openHelper.writableDatabase.query("PRAGMA wal_checkpoint(FULL)").close()
@@ -76,7 +82,7 @@ object BackupManager {
                 put("checksum", checksum)
             }
 
-            context.contentResolver.openOutputStream(destination)?.use { out ->
+            fun writeZip(out: java.io.OutputStream) {
                 ZipOutputStream(out).use { zip ->
                     zip.putNextEntry(ZipEntry(ENTRY_MANIFEST))
                     zip.write(manifest.toString().toByteArray(Charsets.UTF_8))
@@ -97,7 +103,17 @@ object BackupManager {
                         }
                     }
                 }
-            } ?: return@withContext BackupResult.Error("Could not open destination")
+            }
+
+            if (password != null && tempZipFile != null) {
+                tempZipFile.outputStream().use { writeZip(it) }
+                val encrypted = BackupEncryption.encrypt(tempZipFile.readBytes(), password)
+                context.contentResolver.openOutputStream(destination)?.use { it.write(encrypted) }
+                    ?: return@withContext BackupResult.Error("Could not open destination")
+            } else {
+                context.contentResolver.openOutputStream(destination)?.use { writeZip(it) }
+                    ?: return@withContext BackupResult.Error("Could not open destination")
+            }
 
             container.backupMetadataRepository.record(
                 BackupMetadataEntity(
@@ -112,6 +128,8 @@ object BackupManager {
             BackupResult.Success(vehicleCount)
         } catch (e: Exception) {
             BackupResult.Error(e.message ?: "Unknown error")
+        } finally {
+            tempZipFile?.delete()
         }
     }
 
@@ -122,47 +140,72 @@ object BackupManager {
      * count and total decompressed size are capped (zip-bomb defense) - either
      * violation aborts extraction and reports [BackupVersionValidator.ValidationResult.UnsafeArchive]
      * rather than throwing, so a hostile file can never crash the app.
+     *
+     * Transparently handles `.rovena.secure` files: a quick magic-header peek
+     * decides whether [source] needs [password] at all, so a plain `.rovena`
+     * file is still streamed straight from its content-resolver stream exactly
+     * as before (never fully buffered in memory) - only an encrypted archive
+     * is read fully into memory, which AES-GCM decryption requires anyway.
      */
-    suspend fun inspect(context: Context, source: Uri): BackupInspection = withContext(Dispatchers.IO) {
+    suspend fun inspect(context: Context, source: Uri, password: String? = null): BackupInspection = withContext(Dispatchers.IO) {
         val workDir = File(context.cacheDir, "restore_${UUID.randomUUID()}").apply { mkdirs() }
         try {
+            val magicPeek = context.contentResolver.openInputStream(source)?.use { input ->
+                val buffer = ByteArray(BackupEncryption.MAGIC.size)
+                if (input.read(buffer) == buffer.size) buffer else null
+            }
+            val isEncrypted = magicPeek != null && BackupEncryption.isEncrypted(magicPeek)
+
+            val zipStream: ZipInputStream = if (isEncrypted) {
+                if (password == null) {
+                    return@withContext BackupInspection(null, BackupVersionValidator.ValidationResult.PasswordRequired, null)
+                }
+                val rawBytes = context.contentResolver.openInputStream(source)?.use { it.readBytes() }
+                    ?: return@withContext BackupInspection(null, BackupVersionValidator.ValidationResult.CorruptFile, null)
+                val decrypted = BackupEncryption.decrypt(rawBytes, password)
+                    ?: return@withContext BackupInspection(null, BackupVersionValidator.ValidationResult.WrongPassword, null)
+                ZipInputStream(java.io.ByteArrayInputStream(decrypted))
+            } else {
+                val input = context.contentResolver.openInputStream(source)
+                    ?: return@withContext BackupInspection(null, BackupVersionValidator.ValidationResult.CorruptFile, null)
+                ZipInputStream(input)
+            }
+
             var entryCount = 0
             var totalBytes = 0L
 
-            context.contentResolver.openInputStream(source)?.use { input ->
-                ZipInputStream(input).use { zip ->
-                    var entry: ZipEntry? = zip.nextEntry
-                    while (entry != null) {
-                        entryCount++
-                        if (entryCount > BackupVersionValidator.MAX_ZIP_ENTRIES) {
-                            return@withContext BackupInspection(null, BackupVersionValidator.ValidationResult.UnsafeArchive, workDir)
-                        }
+            zipStream.use { zip ->
+                var entry: ZipEntry? = zip.nextEntry
+                while (entry != null) {
+                    entryCount++
+                    if (entryCount > BackupVersionValidator.MAX_ZIP_ENTRIES) {
+                        return@withContext BackupInspection(null, BackupVersionValidator.ValidationResult.UnsafeArchive, workDir)
+                    }
 
-                        val outFile = BackupPathValidator.resolveSafeEntry(workDir, entry.name)
-                            ?: return@withContext BackupInspection(null, BackupVersionValidator.ValidationResult.UnsafeArchive, workDir)
+                    val outFile = BackupPathValidator.resolveSafeEntry(workDir, entry.name)
+                        ?: return@withContext BackupInspection(null, BackupVersionValidator.ValidationResult.UnsafeArchive, workDir)
 
-                        if (entry.isDirectory) {
-                            outFile.mkdirs()
-                        } else {
-                            outFile.parentFile?.mkdirs()
-                            outFile.outputStream().use { out ->
-                                val buffer = ByteArray(COPY_BUFFER_SIZE)
-                                var read = zip.read(buffer)
-                                while (read >= 0) {
-                                    totalBytes += read
-                                    if (totalBytes > BackupVersionValidator.MAX_TOTAL_UNCOMPRESSED_BYTES) {
-                                        return@withContext BackupInspection(null, BackupVersionValidator.ValidationResult.UnsafeArchive, workDir)
-                                    }
-                                    out.write(buffer, 0, read)
-                                    read = zip.read(buffer)
+                    if (entry.isDirectory) {
+                        outFile.mkdirs()
+                    } else {
+                        outFile.parentFile?.mkdirs()
+                        outFile.outputStream().use { out ->
+                            val buffer = ByteArray(COPY_BUFFER_SIZE)
+                            var read = zip.read(buffer)
+                            while (read >= 0) {
+                                totalBytes += read
+                                if (totalBytes > BackupVersionValidator.MAX_TOTAL_UNCOMPRESSED_BYTES) {
+                                    return@withContext BackupInspection(null, BackupVersionValidator.ValidationResult.UnsafeArchive, workDir)
                                 }
+                                out.write(buffer, 0, read)
+                                read = zip.read(buffer)
                             }
                         }
-                        zip.closeEntry()
-                        entry = zip.nextEntry
                     }
+                    zip.closeEntry()
+                    entry = zip.nextEntry
                 }
-            } ?: return@withContext BackupInspection(null, BackupVersionValidator.ValidationResult.CorruptFile, null)
+            }
 
             val manifestFile = File(workDir, ENTRY_MANIFEST)
             val dbFile = File(workDir, ENTRY_DATABASE)

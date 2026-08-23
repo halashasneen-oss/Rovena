@@ -203,6 +203,7 @@
     <string name="delete_vehicle_confirm_title">Delete this vehicle?</string>
     <string name="delete_vehicle_confirm_message">All maintenance, fuel, expense, document, inspection and reminder records for this vehicle will be permanently deleted. This cannot be undone.</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_continue">Continue</string>
 
     <!-- Vehicle hub sections -->
     <string name="hub_section_maintenance">Maintenance</string>
@@ -450,6 +451,14 @@
     <string name="backup_restore_completed_merged">%1$d vehicle(s) added to your garage.</string>
     <string name="backup_last_created">Last backup: %1$s (%2$d vehicles)</string>
     <string name="backup_none_yet">No backups created yet.</string>
+    <string name="backup_encrypt_dialog_title">Encrypt this backup?</string>
+    <string name="backup_encrypt_dialog_message">Optionally protect this backup with a password - you\'ll need it to restore. Leave blank for a regular, unencrypted backup.</string>
+    <string name="backup_password_hint">Password (optional)</string>
+    <string name="backup_create_button">Create Backup</string>
+    <string name="backup_restore_password_title">Password Required</string>
+    <string name="backup_restore_password_message">This backup is password-protected.</string>
+    <string name="backup_restore_wrong_password">Incorrect password - try again.</string>
+    <string name="backup_restore_password_hint">Password</string>
 
     <string name="quick_add_title">Quick Add</string>
     <string name="quick_action_reminder">Reminder</string>

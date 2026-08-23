@@ -22,6 +22,8 @@ sealed class BackupUiEvent {
     data class BackupError(val message: String) : BackupUiEvent()
     data class RestorePending(val inspection: BackupInspection) : BackupUiEvent()
     data class RestoreInvalid(val validation: BackupVersionValidator.ValidationResult) : BackupUiEvent()
+    /** [wrongPasswordRetry] distinguishes the first prompt from a retry after an incorrect attempt, so the Fragment can show an inline error only on the retry. */
+    data class RestorePasswordNeeded(val source: Uri, val wrongPasswordRetry: Boolean) : BackupUiEvent()
     object RestoreCompletedNeedsRestart : BackupUiEvent()
     data class RestoreCompletedMerged(val vehicleCount: Int) : BackupUiEvent()
 }
@@ -38,9 +40,9 @@ class BackupViewModel(private val container: AppContainer) : ViewModel() {
         _events.value = null
     }
 
-    fun createBackup(context: Context, destination: Uri) {
+    fun createBackup(context: Context, destination: Uri, password: String? = null) {
         viewModelScope.launch {
-            when (val result = BackupManager.createBackup(context, container, destination)) {
+            when (val result = BackupManager.createBackup(context, container, destination, password)) {
                 is BackupResult.Success -> _events.value = BackupUiEvent.BackupCreated(result.vehicleCount)
                 is BackupResult.Error -> _events.value = BackupUiEvent.BackupError(result.message)
                 is BackupResult.Invalid -> Unit
@@ -48,13 +50,16 @@ class BackupViewModel(private val container: AppContainer) : ViewModel() {
         }
     }
 
-    fun inspectBackup(context: Context, source: Uri) {
+    fun inspectBackup(context: Context, source: Uri, password: String? = null) {
         viewModelScope.launch {
-            val inspection = BackupManager.inspect(context, source)
-            if (inspection.validation == BackupVersionValidator.ValidationResult.Valid) {
-                _events.value = BackupUiEvent.RestorePending(inspection)
-            } else {
-                _events.value = BackupUiEvent.RestoreInvalid(inspection.validation)
+            val inspection = BackupManager.inspect(context, source, password)
+            when (inspection.validation) {
+                BackupVersionValidator.ValidationResult.Valid -> _events.value = BackupUiEvent.RestorePending(inspection)
+                BackupVersionValidator.ValidationResult.PasswordRequired ->
+                    _events.value = BackupUiEvent.RestorePasswordNeeded(source, wrongPasswordRetry = false)
+                BackupVersionValidator.ValidationResult.WrongPassword ->
+                    _events.value = BackupUiEvent.RestorePasswordNeeded(source, wrongPasswordRetry = true)
+                else -> _events.value = BackupUiEvent.RestoreInvalid(inspection.validation)
             }
         }
     }

@@ -187,6 +187,7 @@
     <string name="delete_vehicle_confirm_title">Supprimer ce véhicule ?</string>
     <string name="delete_vehicle_confirm_message">Tout l\'entretien, le carburant, les dépenses, les documents, les inspections et les rappels de ce véhicule seront définitivement supprimés. Cette action est irréversible.</string>
     <string name="action_cancel">Annuler</string>
+    <string name="action_continue">Continuer</string>
 
     <string name="hub_section_maintenance">Entretien</string>
     <string name="hub_section_fuel">Carburant</string>
@@ -433,6 +434,14 @@
     <string name="backup_restore_completed_merged">%1$d véhicule(s) ajouté(s) à votre garage.</string>
     <string name="backup_last_created">Dernière sauvegarde : %1$s (%2$d véhicules)</string>
     <string name="backup_none_yet">Aucune sauvegarde créée pour le moment.</string>
+    <string name="backup_encrypt_dialog_title">Chiffrer cette sauvegarde ?</string>
+    <string name="backup_encrypt_dialog_message">Protégez éventuellement cette sauvegarde par un mot de passe - vous en aurez besoin pour la restaurer. Laissez vide pour une sauvegarde normale, non chiffrée.</string>
+    <string name="backup_password_hint">Mot de passe (facultatif)</string>
+    <string name="backup_create_button">Créer une sauvegarde</string>
+    <string name="backup_restore_password_title">Mot de passe requis</string>
+    <string name="backup_restore_password_message">Cette sauvegarde est protégée par un mot de passe.</string>
+    <string name="backup_restore_wrong_password">Mot de passe incorrect - réessayez.</string>
+    <string name="backup_restore_password_hint">Mot de passe</string>
 
     <string name="quick_add_title">Ajout rapide</string>
     <string name="quick_action_reminder">Rappel</string>
