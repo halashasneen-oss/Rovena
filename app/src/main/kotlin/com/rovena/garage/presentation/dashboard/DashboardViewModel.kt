@@ -47,6 +47,9 @@ data class DashboardUiState(
     val nextService: UpcomingTaskUi? = null,
     val fuelAvgL100Km: Double? = null,
     val monthlyCost: Double = 0.0,
+    /** Distance driven in the last 7 days, from the vehicle's own logged odometer readings (fuel fill-ups + maintenance records) - null when fewer than 2 readings fall in that window, rather than a fabricated number (spec: Daily/Weekly in-app summary). */
+    val weeklyDistanceKm: Int? = null,
+    val weeklyCost: Double = 0.0,
     val upcomingTasks: List<UpcomingTaskUi> = emptyList(),
     val vehicleStatus: PriorityEngine.VehicleStatus = PriorityEngine.VehicleStatus.HEALTHY,
     val recentActivity: List<TimelineEventEntity> = emptyList(),
@@ -269,6 +272,16 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
         val monthlyMaintenance = maintenance.filter { YearMonth.from(it.dateMillis.toLocalDate()) == currentMonth }.sumOf { it.cost ?: 0.0 }
         val monthlyExpense = expenses.filter { YearMonth.from(it.dateMillis.toLocalDate()) == currentMonth }.sumOf { it.amount }
 
+        // Daily/Weekly in-app summary (spec) - the trailing 7 days including today.
+        val weekStart = today.minusDays(6)
+        val weeklyOdometerReadings = odometerReadings.filter { !it.date.isBefore(weekStart) }
+        val weeklyDistanceKm = if (weeklyOdometerReadings.size >= 2) {
+            weeklyOdometerReadings.maxOf { it.mileageKm } - weeklyOdometerReadings.minOf { it.mileageKm }
+        } else null
+        val weeklyFuel = fuel.filter { !it.dateMillis.toLocalDate().isBefore(weekStart) }.sumOf { it.totalCost }
+        val weeklyMaintenance = maintenance.filter { !it.dateMillis.toLocalDate().isBefore(weekStart) }.sumOf { it.cost ?: 0.0 }
+        val weeklyExpense = expenses.filter { !it.dateMillis.toLocalDate().isBefore(weekStart) }.sumOf { it.amount }
+
         return DashboardUiState(
             hasAnyVehicle = true,
             vehicle = vehicle,
@@ -277,6 +290,8 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
             nextService = nextService,
             fuelAvgL100Km = fuelStats.averageLitersPer100Km,
             monthlyCost = monthlyFuel + monthlyMaintenance + monthlyExpense,
+            weeklyDistanceKm = weeklyDistanceKm,
+            weeklyCost = weeklyFuel + weeklyMaintenance + weeklyExpense,
             upcomingTasks = upcomingTasks.take(5),
             vehicleStatus = priorityResult.vehicleStatus,
             recentActivity = timeline.take(6),

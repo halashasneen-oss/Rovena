@@ -142,6 +142,8 @@
     <string name="dashboard_next_service">Próximo servicio</string>
     <string name="dashboard_fuel">Combustible</string>
     <string name="dashboard_monthly_cost">Costo mensual</string>
+    <string name="dashboard_weekly_distance">Distancia de esta semana</string>
+    <string name="dashboard_weekly_spend">Gasto de esta semana</string>
     <string name="dashboard_upcoming_tasks">Necesita tu atención</string>
     <string name="dashboard_no_upcoming_tasks">Todo al día - nada necesita tu atención ahora mismo.</string>
     <string name="dashboard_attention_count">%1$d elemento(s) necesitan atención</string>

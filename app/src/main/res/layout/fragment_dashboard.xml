@@ -140,6 +140,22 @@
                     android:layout_marginStart="6dp" />
             </LinearLayout>
 
+            <!-- This week's summary (spec: Daily/Weekly in-app summary) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp"
+                android:weightSum="2">
+
+                <include android:id="@+id/statWeeklyDistance" layout="@layout/item_stat_card"
+                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                    android:layout_marginEnd="6dp" />
+                <include android:id="@+id/statWeeklySpend" layout="@layout/item_stat_card"
+                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                    android:layout_marginStart="6dp" />
+            </LinearLayout>
+
             <!-- Upcoming tasks -->
             <com.google.android.material.card.MaterialCardView style="?attr/materialCardViewStyle"
                 android:layout_width="match_parent"

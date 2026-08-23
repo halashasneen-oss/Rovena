@@ -142,6 +142,8 @@
     <string name="dashboard_next_service">الصيانة القادمة</string>
     <string name="dashboard_fuel">الوقود</string>
     <string name="dashboard_monthly_cost">التكلفة الشهرية</string>
+    <string name="dashboard_weekly_distance">مسافة هذا الأسبوع</string>
+    <string name="dashboard_weekly_spend">إنفاق هذا الأسبوع</string>
     <string name="dashboard_upcoming_tasks">يحتاج انتباهك</string>
     <string name="dashboard_no_upcoming_tasks">كل شيء على ما يرام - لا يوجد شيء يحتاج انتباهك الآن.</string>
     <string name="dashboard_attention_count">%1$d عنصر يحتاج للانتباه</string>
