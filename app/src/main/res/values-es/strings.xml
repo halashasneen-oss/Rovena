@@ -114,6 +114,9 @@
     <string name="health_detail_title">Detalles de la puntuación de salud</string>
     <string name="health_detail_no_data">Aún sin datos</string>
     <string name="health_detail_confidence">Confianza de datos: %1$d%% de los datos esperados están disponibles. Las categorías sin datos se excluyen de la puntuación en lugar de penalizarse.</string>
+    <string name="health_detail_trend_title">Tendencia de puntuación</string>
+    <string name="health_detail_trend_empty">Aún no hay suficiente historial. Vuelve en unos días para ver la tendencia.</string>
+    <string name="health_detail_trend_range">%1$d → %2$d en los últimos %3$d días registrados</string>
     <string name="mileage_estimated_date">≈ %1$s</string>
 
     <string name="due_status_upcoming">Próximo</string>

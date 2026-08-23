@@ -6,7 +6,6 @@ import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.VehicleEntity
 import com.rovena.garage.domain.model.DistanceUnit
 import com.rovena.garage.domain.usecase.CurrencyAggregator
-import com.rovena.garage.domain.usecase.HealthScoreCalculator
 import com.rovena.garage.utils.pdf.PdfBuilder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -20,26 +19,8 @@ object VehicleSummaryPdfGenerator {
         val expenses = firstOnce(container.expenseRepository.observeByVehicle(vehicle.id))
         val documents = firstOnce(container.documentRepository.observeByVehicle(vehicle.id))
         val reminders = firstOnce(container.reminderRepository.observeActive(vehicle.id))
-
-        val overdue = maintenance.count {
-            (it.nextDueMileageKm != null && it.nextDueMileageKm <= vehicle.currentMileageKm) ||
-                (it.nextDueDateMillis != null && it.nextDueDateMillis <= System.currentTimeMillis())
-        }
-        val tracked = maintenance.count { it.nextDueMileageKm != null || it.nextDueDateMillis != null }
-        val lastDate = maintenance.maxOfOrNull { it.dateMillis }
-        val days = lastDate?.let { ((System.currentTimeMillis() - it) / 86_400_000L).toInt() }
-        val hasExpired = documents.any { it.expiryDateMillis != null && it.expiryDateMillis < System.currentTimeMillis() }
-        val health = HealthScoreCalculator.fromVehicleInputs(
-            HealthScoreCalculator.VehicleHealthInputs(
-                daysSinceLastMaintenance = days,
-                overdueMaintenanceCount = if (tracked > 0) overdue else null,
-                totalActiveMaintenanceItems = if (tracked > 0) tracked else null,
-                brakesConditionScore = null, tiresConditionScore = null, batteryConditionScore = null, fluidsConditionScore = null,
-                engineServiceUpToDate = null, transmissionServiceUpToDate = null,
-                hasExpiredDocument = if (documents.isNotEmpty()) hasExpired else null,
-                hasAnyTrackedDocument = documents.isNotEmpty()
-            )
-        )
+        val conditionScores = container.inspectionRepository.observeLatestConditionScores(vehicle.id).first()
+        val health = HealthInputsBuilder.calculate(vehicle, maintenance, documents, conditionScores)
 
         val pdf = PdfBuilder()
         pdf.title(context.getString(R.string.pdf_vehicle_summary_title))

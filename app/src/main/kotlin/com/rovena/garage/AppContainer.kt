@@ -6,6 +6,7 @@ import com.rovena.garage.data.repository.BackupMetadataRepository
 import com.rovena.garage.data.repository.DocumentRepository
 import com.rovena.garage.data.repository.ExpenseRepository
 import com.rovena.garage.data.repository.FuelRepository
+import com.rovena.garage.data.repository.HealthScoreHistoryRepository
 import com.rovena.garage.data.repository.InspectionRepository
 import com.rovena.garage.data.repository.MaintenanceRepository
 import com.rovena.garage.data.repository.PartRepository
@@ -82,6 +83,10 @@ class AppContainer(context: Context) {
 
     val partRepository: PartRepository by lazy {
         PartRepository(database.partDao())
+    }
+
+    val healthScoreHistoryRepository: HealthScoreHistoryRepository by lazy {
+        HealthScoreHistoryRepository(database.healthScoreSnapshotDao())
     }
 
     val userPreferences: UserPreferences by lazy { UserPreferences(appContext) }

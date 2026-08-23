@@ -14,7 +14,7 @@ object BackupVersionValidator {
     const val MIN_SUPPORTED_BACKUP_FORMAT_VERSION = 1
 
     /** Current Room database schema version this build writes/expects. */
-    const val CURRENT_DATABASE_SCHEMA_VERSION = 7
+    const val CURRENT_DATABASE_SCHEMA_VERSION = 8
 
     /** Zip-bomb guard: an archive naming more entries than this is rejected outright. */
     const val MAX_ZIP_ENTRIES = 10_000

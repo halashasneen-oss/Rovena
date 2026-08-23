@@ -10,6 +10,7 @@ import com.rovena.garage.data.local.dao.BackupMetadataDao
 import com.rovena.garage.data.local.dao.DocumentDao
 import com.rovena.garage.data.local.dao.ExpenseDao
 import com.rovena.garage.data.local.dao.FuelDao
+import com.rovena.garage.data.local.dao.HealthScoreSnapshotDao
 import com.rovena.garage.data.local.dao.InspectionDao
 import com.rovena.garage.data.local.dao.InspectionItemDao
 import com.rovena.garage.data.local.dao.MaintenanceDao
@@ -24,6 +25,7 @@ import com.rovena.garage.data.local.entities.BackupMetadataEntity
 import com.rovena.garage.data.local.entities.DocumentEntity
 import com.rovena.garage.data.local.entities.ExpenseEntity
 import com.rovena.garage.data.local.entities.FuelRecordEntity
+import com.rovena.garage.data.local.entities.HealthScoreSnapshotEntity
 import com.rovena.garage.data.local.entities.InspectionEntity
 import com.rovena.garage.data.local.entities.InspectionItemEntity
 import com.rovena.garage.data.local.entities.MaintenanceRecordEntity
@@ -49,9 +51,10 @@ import com.rovena.garage.data.local.entities.VehiclePhotoEntity
         AppSettingsEntity::class,
         BackupMetadataEntity::class,
         VehicleNoteEntity::class,
-        PartEntity::class
+        PartEntity::class,
+        HealthScoreSnapshotEntity::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -71,6 +74,7 @@ abstract class RovenaDatabase : RoomDatabase() {
     abstract fun backupMetadataDao(): BackupMetadataDao
     abstract fun vehicleNoteDao(): VehicleNoteDao
     abstract fun partDao(): PartDao
+    abstract fun healthScoreSnapshotDao(): HealthScoreSnapshotDao
 
     companion object {
         const val DATABASE_NAME = "rovena.db"

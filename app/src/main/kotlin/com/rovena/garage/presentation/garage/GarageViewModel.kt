@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.rovena.garage.AppContainer
 import com.rovena.garage.data.local.entities.VehicleEntity
 import com.rovena.garage.domain.model.HealthStatus
-import com.rovena.garage.domain.usecase.HealthScoreCalculator
+import com.rovena.garage.utils.HealthInputsBuilder
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,32 +27,10 @@ class GarageViewModel(private val container: AppContainer) : ViewModel() {
             val perVehicleFlows = vehicles.map { vehicle ->
                 combine(
                     container.maintenanceRepository.observeByVehicle(vehicle.id),
-                    container.documentRepository.observeByVehicle(vehicle.id)
-                ) { maintenance, documents ->
-                    val overdue = maintenance.count {
-                        (it.nextDueMileageKm != null && it.nextDueMileageKm <= vehicle.currentMileageKm) ||
-                            (it.nextDueDateMillis != null && it.nextDueDateMillis <= System.currentTimeMillis())
-                    }
-                    val tracked = maintenance.count { it.nextDueMileageKm != null || it.nextDueDateMillis != null }
-                    val lastMaintenance = maintenance.maxOfOrNull { it.dateMillis }
-                    val days = lastMaintenance?.let { ((System.currentTimeMillis() - it) / 86_400_000L).toInt() }
-                    val hasExpired = documents.any { it.expiryDateMillis != null && it.expiryDateMillis < System.currentTimeMillis() }
-
-                    val result = HealthScoreCalculator.fromVehicleInputs(
-                        HealthScoreCalculator.VehicleHealthInputs(
-                            daysSinceLastMaintenance = days,
-                            overdueMaintenanceCount = if (tracked > 0) overdue else null,
-                            totalActiveMaintenanceItems = if (tracked > 0) tracked else null,
-                            brakesConditionScore = null,
-                            tiresConditionScore = null,
-                            batteryConditionScore = null,
-                            fluidsConditionScore = null,
-                            engineServiceUpToDate = null,
-                            transmissionServiceUpToDate = null,
-                            hasExpiredDocument = if (documents.isNotEmpty()) hasExpired else null,
-                            hasAnyTrackedDocument = documents.isNotEmpty()
-                        )
-                    )
+                    container.documentRepository.observeByVehicle(vehicle.id),
+                    container.inspectionRepository.observeLatestConditionScores(vehicle.id)
+                ) { maintenance, documents, conditionScores ->
+                    val result = HealthInputsBuilder.calculate(vehicle, maintenance, documents, conditionScores)
                     VehicleCardUi(vehicle, result.score, result.status)
                 }
             }

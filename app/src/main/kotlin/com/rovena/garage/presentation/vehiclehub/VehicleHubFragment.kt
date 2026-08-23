@@ -145,11 +145,27 @@ class VehicleHubFragment : Fragment(R.layout.fragment_vehicle_hub) {
             "$label: $valueText"
         }
         val confidencePercent = (state.healthKnownWeightRatio * 100).roundToInt().coerceIn(0, 100)
-        val message = lines + "\n\n" + getString(R.string.health_detail_confidence, confidencePercent)
+
+        val detailBinding = com.rovena.garage.databinding.DialogHealthScoreDetailBinding.inflate(layoutInflater)
+        detailBinding.breakdownText.text = lines
+        detailBinding.confidenceText.text = getString(R.string.health_detail_confidence, confidencePercent)
+
+        val history = state.healthHistory
+        if (history.size >= 2) {
+            detailBinding.trendChart.visibility = View.VISIBLE
+            detailBinding.trendChart.values = history.map { it.toFloat() }
+            detailBinding.trendRangeText.visibility = View.VISIBLE
+            detailBinding.trendRangeText.text = getString(R.string.health_detail_trend_range, history.first(), history.last(), history.size)
+            detailBinding.trendEmptyText.visibility = View.GONE
+        } else {
+            detailBinding.trendChart.visibility = View.GONE
+            detailBinding.trendRangeText.visibility = View.GONE
+            detailBinding.trendEmptyText.visibility = View.VISIBLE
+        }
 
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.health_detail_title)
-            .setMessage(message)
+            .setView(detailBinding.root)
             .setPositiveButton(R.string.action_close, null)
             .show()
     }

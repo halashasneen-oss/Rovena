@@ -12,13 +12,12 @@ import com.rovena.garage.data.local.entities.TimelineEventEntity
 import com.rovena.garage.data.local.entities.VehicleEntity
 import com.rovena.garage.domain.model.DueStatus
 import com.rovena.garage.domain.model.HealthStatus
-import com.rovena.garage.domain.model.MaintenanceCategory
 import com.rovena.garage.domain.usecase.CurrencyAggregator
 import com.rovena.garage.domain.usecase.DueStatusCalculator
 import com.rovena.garage.domain.usecase.FuelStatsCalculator
-import com.rovena.garage.domain.usecase.HealthScoreCalculator
 import com.rovena.garage.domain.usecase.MileageIntelligenceCalculator
 import com.rovena.garage.domain.usecase.PriorityEngine
+import com.rovena.garage.utils.HealthInputsBuilder
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -126,30 +125,7 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
         val today = LocalDate.now()
         val nowMillis = System.currentTimeMillis()
 
-        val overdue = maintenance.count { record ->
-            (record.nextDueMileageKm != null && record.nextDueMileageKm <= vehicle.currentMileageKm) ||
-                (record.nextDueDateMillis != null && record.nextDueDateMillis <= nowMillis)
-        }
-        val tracked = maintenance.count { it.nextDueMileageKm != null || it.nextDueDateMillis != null }
-        val lastMaintenanceDate = maintenance.maxOfOrNull { it.dateMillis }
-        val daysSinceLastMaintenance = lastMaintenanceDate?.let { ((nowMillis - it) / 86_400_000L).toInt() }
-        val hasExpiredDoc = documents.any { it.expiryDateMillis != null && it.expiryDateMillis < nowMillis }
-        val hasOilRecord = maintenance.any { it.category == MaintenanceCategory.ENGINE_OIL }
-
-        val healthInputs = HealthScoreCalculator.VehicleHealthInputs(
-            daysSinceLastMaintenance = daysSinceLastMaintenance,
-            overdueMaintenanceCount = if (tracked > 0) overdue else null,
-            totalActiveMaintenanceItems = if (tracked > 0) tracked else null,
-            brakesConditionScore = conditionScores.brakes,
-            tiresConditionScore = conditionScores.tires,
-            batteryConditionScore = conditionScores.battery,
-            fluidsConditionScore = conditionScores.fluids,
-            engineServiceUpToDate = if (!hasOilRecord) null else overdue == 0,
-            transmissionServiceUpToDate = null,
-            hasExpiredDocument = if (documents.isNotEmpty()) hasExpiredDoc else null,
-            hasAnyTrackedDocument = documents.isNotEmpty()
-        )
-        val health = HealthScoreCalculator.fromVehicleInputs(healthInputs)
+        val health = HealthInputsBuilder.calculate(vehicle, maintenance, documents, conditionScores, nowMillis)
 
         // Driving pace from the vehicle's own logged odometer readings (fuel fill-ups +
         // maintenance records), used to project a labeled estimated date for mileage-only

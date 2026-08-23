@@ -3,16 +3,18 @@ package com.rovena.garage.presentation.vehiclehub
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rovena.garage.AppContainer
+import com.rovena.garage.data.local.entities.HealthScoreSnapshotEntity
 import com.rovena.garage.data.local.entities.VehicleEntity
 import com.rovena.garage.domain.model.HealthCategory
 import com.rovena.garage.domain.model.HealthStatus
-import com.rovena.garage.domain.usecase.HealthScoreCalculator
+import com.rovena.garage.utils.HealthInputsBuilder
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 data class VehicleHubUiState(
     val vehicle: VehicleEntity? = null,
@@ -28,6 +30,8 @@ data class VehicleHubUiState(
     val reminderCount: Int = 0,
     val noteCount: Int = 0,
     val partCount: Int = 0,
+    /** Recorded Health Scores, oldest first, at most one per calendar day - see HealthScoreHistoryRepository. */
+    val healthHistory: List<Int> = emptyList(),
     val isLoading: Boolean = true
 )
 
@@ -50,41 +54,23 @@ class VehicleHubViewModel(private val container: AppContainer, argVehicleId: Lon
                 container.reminderRepository.observeActiveCount(id),
                 container.maintenanceRepository.observeByVehicle(id),
                 container.documentRepository.observeByVehicle(id),
-                container.inspectionRepository.observeLatestConditionScores(id)
-            ) { reminderCount, maintenance, documents, conditionScores ->
-                InnerPartial(reminderCount, maintenance, documents, conditionScores)
+                container.inspectionRepository.observeLatestConditionScores(id),
+                container.healthScoreHistoryRepository.observeByVehicle(id)
+            ) { reminderCount, maintenance, documents, conditionScores, history ->
+                InnerPartial(reminderCount, maintenance, documents, conditionScores, history)
             }
             combine(
                 innerPartial,
                 container.vehicleNoteRepository.observeCount(id),
                 container.partRepository.observeCount(id)
             ) { inner, noteCount, partCount ->
-                val (reminderCount, maintenance, documents, conditionScores) = inner
+                val (reminderCount, maintenance, documents, conditionScores, history) = inner
                 val vehicle = partial.vehicle ?: return@combine VehicleHubUiState(isLoading = false)
-                val overdue = maintenance.count {
-                    (it.nextDueMileageKm != null && it.nextDueMileageKm <= vehicle.currentMileageKm) ||
-                        (it.nextDueDateMillis != null && it.nextDueDateMillis <= System.currentTimeMillis())
-                }
-                val tracked = maintenance.count { it.nextDueMileageKm != null || it.nextDueDateMillis != null }
-                val lastDate = maintenance.maxOfOrNull { it.dateMillis }
-                val days = lastDate?.let { ((System.currentTimeMillis() - it) / 86_400_000L).toInt() }
                 val hasExpired = documents.any { it.expiryDateMillis != null && it.expiryDateMillis < System.currentTimeMillis() }
-
-                val health = HealthScoreCalculator.fromVehicleInputs(
-                    HealthScoreCalculator.VehicleHealthInputs(
-                        daysSinceLastMaintenance = days,
-                        overdueMaintenanceCount = if (tracked > 0) overdue else null,
-                        totalActiveMaintenanceItems = if (tracked > 0) tracked else null,
-                        brakesConditionScore = conditionScores.brakes,
-                        tiresConditionScore = conditionScores.tires,
-                        batteryConditionScore = conditionScores.battery,
-                        fluidsConditionScore = conditionScores.fluids,
-                        engineServiceUpToDate = null,
-                        transmissionServiceUpToDate = null,
-                        hasExpiredDocument = if (documents.isNotEmpty()) hasExpired else null,
-                        hasAnyTrackedDocument = documents.isNotEmpty()
-                    )
-                )
+                val health = HealthInputsBuilder.calculate(vehicle, maintenance, documents, conditionScores)
+                health.score?.let { score ->
+                    viewModelScope.launch { container.healthScoreHistoryRepository.recordToday(vehicle.id, score) }
+                }
 
                 VehicleHubUiState(
                     vehicle = vehicle,
@@ -100,6 +86,7 @@ class VehicleHubViewModel(private val container: AppContainer, argVehicleId: Lon
                     reminderCount = reminderCount,
                     noteCount = noteCount,
                     partCount = partCount,
+                    healthHistory = history.map { it.score },
                     isLoading = false
                 )
             }
@@ -118,6 +105,7 @@ class VehicleHubViewModel(private val container: AppContainer, argVehicleId: Lon
         val reminderCount: Int,
         val maintenance: List<com.rovena.garage.data.local.entities.MaintenanceRecordEntity>,
         val documents: List<com.rovena.garage.data.local.entities.DocumentEntity>,
-        val conditionScores: com.rovena.garage.data.repository.InspectionConditionScores
+        val conditionScores: com.rovena.garage.data.repository.InspectionConditionScores,
+        val history: List<HealthScoreSnapshotEntity>
     )
 }

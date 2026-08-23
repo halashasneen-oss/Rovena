@@ -123,6 +123,9 @@
     <string name="health_detail_title">Health Score Details</string>
     <string name="health_detail_no_data">No data yet</string>
     <string name="health_detail_confidence">Data confidence: %1$d%% of expected data available. Categories with no data are excluded from the score rather than penalized.</string>
+    <string name="health_detail_trend_title">Score trend</string>
+    <string name="health_detail_trend_empty">Not enough history yet. Come back after a few days for a trend.</string>
+    <string name="health_detail_trend_range">%1$d → %2$d over the last %3$d recorded days</string>
     <string name="mileage_estimated_date">≈ %1$s</string>
 
     <!-- Due statuses -->

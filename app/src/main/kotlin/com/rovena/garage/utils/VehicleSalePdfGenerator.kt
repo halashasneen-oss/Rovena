@@ -8,8 +8,8 @@ import com.rovena.garage.domain.model.DistanceUnit
 import com.rovena.garage.domain.model.FuelEconomyUnit
 import com.rovena.garage.domain.model.InspectionItemKey
 import com.rovena.garage.domain.model.InspectionItemStatus
+import com.rovena.garage.data.repository.InspectionConditionScores
 import com.rovena.garage.domain.usecase.FuelStatsCalculator
-import com.rovena.garage.domain.usecase.HealthScoreCalculator
 import com.rovena.garage.domain.usecase.InspectionScoreCalculator
 import com.rovena.garage.utils.pdf.PdfBuilder
 import kotlinx.coroutines.flow.Flow
@@ -38,28 +38,14 @@ object VehicleSalePdfGenerator {
         val itemsByKey = latestInspectionItems.associateBy { it.itemKey }
         fun conditionScore(key: InspectionItemKey) = itemsByKey[key]?.status?.let(InspectionScoreCalculator::conditionScoreFor)
 
-        val overdue = maintenance.count {
-            (it.nextDueMileageKm != null && it.nextDueMileageKm <= vehicle.currentMileageKm) ||
-                (it.nextDueDateMillis != null && it.nextDueDateMillis <= System.currentTimeMillis())
-        }
-        val tracked = maintenance.count { it.nextDueMileageKm != null || it.nextDueDateMillis != null }
-        val lastDate = maintenance.maxOfOrNull { it.dateMillis }
-        val daysSinceLastMaintenance = lastDate?.let { ((System.currentTimeMillis() - it) / 86_400_000L).toInt() }
         val hasExpiredDocument = documents.any { it.expiryDateMillis != null && it.expiryDateMillis < System.currentTimeMillis() }
-        val health = HealthScoreCalculator.fromVehicleInputs(
-            HealthScoreCalculator.VehicleHealthInputs(
-                daysSinceLastMaintenance = daysSinceLastMaintenance,
-                overdueMaintenanceCount = if (tracked > 0) overdue else null,
-                totalActiveMaintenanceItems = if (tracked > 0) tracked else null,
-                brakesConditionScore = conditionScore(InspectionItemKey.BRAKES),
-                tiresConditionScore = conditionScore(InspectionItemKey.TIRES),
-                batteryConditionScore = conditionScore(InspectionItemKey.BATTERY),
-                fluidsConditionScore = conditionScore(InspectionItemKey.FLUIDS),
-                engineServiceUpToDate = null, transmissionServiceUpToDate = null,
-                hasExpiredDocument = if (documents.isNotEmpty()) hasExpiredDocument else null,
-                hasAnyTrackedDocument = documents.isNotEmpty()
-            )
+        val conditionScores = InspectionConditionScores(
+            brakes = conditionScore(InspectionItemKey.BRAKES),
+            tires = conditionScore(InspectionItemKey.TIRES),
+            battery = conditionScore(InspectionItemKey.BATTERY),
+            fluids = conditionScore(InspectionItemKey.FLUIDS)
         )
+        val health = HealthInputsBuilder.calculate(vehicle, maintenance, documents, conditionScores)
 
         val fuelEntries = fuel.sortedBy { it.mileageKm }.map {
             FuelStatsCalculator.FuelEntry(
