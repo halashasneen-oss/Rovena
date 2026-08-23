@@ -85,5 +85,34 @@ object Migrations {
         }
     }
 
-    val ALL: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+    /**
+     * Adds currencyCode to vehicles (purchasePrice/currentEstimatedValue) and
+     * inspection_items (estimatedRepairCost) - expenses/fuel_records/
+     * maintenance_records already had the column reserved since v1 but no
+     * write path ever populated it (spec: currency architecture). Backfills
+     * every NULL currencyCode across all five columns using the app's
+     * *current* default currency at migration time, per spec section 6 -
+     * older records keep whatever currency was in effect when the user last
+     * touched Settings, never guessed retroactively per-record.
+     */
+    val MIGRATION_6_7 = object : Migration(6, 7) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE vehicles ADD COLUMN currencyCode TEXT DEFAULT NULL")
+            db.execSQL("ALTER TABLE inspection_items ADD COLUMN currencyCode TEXT DEFAULT NULL")
+
+            val defaultCurrencyExpr = """
+                COALESCE(
+                    (SELECT CASE WHEN currency = 'CUSTOM' THEN COALESCE(NULLIF(customCurrencyCode, ''), 'JOD') ELSE currency END
+                     FROM app_settings WHERE id = 0),
+                    'JOD'
+                )
+            """.trimIndent()
+
+            listOf("expenses", "fuel_records", "maintenance_records", "vehicles", "inspection_items").forEach { table ->
+                db.execSQL("UPDATE $table SET currencyCode = ($defaultCurrencyExpr) WHERE currencyCode IS NULL")
+            }
+        }
+    }
+
+    val ALL: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
 }

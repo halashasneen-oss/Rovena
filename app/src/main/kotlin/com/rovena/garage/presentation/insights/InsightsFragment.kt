@@ -14,7 +14,6 @@ import com.rovena.garage.R
 import com.rovena.garage.databinding.FragmentInsightsBinding
 import com.rovena.garage.databinding.ItemInsightRowBinding
 import com.rovena.garage.databinding.ItemLegendRowBinding
-import com.rovena.garage.domain.model.AppCurrency
 import com.rovena.garage.domain.model.DistanceUnit
 import com.rovena.garage.domain.model.FuelEconomyUnit
 import com.rovena.garage.domain.usecase.VehicleInsightGenerator
@@ -75,9 +74,9 @@ class InsightsFragment : Fragment(R.layout.fragment_insights) {
         bindStat(binding.statConsumption, getString(R.string.insights_avg_consumption),
             Formatters.fuelEconomy(requireContext(), state.fuelStats?.averageLitersPer100Km, FuelEconomyUnit.L_100KM))
         bindStat(binding.statCostPerKm, getString(R.string.insights_cost_per_km),
-            state.expenseStats?.costPerKm?.let { Formatters.currency(requireContext(), it, AppCurrency.JOD, null) } ?: getString(R.string.not_enough_data))
+            state.expenseStats?.costPerKm?.let { Formatters.currency(requireContext(), it, state.displayCurrencyCode) } ?: getString(R.string.not_enough_data))
         bindStat(binding.statAvgMonthly, getString(R.string.insights_avg_monthly),
-            state.expenseStats?.averageMonthlyCost?.let { Formatters.currency(requireContext(), it, AppCurrency.JOD, null) } ?: getString(R.string.not_enough_data))
+            state.expenseStats?.averageMonthlyCost?.let { Formatters.currency(requireContext(), it, state.displayCurrencyCode) } ?: getString(R.string.not_enough_data))
 
         if (state.insights.isEmpty()) {
             binding.insightsCard.visibility = View.GONE
@@ -125,7 +124,7 @@ class InsightsFragment : Fragment(R.layout.fragment_insights) {
             val row = ItemLegendRowBinding.inflate(LayoutInflater.from(requireContext()), binding.categoryLegend, false)
             row.legendDot.backgroundTintList = android.content.res.ColorStateList.valueOf(chartColors[index % chartColors.size])
             row.legendLabel.text = getString(EnumLabels.of(slice.category))
-            row.legendValue.text = Formatters.currency(requireContext(), slice.total, AppCurrency.JOD, null)
+            row.legendValue.text = Formatters.currency(requireContext(), slice.total, state.displayCurrencyCode)
             binding.categoryLegend.addView(row.root)
         }
     }

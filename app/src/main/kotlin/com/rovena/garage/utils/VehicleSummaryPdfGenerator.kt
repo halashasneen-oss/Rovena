@@ -4,8 +4,8 @@ import android.content.Context
 import com.rovena.garage.AppContainer
 import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.VehicleEntity
-import com.rovena.garage.domain.model.AppCurrency
 import com.rovena.garage.domain.model.DistanceUnit
+import com.rovena.garage.domain.usecase.CurrencyAggregator
 import com.rovena.garage.domain.usecase.HealthScoreCalculator
 import com.rovena.garage.utils.pdf.PdfBuilder
 import kotlinx.coroutines.flow.Flow
@@ -56,8 +56,8 @@ object VehicleSummaryPdfGenerator {
         vehicle.licensePlate?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_plate), it) }
         vehicle.color?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_color), it) }
         vehicle.purchaseDateMillis?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_purchase_date), Formatters.date(context, it)) }
-        vehicle.purchasePrice?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_purchase_price), Formatters.currency(context, it, AppCurrency.JOD, null)) }
-        vehicle.currentEstimatedValue?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_estimated_value), Formatters.currency(context, it, AppCurrency.JOD, null)) }
+        vehicle.purchasePrice?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_purchase_price), Formatters.currency(context, it, vehicle.currencyCode)) }
+        vehicle.currentEstimatedValue?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_estimated_value), Formatters.currency(context, it, vehicle.currencyCode)) }
 
         pdf.sectionHeader(context.getString(R.string.dashboard_vehicle_health))
         pdf.keyValueRow(
@@ -68,15 +68,24 @@ object VehicleSummaryPdfGenerator {
 
         pdf.sectionHeader(context.getString(R.string.hub_section_maintenance))
         pdf.keyValueRow(context.getString(R.string.hub_records_count, maintenance.size), "")
-        pdf.keyValueRow(context.getString(R.string.pdf_total), Formatters.currency(context, maintenance.sumOf { it.cost ?: 0.0 }, AppCurrency.JOD, null))
+        pdf.keyValueRow(
+            context.getString(R.string.pdf_total),
+            Formatters.currencyTotal(context, CurrencyAggregator.aggregate(maintenance.mapNotNull { r -> r.cost?.let { it to (r.currencyCode ?: "JOD") } }))
+        )
 
         pdf.sectionHeader(context.getString(R.string.hub_section_fuel))
         pdf.keyValueRow(context.getString(R.string.hub_records_count, fuel.size), "")
-        pdf.keyValueRow(context.getString(R.string.pdf_total), Formatters.currency(context, fuel.sumOf { it.totalCost }, AppCurrency.JOD, null))
+        pdf.keyValueRow(
+            context.getString(R.string.pdf_total),
+            Formatters.currencyTotal(context, CurrencyAggregator.aggregate(fuel.map { it.totalCost to (it.currencyCode ?: "JOD") }))
+        )
 
         pdf.sectionHeader(context.getString(R.string.hub_section_expenses))
         pdf.keyValueRow(context.getString(R.string.hub_records_count, expenses.size), "")
-        pdf.keyValueRow(context.getString(R.string.pdf_total), Formatters.currency(context, expenses.sumOf { it.amount }, AppCurrency.JOD, null))
+        pdf.keyValueRow(
+            context.getString(R.string.pdf_total),
+            Formatters.currencyTotal(context, CurrencyAggregator.aggregate(expenses.map { it.amount to (it.currencyCode ?: "JOD") }))
+        )
 
         pdf.sectionHeader(context.getString(R.string.hub_section_documents))
         pdf.keyValueRow(context.getString(R.string.hub_records_count, documents.size), "")

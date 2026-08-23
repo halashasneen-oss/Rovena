@@ -6,6 +6,7 @@ import com.rovena.garage.AppContainer
 import com.rovena.garage.data.local.entities.VehicleEntity
 import com.rovena.garage.domain.model.FuelType
 import com.rovena.garage.domain.model.TransmissionType
+import com.rovena.garage.utils.EnumLabels
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +28,7 @@ data class VehicleFormState(
     val purchaseDateMillis: Long? = null,
     val purchasePrice: String = "",
     val estimatedValue: String = "",
+    val currencyCode: String? = null,
     val notes: String = "",
     val isPrimary: Boolean = false,
     val photoPath: String? = null,
@@ -61,6 +63,7 @@ class VehicleFormViewModel(private val container: AppContainer, private val edit
                         purchaseDateMillis = v.purchaseDateMillis,
                         purchasePrice = v.purchasePrice?.toString().orEmpty(),
                         estimatedValue = v.currentEstimatedValue?.toString().orEmpty(),
+                        currencyCode = v.currencyCode,
                         notes = v.notes.orEmpty(),
                         isPrimary = v.isPrimary,
                         photoPath = v.photoPath,
@@ -69,7 +72,13 @@ class VehicleFormViewModel(private val container: AppContainer, private val edit
                 } ?: run { _state.value = _state.value.copy(isLoading = false) }
             }
         } else {
-            _state.value = _state.value.copy(isLoading = false)
+            viewModelScope.launch {
+                val settings = container.settingsRepository.getOrDefault()
+                _state.value = _state.value.copy(
+                    currencyCode = EnumLabels.effectiveCurrencyCode(settings.currency, settings.customCurrencyCode),
+                    isLoading = false
+                )
+            }
         }
     }
 
@@ -109,6 +118,7 @@ class VehicleFormViewModel(private val container: AppContainer, private val edit
                 purchaseDateMillis = s.purchaseDateMillis,
                 purchasePrice = s.purchasePrice.toDoubleOrNull(),
                 currentEstimatedValue = s.estimatedValue.toDoubleOrNull(),
+                currencyCode = s.currencyCode,
                 notes = s.notes.trim().ifBlank { null },
                 isPrimary = s.isPrimary,
                 photoPath = s.photoPath

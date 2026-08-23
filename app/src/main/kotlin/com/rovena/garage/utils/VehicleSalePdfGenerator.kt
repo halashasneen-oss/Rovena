@@ -4,7 +4,6 @@ import android.content.Context
 import com.rovena.garage.AppContainer
 import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.VehicleEntity
-import com.rovena.garage.domain.model.AppCurrency
 import com.rovena.garage.domain.model.DistanceUnit
 import com.rovena.garage.domain.model.FuelEconomyUnit
 import com.rovena.garage.domain.model.InspectionItemKey
@@ -111,7 +110,7 @@ object VehicleSalePdfGenerator {
         pdf.sectionHeader(context.getString(R.string.hub_section_maintenance))
         pdf.keyValueRow(context.getString(R.string.hub_records_count, maintenance.size), "")
         maintenance.forEach { record ->
-            val costText = record.cost?.let { Formatters.currency(context, it, AppCurrency.JOD, record.currencyCode) } ?: ""
+            val costText = record.cost?.let { Formatters.currency(context, it, record.currencyCode) } ?: ""
             pdf.bodyLine("${Formatters.date(context, record.dateMillis)} · ${context.getString(EnumLabels.of(record.category))} · $costText")
             pdf.caption("  ${record.description}" + (record.workshop?.let { " · $it" } ?: "") + " · " + Formatters.mileage(context, record.mileageKm, DistanceUnit.KM))
         }

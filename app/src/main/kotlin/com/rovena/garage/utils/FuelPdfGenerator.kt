@@ -4,9 +4,9 @@ import android.content.Context
 import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.FuelRecordEntity
 import com.rovena.garage.data.local.entities.VehicleEntity
-import com.rovena.garage.domain.model.AppCurrency
 import com.rovena.garage.domain.model.DistanceUnit
 import com.rovena.garage.domain.model.FuelEconomyUnit
+import com.rovena.garage.domain.usecase.CurrencyAggregator
 import com.rovena.garage.domain.usecase.FuelStatsCalculator
 import com.rovena.garage.utils.pdf.PdfBuilder
 import java.io.File
@@ -29,7 +29,11 @@ object FuelPdfGenerator {
         pdf.caption(context.getString(R.string.pdf_generated_on, Formatters.date(context, System.currentTimeMillis())))
         pdf.spacer()
         pdf.keyValueRow(context.getString(R.string.pdf_vehicle), "${vehicle.make} ${vehicle.model} (${vehicle.year})")
-        pdf.keyValueRow(context.getString(R.string.pdf_total), Formatters.currency(context, records.sumOf { it.totalCost }, AppCurrency.JOD, null), valueAccent = true)
+        pdf.keyValueRow(
+            context.getString(R.string.pdf_total),
+            Formatters.currencyTotal(context, CurrencyAggregator.aggregate(records.map { it.totalCost to (it.currencyCode ?: "JOD") })),
+            valueAccent = true
+        )
         pdf.spacer()
 
         pdf.sectionHeader(context.getString(R.string.insights_avg_consumption))
@@ -41,7 +45,7 @@ object FuelPdfGenerator {
         pdf.spacer()
         pdf.sectionHeader(context.getString(R.string.hub_section_fuel))
         records.sortedByDescending { it.dateMillis }.forEach { record ->
-            pdf.bodyLine("${Formatters.date(context, record.dateMillis)} · ${record.liters} L · ${Formatters.currency(context, record.totalCost, AppCurrency.JOD, record.currencyCode)}")
+            pdf.bodyLine("${Formatters.date(context, record.dateMillis)} · ${record.liters} L · ${Formatters.currency(context, record.totalCost, record.currencyCode)}")
             pdf.caption("  " + Formatters.mileage(context, record.mileageKm, DistanceUnit.KM) + (record.station?.let { " · $it" } ?: ""))
         }
 

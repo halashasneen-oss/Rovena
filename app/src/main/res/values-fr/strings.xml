@@ -126,6 +126,7 @@
     <string name="unit_l_100km_short">L/100km</string>
     <string name="unit_mpg_short">MPG</string>
     <string name="not_enough_data">Données insuffisantes</string>
+    <string name="multiple_currencies">Plusieurs devises</string>
 
     <string name="nav_home">Accueil</string>
     <string name="nav_garage">Garage</string>

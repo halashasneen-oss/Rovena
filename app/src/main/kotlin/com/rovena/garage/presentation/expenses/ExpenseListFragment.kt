@@ -14,7 +14,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rovena.garage.R
 import com.rovena.garage.databinding.FragmentGenericListBinding
-import com.rovena.garage.domain.model.AppCurrency
 import com.rovena.garage.presentation.common.appContainer
 import com.rovena.garage.presentation.common.resolveVehicleId
 import com.rovena.garage.presentation.common.viewModelFactory
@@ -62,7 +61,7 @@ class ExpenseListFragment : Fragment(R.layout.fragment_generic_list) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     adapter.submitList(state.records)
-                    binding.screenSummary.text = Formatters.currency(requireContext(), state.total, AppCurrency.JOD, null)
+                    binding.screenSummary.text = Formatters.currencyTotal(requireContext(), state.total)
                     val empty = !state.isLoading && state.records.isEmpty()
                     binding.emptyState.root.visibility = if (empty) View.VISIBLE else View.GONE
                     binding.listRecycler.visibility = if (empty) View.GONE else View.VISIBLE

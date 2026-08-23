@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rovena.garage.AppContainer
 import com.rovena.garage.domain.model.ExpenseCategory
+import com.rovena.garage.domain.usecase.CurrencyAggregator
 import com.rovena.garage.domain.usecase.ExpenseAggregator
 import com.rovena.garage.domain.usecase.FuelStatsCalculator
 import com.rovena.garage.domain.usecase.VehicleInsightGenerator
@@ -35,6 +36,15 @@ data class InsightsUiState(
     val maintenanceCount: Int = 0,
     /** Local, rules-based observations from [VehicleInsightGenerator] - e.g. a fuel-economy or maintenance-cost trend worth calling out. */
     val insights: List<VehicleInsightGenerator.Insight> = emptyList(),
+    /**
+     * Currency the numeric [monthlySpend]/[maintenanceMonthlySpend] chart values and
+     * [categoryBreakdown]/[expenseStats] totals are expressed in (spec: charts must never
+     * mix currencies) - the vehicle's most common recorded currency. Null only when there's
+     * no financial history at all yet.
+     */
+    val displayCurrencyCode: String? = null,
+    /** True when this vehicle has financial records in more than one currency - some of them are excluded from the single-currency chart/breakdown above rather than silently combined. */
+    val hasMixedCurrencies: Boolean = false,
     val isLoading: Boolean = true
 )
 
@@ -62,7 +72,19 @@ class InsightsViewModel(private val container: AppContainer, vehicleIdFlow: Flow
                 if (mileages.size >= 2) mileages.max() - mileages.min() else null
             }
 
-            val expenseEntries = expenses.map {
+            // Charts render one numeric value per bar/slice, so every money-bearing insight
+            // below is restricted to the vehicle's single most common recorded currency
+            // (spec: never sum across currencies, never mix currencies in one chart) -
+            // records in any other currency are excluded from these totals rather than
+            // silently combined, and hasMixedCurrencies tells the Fragment to disclose that.
+            val allCurrencyCodes = fuel.map { it.currencyCode ?: "JOD" } + maintenance.map { it.currencyCode ?: "JOD" } + expenses.map { it.currencyCode ?: "JOD" }
+            val displayCurrency = allCurrencyCodes.groupingBy { it }.eachCount().entries.maxByOrNull { it.value }?.key
+            val hasMixedCurrencies = allCurrencyCodes.distinct().size > 1
+            val fuelInCurrency = fuel.filter { (it.currencyCode ?: "JOD") == displayCurrency }
+            val maintenanceInCurrency = maintenance.filter { (it.currencyCode ?: "JOD") == displayCurrency }
+            val expensesInCurrency = expenses.filter { (it.currencyCode ?: "JOD") == displayCurrency }
+
+            val expenseEntries = expensesInCurrency.map {
                 ExpenseAggregator.ExpenseEntry(
                     date = Instant.ofEpochMilli(it.dateMillis).atZone(ZoneId.systemDefault()).toLocalDate(),
                     amount = it.amount, category = it.category
@@ -74,13 +96,13 @@ class InsightsViewModel(private val container: AppContainer, vehicleIdFlow: Flow
             val now = YearMonth.now()
             val months = (5 downTo 0).map { now.minusMonths(it.toLong()) }
             val monthlySpend = months.map { month ->
-                val fuelTotal = fuel.filter { YearMonth.from(Instant.ofEpochMilli(it.dateMillis).atZone(ZoneId.systemDefault()).toLocalDate()) == month }.sumOf { it.totalCost }
-                val maintTotal = maintenance.filter { YearMonth.from(Instant.ofEpochMilli(it.dateMillis).atZone(ZoneId.systemDefault()).toLocalDate()) == month }.sumOf { it.cost ?: 0.0 }
-                val expTotal = expenses.filter { YearMonth.from(Instant.ofEpochMilli(it.dateMillis).atZone(ZoneId.systemDefault()).toLocalDate()) == month }.sumOf { it.amount }
+                val fuelTotal = fuelInCurrency.filter { YearMonth.from(Instant.ofEpochMilli(it.dateMillis).atZone(ZoneId.systemDefault()).toLocalDate()) == month }.sumOf { it.totalCost }
+                val maintTotal = maintenanceInCurrency.filter { YearMonth.from(Instant.ofEpochMilli(it.dateMillis).atZone(ZoneId.systemDefault()).toLocalDate()) == month }.sumOf { it.cost ?: 0.0 }
+                val expTotal = expensesInCurrency.filter { YearMonth.from(Instant.ofEpochMilli(it.dateMillis).atZone(ZoneId.systemDefault()).toLocalDate()) == month }.sumOf { it.amount }
                 MonthlySpend(month, fuelTotal + maintTotal + expTotal)
             }
             val maintenanceMonthlySpend = months.map { month ->
-                val maintTotal = maintenance.filter { YearMonth.from(Instant.ofEpochMilli(it.dateMillis).atZone(ZoneId.systemDefault()).toLocalDate()) == month }.sumOf { it.cost ?: 0.0 }
+                val maintTotal = maintenanceInCurrency.filter { YearMonth.from(Instant.ofEpochMilli(it.dateMillis).atZone(ZoneId.systemDefault()).toLocalDate()) == month }.sumOf { it.cost ?: 0.0 }
                 MonthlySpend(month, maintTotal)
             }
 
@@ -98,7 +120,8 @@ class InsightsViewModel(private val container: AppContainer, vehicleIdFlow: Flow
                 vehicleId = vehicle.id, hasVehicle = true, fuelStats = fuelStats, expenseStats = expenseStats,
                 monthlySpend = monthlySpend, maintenanceMonthlySpend = maintenanceMonthlySpend,
                 categoryBreakdown = categoryBreakdown, totalDistanceKm = totalDistance,
-                maintenanceCount = maintenance.size, insights = insights, isLoading = false
+                maintenanceCount = maintenance.size, insights = insights,
+                displayCurrencyCode = displayCurrency, hasMixedCurrencies = hasMixedCurrencies, isLoading = false
             )
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), InsightsUiState())

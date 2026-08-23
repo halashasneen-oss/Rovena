@@ -7,6 +7,7 @@ import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.MaintenanceRecordEntity
 import com.rovena.garage.domain.model.MaintenanceCategory
 import com.rovena.garage.domain.model.PhotoLinkedType
+import com.rovena.garage.utils.EnumLabels
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,6 +21,7 @@ data class MaintenanceFormState(
     val category: MaintenanceCategory = MaintenanceCategory.ENGINE_OIL,
     val description: String = "",
     val cost: String = "",
+    val currencyCode: String? = null,
     val parts: String = "",
     val workshop: String = "",
     val technician: String = "",
@@ -56,6 +58,7 @@ class MaintenanceFormViewModel(
                         category = record.category,
                         description = record.description,
                         cost = record.cost?.toString().orEmpty(),
+                        currencyCode = record.currencyCode,
                         parts = record.parts.orEmpty(),
                         workshop = record.workshop.orEmpty(),
                         technician = record.technician.orEmpty(),
@@ -70,7 +73,13 @@ class MaintenanceFormViewModel(
                 }
             }
         } else {
-            _state.value = _state.value.copy(isLoading = false)
+            viewModelScope.launch {
+                val settings = container.settingsRepository.getOrDefault()
+                _state.value = _state.value.copy(
+                    currencyCode = EnumLabels.effectiveCurrencyCode(settings.currency, settings.customCurrencyCode),
+                    isLoading = false
+                )
+            }
         }
     }
 
@@ -98,7 +107,7 @@ class MaintenanceFormViewModel(
                 category = s.category,
                 description = s.description.trim(),
                 cost = s.cost.toDoubleOrNull(),
-                currencyCode = null,
+                currencyCode = s.currencyCode,
                 parts = s.parts.trim().ifBlank { null },
                 workshop = s.workshop.trim().ifBlank { null },
                 technician = s.technician.trim().ifBlank { null },

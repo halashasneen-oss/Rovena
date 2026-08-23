@@ -31,6 +31,8 @@ data class VehicleEntity(
     val purchaseDateMillis: Long? = null,
     val purchasePrice: Double? = null,
     val currentEstimatedValue: Double? = null,
+    /** Currency for both [purchasePrice] and [currentEstimatedValue], stamped at entry time - never rewritten when the app's default currency later changes. */
+    val currencyCode: String? = null,
     val notes: String? = null,
     val isPrimary: Boolean = false,
     val photoPath: String? = null,

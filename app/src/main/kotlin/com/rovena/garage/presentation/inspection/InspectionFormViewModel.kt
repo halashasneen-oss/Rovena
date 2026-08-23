@@ -15,6 +15,7 @@ import com.rovena.garage.domain.model.PhotoLinkedType
 import com.rovena.garage.domain.model.ReminderBasis
 import com.rovena.garage.domain.usecase.InspectionMaintenanceSuggester
 import com.rovena.garage.domain.usecase.InspectionScoreCalculator
+import com.rovena.garage.utils.EnumLabels
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,6 +30,7 @@ data class InspectionItemDraft(
     val status: InspectionItemStatus = InspectionItemStatus.UNKNOWN,
     val notes: String = "",
     val estimatedRepairCost: String = "",
+    val currencyCode: String? = null,
     val photoPaths: List<String> = emptyList()
 )
 
@@ -90,6 +92,7 @@ class InspectionFormViewModel(private val container: AppContainer, private val v
                                 status = saved.status,
                                 notes = saved.notes.orEmpty(),
                                 estimatedRepairCost = saved.estimatedRepairCost?.toString().orEmpty(),
+                                currencyCode = saved.currencyCode,
                                 photoPaths = container.photoRepository.getByLinkOnce(PhotoLinkedType.INSPECTION_ITEM, saved.id).map { it.filePath }
                             )
                         } ?: default
@@ -105,7 +108,13 @@ class InspectionFormViewModel(private val container: AppContainer, private val v
                 }
             } else {
                 val vehicle = container.vehicleRepository.getById(vehicleId)
-                _state.value = _state.value.copy(mileage = vehicle?.currentMileageKm?.toString().orEmpty(), isLoading = false)
+                val settings = container.settingsRepository.getOrDefault()
+                val defaultCurrency = EnumLabels.effectiveCurrencyCode(settings.currency, settings.customCurrencyCode)
+                _state.value = _state.value.copy(
+                    mileage = vehicle?.currentMileageKm?.toString().orEmpty(),
+                    items = _state.value.items.map { it.copy(currencyCode = defaultCurrency) },
+                    isLoading = false
+                )
             }
         }
     }
@@ -135,7 +144,8 @@ class InspectionFormViewModel(private val container: AppContainer, private val v
             val itemEntities = s.items.map {
                 InspectionItemEntity(
                     inspectionId = 0, categoryGroup = it.categoryGroup, itemKey = it.itemKey, status = it.status,
-                    notes = it.notes.trim().ifBlank { null }, estimatedRepairCost = it.estimatedRepairCost.toDoubleOrNull()
+                    notes = it.notes.trim().ifBlank { null }, estimatedRepairCost = it.estimatedRepairCost.toDoubleOrNull(),
+                    currencyCode = it.currencyCode
                 )
             }
             val savedId = container.inspectionRepository.saveInspection(inspection, itemEntities)

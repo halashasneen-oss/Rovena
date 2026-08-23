@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.rovena.garage.AppContainer
 import com.rovena.garage.data.local.entities.MaintenanceRecordEntity
 import com.rovena.garage.domain.model.DueStatus
+import com.rovena.garage.domain.usecase.CurrencyAggregator
 import com.rovena.garage.domain.usecase.DueStatusCalculator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,7 +24,8 @@ data class MaintenanceRowUi(val record: MaintenanceRecordEntity, val dueStatus: 
 data class MaintenanceListUiState(
     val vehicleId: Long? = null,
     val rows: List<MaintenanceRowUi> = emptyList(),
-    val totalCost: Double = 0.0,
+    /** Never a blind sum across currencies (spec: multi-currency analytics). */
+    val totalCost: CurrencyAggregator.CurrencyTotal = CurrencyAggregator.CurrencyTotal.Empty,
     val isLoading: Boolean = true
 )
 
@@ -33,9 +35,8 @@ class MaintenanceListViewModel(private val container: AppContainer, vehicleIdFlo
         if (vehicleId == null) return@flatMapLatest flowOf(MaintenanceListUiState(isLoading = false))
         combine(
             container.maintenanceRepository.observeByVehicle(vehicleId),
-            container.vehicleRepository.observeById(vehicleId),
-            container.maintenanceRepository.observeTotalCost(vehicleId)
-        ) { records, vehicle, total ->
+            container.vehicleRepository.observeById(vehicleId)
+        ) { records, vehicle ->
             val today = LocalDate.now()
             val rows = records.map { record ->
                 val status = if (vehicle != null && (record.nextDueMileageKm != null || record.nextDueDateMillis != null)) {
@@ -48,7 +49,8 @@ class MaintenanceListViewModel(private val container: AppContainer, vehicleIdFlo
                 } else null
                 MaintenanceRowUi(record, status)
             }
-            MaintenanceListUiState(vehicleId, rows, total ?: 0.0, false)
+            val total = CurrencyAggregator.aggregate(records.mapNotNull { r -> r.cost?.let { it to (r.currencyCode ?: "JOD") } })
+            MaintenanceListUiState(vehicleId, rows, total, false)
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MaintenanceListUiState())
 

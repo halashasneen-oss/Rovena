@@ -126,6 +126,7 @@
     <string name="unit_l_100km_short">ل/100كم</string>
     <string name="unit_mpg_short">ميل/غالون</string>
     <string name="not_enough_data">بيانات غير كافية</string>
+    <string name="multiple_currencies">عملات متعددة</string>
 
     <string name="nav_home">الرئيسية</string>
     <string name="nav_garage">المرآب</string>

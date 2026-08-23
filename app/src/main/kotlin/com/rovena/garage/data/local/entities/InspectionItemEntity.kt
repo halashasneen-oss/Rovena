@@ -27,5 +27,6 @@ data class InspectionItemEntity(
     val itemKey: InspectionItemKey,
     val status: InspectionItemStatus = InspectionItemStatus.UNKNOWN,
     val notes: String? = null,
-    val estimatedRepairCost: Double? = null
+    val estimatedRepairCost: Double? = null,
+    val currencyCode: String? = null
 )

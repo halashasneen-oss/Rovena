@@ -6,6 +6,7 @@ import com.rovena.garage.AppContainer
 import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.ExpenseEntity
 import com.rovena.garage.domain.model.ExpenseCategory
+import com.rovena.garage.utils.EnumLabels
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,6 +17,8 @@ data class ExpenseFormState(
     val vehicleId: Long = 0,
     val dateMillis: Long = System.currentTimeMillis(),
     val amount: String = "",
+    /** Stamped from the app's default currency for a new record, preserved unchanged from the loaded record when editing - never rewritten by a later default-currency change (spec: currency architecture). */
+    val currencyCode: String? = null,
     val category: ExpenseCategory = ExpenseCategory.OTHER,
     val description: String = "",
     val mileage: String = "",
@@ -39,13 +42,20 @@ class ExpenseFormViewModel(private val container: AppContainer, private val vehi
                 container.expenseRepository.getById(recordId)?.let { e ->
                     _state.value = ExpenseFormState(
                         id = e.id, vehicleId = e.vehicleId, dateMillis = e.dateMillis, amount = e.amount.toString(),
+                        currencyCode = e.currencyCode,
                         category = e.category, description = e.description.orEmpty(), mileage = e.mileageKm?.toString().orEmpty(),
                         vendor = e.vendor.orEmpty(), notes = e.notes.orEmpty(), receiptPhotoPath = e.receiptPhotoPath, isLoading = false
                     )
                 } ?: run { _state.value = _state.value.copy(isLoading = false) }
             }
         } else {
-            _state.value = _state.value.copy(isLoading = false)
+            viewModelScope.launch {
+                val settings = container.settingsRepository.getOrDefault()
+                _state.value = _state.value.copy(
+                    currencyCode = EnumLabels.effectiveCurrencyCode(settings.currency, settings.customCurrencyCode),
+                    isLoading = false
+                )
+            }
         }
     }
 
@@ -64,7 +74,7 @@ class ExpenseFormViewModel(private val container: AppContainer, private val vehi
         }
         viewModelScope.launch {
             val entity = ExpenseEntity(
-                id = s.id, vehicleId = s.vehicleId, dateMillis = s.dateMillis, amount = amount!!, currencyCode = null,
+                id = s.id, vehicleId = s.vehicleId, dateMillis = s.dateMillis, amount = amount!!, currencyCode = s.currencyCode,
                 category = s.category, description = s.description.trim().ifBlank { null },
                 mileageKm = s.mileage.toIntOrNull(), vendor = s.vendor.trim().ifBlank { null },
                 notes = s.notes.trim().ifBlank { null }, receiptPhotoPath = s.receiptPhotoPath

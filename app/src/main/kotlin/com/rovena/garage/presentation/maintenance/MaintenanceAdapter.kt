@@ -27,7 +27,7 @@ class MaintenanceAdapter(private val onClick: (MaintenanceRowUi) -> Unit) :
             binding.recordTitle.text = context.getString(EnumLabels.of(row.record.category))
             binding.recordSubtitle.text = "${Formatters.date(context, row.record.dateMillis)} · ${Formatters.mileage(context, row.record.mileageKm, com.rovena.garage.domain.model.DistanceUnit.KM)}"
             binding.recordAmount.text = row.record.cost?.let {
-                Formatters.currency(context, it, com.rovena.garage.domain.model.AppCurrency.JOD, row.record.currencyCode)
+                Formatters.currency(context, it, row.record.currencyCode)
             } ?: ""
             if (row.dueStatus != null) {
                 binding.recordStatus.visibility = android.view.View.VISIBLE

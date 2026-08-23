@@ -4,7 +4,7 @@ import android.content.Context
 import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.ExpenseEntity
 import com.rovena.garage.data.local.entities.VehicleEntity
-import com.rovena.garage.domain.model.AppCurrency
+import com.rovena.garage.domain.usecase.CurrencyAggregator
 import com.rovena.garage.utils.pdf.PdfBuilder
 import java.io.File
 
@@ -16,21 +16,28 @@ object ExpensePdfGenerator {
         pdf.caption(context.getString(R.string.pdf_generated_on, Formatters.date(context, System.currentTimeMillis())))
         pdf.spacer()
         pdf.keyValueRow(context.getString(R.string.pdf_vehicle), "${vehicle.make} ${vehicle.model} (${vehicle.year})")
-        pdf.keyValueRow(context.getString(R.string.pdf_total), Formatters.currency(context, records.sumOf { it.amount }, AppCurrency.JOD, null), valueAccent = true)
+        pdf.keyValueRow(
+            context.getString(R.string.pdf_total),
+            Formatters.currencyTotal(context, CurrencyAggregator.aggregate(records.map { it.amount to (it.currencyCode ?: "JOD") })),
+            valueAccent = true
+        )
         pdf.spacer()
 
         val sorted = records.sortedByDescending { it.dateMillis }
         pdf.sectionHeader(context.getString(R.string.hub_section_expenses))
         sorted.forEach { expense ->
             val title = expense.description?.takeIf { it.isNotBlank() } ?: context.getString(EnumLabels.of(expense.category))
-            pdf.bodyLine("${Formatters.date(context, expense.dateMillis)} · $title · ${Formatters.currency(context, expense.amount, AppCurrency.JOD, expense.currencyCode)}")
+            pdf.bodyLine("${Formatters.date(context, expense.dateMillis)} · $title · ${Formatters.currency(context, expense.amount, expense.currencyCode)}")
             expense.vendor?.let { pdf.caption("  $it") }
         }
 
         pdf.spacer()
         pdf.sectionHeader(context.getString(R.string.insights_category_breakdown))
         records.groupBy { it.category }.entries.sortedByDescending { it.value.sumOf { r -> r.amount } }.forEach { (category, list) ->
-            pdf.keyValueRow(context.getString(EnumLabels.of(category)), Formatters.currency(context, list.sumOf { it.amount }, AppCurrency.JOD, null))
+            pdf.keyValueRow(
+                context.getString(EnumLabels.of(category)),
+                Formatters.currencyTotal(context, CurrencyAggregator.aggregate(list.map { it.amount to (it.currencyCode ?: "JOD") }))
+            )
         }
 
         pdf.spacer()

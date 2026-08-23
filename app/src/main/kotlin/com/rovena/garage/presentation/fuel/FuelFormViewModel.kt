@@ -7,6 +7,7 @@ import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.FuelRecordEntity
 import com.rovena.garage.domain.model.FuelType
 import com.rovena.garage.domain.usecase.MileageValidator
+import com.rovena.garage.utils.EnumLabels
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,6 +21,7 @@ data class FuelFormState(
     val liters: String = "",
     val pricePerLiter: String = "",
     val totalCost: String = "",
+    val currencyCode: String? = null,
     val fuelType: FuelType = FuelType.PETROL,
     val station: String = "",
     val isFullTank: Boolean = true,
@@ -44,6 +46,7 @@ class FuelFormViewModel(private val container: AppContainer, private val vehicle
                         id = r.id, vehicleId = r.vehicleId, dateMillis = r.dateMillis,
                         mileage = r.mileageKm.toString(), liters = r.liters.toString(),
                         pricePerLiter = r.pricePerLiter.toString(), totalCost = r.totalCost.toString(),
+                        currencyCode = r.currencyCode,
                         fuelType = r.fuelType, station = r.station.orEmpty(), isFullTank = r.isFullTank,
                         notes = r.notes.orEmpty(), isLoading = false
                     )
@@ -51,9 +54,13 @@ class FuelFormViewModel(private val container: AppContainer, private val vehicle
             }
         } else {
             viewModelScope.launch {
-                container.vehicleRepository.getById(vehicleId)?.let { v ->
-                    _state.value = _state.value.copy(fuelType = v.fuelType, isLoading = false)
-                } ?: run { _state.value = _state.value.copy(isLoading = false) }
+                val vehicle = container.vehicleRepository.getById(vehicleId)
+                val settings = container.settingsRepository.getOrDefault()
+                _state.value = _state.value.copy(
+                    fuelType = vehicle?.fuelType ?: _state.value.fuelType,
+                    currencyCode = EnumLabels.effectiveCurrencyCode(settings.currency, settings.customCurrencyCode),
+                    isLoading = false
+                )
             }
         }
     }
@@ -97,7 +104,7 @@ class FuelFormViewModel(private val container: AppContainer, private val vehicle
             val pricePerLiter = s.pricePerLiter.toDoubleOrNull() ?: (total!! / liters!!)
             val entity = FuelRecordEntity(
                 id = s.id, vehicleId = s.vehicleId, dateMillis = s.dateMillis, mileageKm = mileage!!,
-                liters = liters!!, pricePerLiter = pricePerLiter, totalCost = total!!, currencyCode = null,
+                liters = liters!!, pricePerLiter = pricePerLiter, totalCost = total!!, currencyCode = s.currencyCode,
                 fuelType = s.fuelType, station = s.station.trim().ifBlank { null }, isFullTank = s.isFullTank,
                 notes = s.notes.trim().ifBlank { null }
             )

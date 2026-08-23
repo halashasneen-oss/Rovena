@@ -122,11 +122,11 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         bindStat(binding.statFuel, getString(R.string.dashboard_fuel),
             Formatters.fuelEconomy(requireContext(), state.fuelAvgL100Km, state.fuelEconomyUnit))
         bindStat(binding.statMonthlyCost, getString(R.string.dashboard_monthly_cost),
-            Formatters.currency(requireContext(), state.monthlyCost, state.currency, state.customCurrencyCode))
+            Formatters.currencyTotalCompact(requireContext(), state.monthlyCost))
         bindStat(binding.statWeeklyDistance, getString(R.string.dashboard_weekly_distance),
             state.weeklyDistanceKm?.let { Formatters.mileage(requireContext(), it, state.distanceUnit) } ?: getString(R.string.not_enough_data))
         bindStat(binding.statWeeklySpend, getString(R.string.dashboard_weekly_spend),
-            Formatters.currency(requireContext(), state.weeklyCost, state.currency, state.customCurrencyCode))
+            Formatters.currencyTotalCompact(requireContext(), state.weeklyCost))
 
         binding.upcomingEmptyText.visibility = View.VISIBLE
         binding.upcomingEmptyText.text = if (state.upcomingTasks.isEmpty()) {

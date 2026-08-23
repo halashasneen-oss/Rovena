@@ -20,7 +20,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.MaintenanceRecordEntity
 import com.rovena.garage.databinding.FragmentGenericListBinding
-import com.rovena.garage.domain.model.AppCurrency
 import com.rovena.garage.domain.usecase.ServicePlanCatalog
 import com.rovena.garage.presentation.common.appContainer
 import com.rovena.garage.presentation.common.resolveVehicleId
@@ -75,7 +74,7 @@ class MaintenanceListFragment : Fragment(R.layout.fragment_generic_list) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     adapter.submitList(state.rows)
-                    binding.screenSummary.text = Formatters.currency(requireContext(), state.totalCost, AppCurrency.JOD, null)
+                    binding.screenSummary.text = Formatters.currencyTotal(requireContext(), state.totalCost)
                     val empty = !state.isLoading && state.rows.isEmpty()
                     binding.emptyState.root.visibility = if (empty) View.VISIBLE else View.GONE
                     binding.listRecycler.visibility = if (empty) View.GONE else View.VISIBLE

@@ -13,6 +13,7 @@ import com.rovena.garage.data.local.entities.VehicleEntity
 import com.rovena.garage.domain.model.DueStatus
 import com.rovena.garage.domain.model.HealthStatus
 import com.rovena.garage.domain.model.MaintenanceCategory
+import com.rovena.garage.domain.usecase.CurrencyAggregator
 import com.rovena.garage.domain.usecase.DueStatusCalculator
 import com.rovena.garage.domain.usecase.FuelStatsCalculator
 import com.rovena.garage.domain.usecase.HealthScoreCalculator
@@ -46,17 +47,16 @@ data class DashboardUiState(
     val healthStatus: HealthStatus? = null,
     val nextService: UpcomingTaskUi? = null,
     val fuelAvgL100Km: Double? = null,
-    val monthlyCost: Double = 0.0,
+    /** Never a blind sum across currencies (spec: multi-currency analytics). */
+    val monthlyCost: CurrencyAggregator.CurrencyTotal = CurrencyAggregator.CurrencyTotal.Empty,
     /** Distance driven in the last 7 days, from the vehicle's own logged odometer readings (fuel fill-ups + maintenance records) - null when fewer than 2 readings fall in that window, rather than a fabricated number (spec: Daily/Weekly in-app summary). */
     val weeklyDistanceKm: Int? = null,
-    val weeklyCost: Double = 0.0,
+    val weeklyCost: CurrencyAggregator.CurrencyTotal = CurrencyAggregator.CurrencyTotal.Empty,
     val upcomingTasks: List<UpcomingTaskUi> = emptyList(),
     val vehicleStatus: PriorityEngine.VehicleStatus = PriorityEngine.VehicleStatus.HEALTHY,
     val recentActivity: List<TimelineEventEntity> = emptyList(),
     val distanceUnit: com.rovena.garage.domain.model.DistanceUnit = com.rovena.garage.domain.model.DistanceUnit.KM,
     val fuelEconomyUnit: com.rovena.garage.domain.model.FuelEconomyUnit = com.rovena.garage.domain.model.FuelEconomyUnit.L_100KM,
-    val currency: com.rovena.garage.domain.model.AppCurrency = com.rovena.garage.domain.model.AppCurrency.JOD,
-    val customCurrencyCode: String? = null,
     val isLoading: Boolean = true
 )
 
@@ -268,9 +268,9 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
         val fuelStats = FuelStatsCalculator.compute(fuelEntries)
 
         val currentMonth = YearMonth.now()
-        val monthlyFuel = fuel.filter { YearMonth.from(it.dateMillis.toLocalDate()) == currentMonth }.sumOf { it.totalCost }
-        val monthlyMaintenance = maintenance.filter { YearMonth.from(it.dateMillis.toLocalDate()) == currentMonth }.sumOf { it.cost ?: 0.0 }
-        val monthlyExpense = expenses.filter { YearMonth.from(it.dateMillis.toLocalDate()) == currentMonth }.sumOf { it.amount }
+        val monthlyFuel = fuel.filter { YearMonth.from(it.dateMillis.toLocalDate()) == currentMonth }.map { it.totalCost to (it.currencyCode ?: "JOD") }
+        val monthlyMaintenance = maintenance.filter { YearMonth.from(it.dateMillis.toLocalDate()) == currentMonth }.mapNotNull { r -> r.cost?.let { it to (r.currencyCode ?: "JOD") } }
+        val monthlyExpense = expenses.filter { YearMonth.from(it.dateMillis.toLocalDate()) == currentMonth }.map { it.amount to (it.currencyCode ?: "JOD") }
 
         // Daily/Weekly in-app summary (spec) - the trailing 7 days including today.
         val weekStart = today.minusDays(6)
@@ -278,9 +278,9 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
         val weeklyDistanceKm = if (weeklyOdometerReadings.size >= 2) {
             weeklyOdometerReadings.maxOf { it.mileageKm } - weeklyOdometerReadings.minOf { it.mileageKm }
         } else null
-        val weeklyFuel = fuel.filter { !it.dateMillis.toLocalDate().isBefore(weekStart) }.sumOf { it.totalCost }
-        val weeklyMaintenance = maintenance.filter { !it.dateMillis.toLocalDate().isBefore(weekStart) }.sumOf { it.cost ?: 0.0 }
-        val weeklyExpense = expenses.filter { !it.dateMillis.toLocalDate().isBefore(weekStart) }.sumOf { it.amount }
+        val weeklyFuel = fuel.filter { !it.dateMillis.toLocalDate().isBefore(weekStart) }.map { it.totalCost to (it.currencyCode ?: "JOD") }
+        val weeklyMaintenance = maintenance.filter { !it.dateMillis.toLocalDate().isBefore(weekStart) }.mapNotNull { r -> r.cost?.let { it to (r.currencyCode ?: "JOD") } }
+        val weeklyExpense = expenses.filter { !it.dateMillis.toLocalDate().isBefore(weekStart) }.map { it.amount to (it.currencyCode ?: "JOD") }
 
         return DashboardUiState(
             hasAnyVehicle = true,
@@ -289,16 +289,14 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
             healthStatus = health.status,
             nextService = nextService,
             fuelAvgL100Km = fuelStats.averageLitersPer100Km,
-            monthlyCost = monthlyFuel + monthlyMaintenance + monthlyExpense,
+            monthlyCost = CurrencyAggregator.aggregate(monthlyFuel + monthlyMaintenance + monthlyExpense),
             weeklyDistanceKm = weeklyDistanceKm,
-            weeklyCost = weeklyFuel + weeklyMaintenance + weeklyExpense,
+            weeklyCost = CurrencyAggregator.aggregate(weeklyFuel + weeklyMaintenance + weeklyExpense),
             upcomingTasks = upcomingTasks.take(5),
             vehicleStatus = priorityResult.vehicleStatus,
             recentActivity = timeline.take(6),
             distanceUnit = settings.distanceUnit,
             fuelEconomyUnit = settings.fuelEconomyUnit,
-            currency = settings.currency,
-            customCurrencyCode = settings.customCurrencyCode,
             isLoading = false
         )
     }

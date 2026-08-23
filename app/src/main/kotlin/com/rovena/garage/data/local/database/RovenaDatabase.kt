@@ -51,7 +51,7 @@ import com.rovena.garage.data.local.entities.VehiclePhotoEntity
         VehicleNoteEntity::class,
         PartEntity::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = true
 )
 @TypeConverters(Converters::class)

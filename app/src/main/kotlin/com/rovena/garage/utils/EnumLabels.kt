@@ -169,4 +169,16 @@ object EnumLabels {
         AppCurrency.CUSTOM -> customCode?.takeIf { it.isNotBlank() } ?: "?"
         else -> currency.code
     }
+
+    /**
+     * The 3-letter code to permanently stamp onto a new financial record (spec:
+     * currency architecture - every record stores its currency at creation
+     * time). Unlike [currencySymbolOrCode], this never returns a placeholder
+     * like "?": a blank custom code falls back to JOD rather than persisting
+     * something unusable.
+     */
+    fun effectiveCurrencyCode(currency: AppCurrency, customCode: String?): String = when (currency) {
+        AppCurrency.CUSTOM -> customCode?.trim()?.uppercase()?.takeIf { it.isNotBlank() } ?: AppCurrency.JOD.code
+        else -> currency.code
+    }
 }

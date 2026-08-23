@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rovena.garage.data.local.entities.FuelRecordEntity
 import com.rovena.garage.databinding.ItemRecordRowBinding
-import com.rovena.garage.domain.model.AppCurrency
 import com.rovena.garage.domain.model.DistanceUnit
 import com.rovena.garage.utils.Formatters
 
@@ -25,7 +24,7 @@ class FuelAdapter(private val onClick: (FuelRecordEntity) -> Unit) : ListAdapter
             val context = binding.root.context
             binding.recordTitle.text = "${record.liters} L" + if (record.isFullTank) "" else " · " + context.getString(com.rovena.garage.R.string.fuel_partial)
             binding.recordSubtitle.text = "${Formatters.date(context, record.dateMillis)} · ${Formatters.mileage(context, record.mileageKm, DistanceUnit.KM)}"
-            binding.recordAmount.text = Formatters.currency(context, record.totalCost, AppCurrency.JOD, record.currencyCode)
+            binding.recordAmount.text = Formatters.currency(context, record.totalCost, record.currencyCode)
             binding.recordStatus.visibility = android.view.View.GONE
             binding.root.setOnClickListener { onClick(record) }
         }
