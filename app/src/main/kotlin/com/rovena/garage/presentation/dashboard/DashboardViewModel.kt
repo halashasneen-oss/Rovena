@@ -17,6 +17,7 @@ import com.rovena.garage.domain.usecase.DueStatusCalculator
 import com.rovena.garage.domain.usecase.FuelStatsCalculator
 import com.rovena.garage.domain.usecase.MileageIntelligenceCalculator
 import com.rovena.garage.domain.usecase.PriorityEngine
+import com.rovena.garage.utils.EnumLabels
 import com.rovena.garage.utils.HealthInputsBuilder
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -31,7 +32,10 @@ import java.time.YearMonth
 import java.time.ZoneId
 
 data class UpcomingTaskUi(
+    /** User-entered free text (document name, reminder title, part name) - ignored when [titleRes] is set. */
     val title: String,
+    /** Localized label resource for a fixed-vocabulary source (currently: maintenance category) - never a raw enum constant name. */
+    val titleRes: Int? = null,
     val status: DueStatus,
     val remainingKm: Int?,
     val remainingDays: Long?,
@@ -156,8 +160,9 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
 
         val nextService = nextServiceEval?.let { (record, eval) ->
             UpcomingTaskUi(
-                record.category.name, eval.status, eval.remainingKm, eval.remainingDays,
-                estimatedDateMillisFor(eval.remainingDays, eval.estimatedDueDate)
+                title = "", titleRes = EnumLabels.of(record.category), status = eval.status,
+                remainingKm = eval.remainingKm, remainingDays = eval.remainingDays,
+                estimatedDateMillis = estimatedDateMillisFor(eval.remainingDays, eval.estimatedDueDate)
             )
         }
 
@@ -167,7 +172,7 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
         // combined into one ranked list, rather than three separate lists the user would
         // have to cross-reference themselves. PriorityEngine drops anything not yet urgent
         // (UPCOMING) so this never becomes a dump of every tracked item.
-        data class AttentionCandidate(val attentionItem: PriorityEngine.AttentionItem, val estimatedDateMillis: Long?)
+        data class AttentionCandidate(val attentionItem: PriorityEngine.AttentionItem, val estimatedDateMillis: Long?, val titleRes: Int? = null)
 
         val maintenanceCandidates = maintenance
             .filter { it.nextDueMileageKm != null || it.nextDueDateMillis != null }
@@ -179,7 +184,8 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
                 ) ?: return@mapNotNull null
                 AttentionCandidate(
                     PriorityEngine.AttentionItem(PriorityEngine.AttentionSourceType.MAINTENANCE, record.id, record.category.name, eval.status, eval.remainingKm, eval.remainingDays),
-                    estimatedDateMillisFor(eval.remainingDays, eval.estimatedDueDate)
+                    estimatedDateMillisFor(eval.remainingDays, eval.estimatedDueDate),
+                    titleRes = EnumLabels.of(record.category)
                 )
             }
 
@@ -223,12 +229,17 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
 
         val attentionCandidates = maintenanceCandidates + documentCandidates + reminderCandidates + partWarrantyCandidates
         val estimateByKey = attentionCandidates.associate { (it.attentionItem.type to it.attentionItem.sourceId) to it.estimatedDateMillis }
+        val titleResByKey = attentionCandidates.mapNotNull { candidate ->
+            candidate.titleRes?.let { (candidate.attentionItem.type to candidate.attentionItem.sourceId) to it }
+        }.toMap()
         val priorityResult = PriorityEngine.build(attentionCandidates.map { it.attentionItem })
 
         val upcomingTasks = priorityResult.items.map { attentionItem ->
+            val key = attentionItem.type to attentionItem.sourceId
             UpcomingTaskUi(
-                attentionItem.title, attentionItem.status, attentionItem.remainingKm, attentionItem.remainingDays,
-                estimateByKey[attentionItem.type to attentionItem.sourceId]
+                title = attentionItem.title, titleRes = titleResByKey[key], status = attentionItem.status,
+                remainingKm = attentionItem.remainingKm, remainingDays = attentionItem.remainingDays,
+                estimatedDateMillis = estimateByKey[key]
             )
         }
 

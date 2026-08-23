@@ -25,7 +25,7 @@ class UpcomingTaskAdapter : ListAdapter<UpcomingTaskUi, UpcomingTaskAdapter.VH>(
     class VH(private val binding: ItemUpcomingTaskBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(task: UpcomingTaskUi) {
             val context = binding.root.context
-            binding.taskTitle.text = task.title
+            binding.taskTitle.text = task.titleRes?.let { context.getString(it) } ?: task.title
             val color = ContextCompat.getColor(context, StatusColors.of(task.status))
             binding.statusDot.backgroundTintList = android.content.res.ColorStateList.valueOf(color)
             val statusLabel = context.getString(EnumLabels.of(task.status))

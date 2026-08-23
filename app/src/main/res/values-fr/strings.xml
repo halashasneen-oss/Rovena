@@ -115,7 +115,7 @@
     <string name="health_detail_no_data">Pas encore de données</string>
     <string name="health_detail_confidence">Confiance des données : %1$d%% des données attendues sont disponibles. Les catégories sans données sont exclues du score plutôt que pénalisées.</string>
     <string name="health_detail_trend_title">Tendance du score</string>
-    <string name="health_detail_trend_empty">Pas encore assez d'historique. Revenez dans quelques jours pour voir la tendance.</string>
+    <string name="health_detail_trend_empty">Pas encore assez d\'historique. Revenez dans quelques jours pour voir la tendance.</string>
     <string name="health_detail_trend_range">%1$d → %2$d sur les %3$d derniers jours enregistrés</string>
     <string name="mileage_estimated_date">≈ %1$s</string>
 
