@@ -37,6 +37,15 @@ data class ReminderEntity(
     val lastTriggeredAtMillis: Long? = null,
     /** Last time a due/overdue notification was posted for this reminder, so the periodic check never double-notifies. */
     val lastNotifiedAtMillis: Long? = null,
+    /**
+     * The most urgent staged day-threshold (30/14/7/3/1/0, or
+     * [com.rovena.garage.domain.usecase.ReminderStageCalculator.EXPIRED_STAGE])
+     * already notified for a date-based reminder, so the staged schedule never
+     * repeats a stage. Null means no stage has fired yet. Reset to null whenever
+     * the reminder's dueDateMillis actually changes (renewal/recurrence), so a
+     * fresh deadline gets its own fresh countdown.
+     */
+    val lastNotifiedStageDays: Int? = null,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 )

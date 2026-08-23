@@ -272,6 +272,7 @@
     <string name="reminder_notification_body_km">متبقٍ %1$d كم</string>
     <string name="reminder_notification_body_days">متبقٍ %1$d يوم</string>
     <string name="reminder_notification_body_overdue">متأخر</string>
+    <string name="reminder_notification_body_due_today">مستحق اليوم</string>
     <string name="reminder_notification_body_with_vehicle">%1$s • %2$s</string>
     <string name="document_expiry_notification_title">%1$s سينتهي قريباً</string>
     <string name="document_expiry_notification_body">ينتهي في %1$s</string>

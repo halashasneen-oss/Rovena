@@ -22,13 +22,15 @@ class ReminderRepository(
     suspend fun getAllActiveOnce(): List<ReminderEntity> = reminderDao.getAllActiveOnce()
 
     suspend fun addOrUpdate(reminder: ReminderEntity): Long {
-        val id = if (reminder.id == 0L) {
-            reminderDao.insert(reminder)
+        val existing = if (reminder.id != 0L) reminderDao.getById(reminder.id) else null
+        val toSave = resetStageIfDateChanged(existing, reminder)
+        val id = if (toSave.id == 0L) {
+            reminderDao.insert(toSave)
         } else {
-            reminderDao.update(reminder.copy(updatedAt = System.currentTimeMillis()))
-            reminder.id
+            reminderDao.update(toSave.copy(updatedAt = System.currentTimeMillis()))
+            toSave.id
         }
-        timelineSyncer.upsertForReminder(reminder.copy(id = id))
+        timelineSyncer.upsertForReminder(toSave.copy(id = id))
         return id
     }
 
@@ -40,6 +42,7 @@ class ReminderRepository(
                     addMonthsToMillis(reminder.dueDateMillis ?: completedAt, months)
                 },
                 lastTriggeredAtMillis = completedAt,
+                lastNotifiedStageDays = null, // a rolled-over cycle gets its own fresh staged countdown
                 updatedAt = completedAt
             )
             reminderDao.update(next)
@@ -54,6 +57,10 @@ class ReminderRepository(
         reminderDao.markNotified(reminderId, whenMillis)
     }
 
+    suspend fun markNotifiedStage(reminderId: Long, stage: Int, whenMillis: Long = System.currentTimeMillis()) {
+        reminderDao.markNotifiedStage(reminderId, stage, whenMillis)
+    }
+
     suspend fun delete(reminder: ReminderEntity) {
         reminderDao.delete(reminder)
         timelineSyncer.removeForSource(TimelineEventType.REMINDER, reminder.id)
@@ -64,5 +71,20 @@ class ReminderRepository(
         cal.timeInMillis = baseMillis
         cal.add(java.util.Calendar.MONTH, months)
         return cal.timeInMillis
+    }
+
+    companion object {
+        /**
+         * Resets a date-based reminder's staged-notification progress when its
+         * due date actually changed (e.g. a document was renewed, or a recurring
+         * reminder rolled to its next cycle) - the countdown should restart for
+         * the new deadline, not treat it as already partly notified.
+         */
+        fun resetStageIfDateChanged(existing: ReminderEntity?, incoming: ReminderEntity): ReminderEntity =
+            if (existing != null && existing.dueDateMillis != incoming.dueDateMillis) {
+                incoming.copy(lastNotifiedStageDays = null)
+            } else {
+                incoming
+            }
     }
 }

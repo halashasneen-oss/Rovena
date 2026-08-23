@@ -272,6 +272,7 @@
     <string name="reminder_notification_body_km">%1$d KM restants</string>
     <string name="reminder_notification_body_days">%1$d jours restants</string>
     <string name="reminder_notification_body_overdue">En retard</string>
+    <string name="reminder_notification_body_due_today">Échéance aujourd\'hui</string>
     <string name="reminder_notification_body_with_vehicle">%1$s • %2$s</string>
     <string name="document_expiry_notification_title">%1$s expire bientôt</string>
     <string name="document_expiry_notification_body">Expire le %1$s</string>

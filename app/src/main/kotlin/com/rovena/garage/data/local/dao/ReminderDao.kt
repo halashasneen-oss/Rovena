@@ -44,4 +44,7 @@ interface ReminderDao {
 
     @Query("UPDATE reminders SET lastNotifiedAtMillis = :whenMillis WHERE id = :reminderId")
     suspend fun markNotified(reminderId: Long, whenMillis: Long)
+
+    @Query("UPDATE reminders SET lastNotifiedStageDays = :stage, lastNotifiedAtMillis = :whenMillis WHERE id = :reminderId")
+    suspend fun markNotifiedStage(reminderId: Long, stage: Int, whenMillis: Long)
 }

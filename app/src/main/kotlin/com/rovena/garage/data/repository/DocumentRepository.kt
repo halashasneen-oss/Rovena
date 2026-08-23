@@ -59,8 +59,17 @@ class DocumentRepository(
 
         var reminderId: Long? = toSave.reminderId
         if (toSave.expiryDateMillis != null) {
-            val reminder = ReminderEntity(
-                id = reminderId ?: 0,
+            val existingReminder = reminderId?.let { reminderDao.getById(it) }
+            // Base the reminder on the existing row (preserving its staged-notification
+            // progress, createdAt, etc.) when there is one, only overriding the fields a
+            // document edit can actually change - a freshly-constructed ReminderEntity
+            // here would silently wipe lastNotifiedStageDays/lastTriggeredAtMillis on
+            // every single document save, not just when the expiry date changes.
+            val candidate = existingReminder?.copy(
+                vehicleId = toSave.vehicleId,
+                title = toSave.name,
+                dueDateMillis = toSave.expiryDateMillis
+            ) ?: ReminderEntity(
                 vehicleId = toSave.vehicleId,
                 title = toSave.name,
                 basis = ReminderBasis.DATE,
@@ -68,6 +77,7 @@ class DocumentRepository(
                 isRecurring = false,
                 isActive = true
             )
+            val reminder = ReminderRepository.resetStageIfDateChanged(existingReminder, candidate)
             reminderId = if (reminderId == null) reminderDao.insert(reminder) else {
                 reminderDao.update(reminder); reminderId
             }
