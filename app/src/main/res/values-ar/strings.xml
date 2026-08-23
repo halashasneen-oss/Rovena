@@ -142,8 +142,9 @@
     <string name="dashboard_next_service">الصيانة القادمة</string>
     <string name="dashboard_fuel">الوقود</string>
     <string name="dashboard_monthly_cost">التكلفة الشهرية</string>
-    <string name="dashboard_upcoming_tasks">المهام القادمة</string>
-    <string name="dashboard_no_upcoming_tasks">لا توجد مهام قادمة. كل شيء محدث.</string>
+    <string name="dashboard_upcoming_tasks">يحتاج انتباهك</string>
+    <string name="dashboard_no_upcoming_tasks">كل شيء على ما يرام - لا يوجد شيء يحتاج انتباهك الآن.</string>
+    <string name="dashboard_attention_count">%1$d عنصر يحتاج للانتباه</string>
     <string name="dashboard_recent_activity">النشاط الأخير</string>
     <string name="dashboard_no_recent_activity">لا يوجد نشاط بعد.</string>
     <string name="dashboard_quick_actions">إجراءات سريعة</string>

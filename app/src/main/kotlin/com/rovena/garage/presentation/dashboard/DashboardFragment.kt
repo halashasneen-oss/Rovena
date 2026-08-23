@@ -124,7 +124,15 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         bindStat(binding.statMonthlyCost, getString(R.string.dashboard_monthly_cost),
             Formatters.currency(requireContext(), state.monthlyCost, state.currency, state.customCurrencyCode))
 
-        binding.upcomingEmptyText.visibility = if (state.upcomingTasks.isEmpty()) View.VISIBLE else View.GONE
+        binding.upcomingEmptyText.visibility = View.VISIBLE
+        binding.upcomingEmptyText.text = if (state.upcomingTasks.isEmpty()) {
+            getString(R.string.dashboard_no_upcoming_tasks)
+        } else {
+            getString(R.string.dashboard_attention_count, state.upcomingTasks.size)
+        }
+        binding.upcomingEmptyText.setTextColor(
+            androidx.core.content.ContextCompat.getColor(requireContext(), StatusColors.of(state.vehicleStatus))
+        )
         binding.upcomingTasksRecycler.visibility = if (state.upcomingTasks.isEmpty()) View.GONE else View.VISIBLE
         upcomingAdapter.submitList(state.upcomingTasks)
 

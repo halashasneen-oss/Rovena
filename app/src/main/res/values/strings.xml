@@ -156,8 +156,9 @@
     <string name="dashboard_next_service">Next Service</string>
     <string name="dashboard_fuel">Fuel</string>
     <string name="dashboard_monthly_cost">Monthly Cost</string>
-    <string name="dashboard_upcoming_tasks">Upcoming Tasks</string>
-    <string name="dashboard_no_upcoming_tasks">No upcoming tasks. You\'re all caught up.</string>
+    <string name="dashboard_upcoming_tasks">Needs Your Attention</string>
+    <string name="dashboard_no_upcoming_tasks">All caught up - nothing needs your attention right now.</string>
+    <string name="dashboard_attention_count">%1$d item(s) need attention</string>
     <string name="dashboard_recent_activity">Recent Activity</string>
     <string name="dashboard_no_recent_activity">No activity yet.</string>
     <string name="dashboard_quick_actions">Quick Actions</string>

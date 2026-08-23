@@ -51,8 +51,12 @@ class ReminderAdapter(
                 // A mileage-only reminder has no date of its own - if we have enough driving
                 // history to project one, show it as a labeled estimate rather than leaving
                 // the user with just a raw km countdown.
-                val estimateSuffix = if (remainingDays == null && eval.estimatedDueDate != null) {
-                    val millis = eval.estimatedDueDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                // estimatedDueDate is a nullable property of a data class declared in the
+                // domain Gradle module, so Kotlin won't smart-cast it across module
+                // boundaries even after a null check - capture it into a local val first.
+                val estimatedDueDate = eval.estimatedDueDate
+                val estimateSuffix = if (remainingDays == null && estimatedDueDate != null) {
+                    val millis = estimatedDueDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
                     " · " + context.getString(R.string.mileage_estimated_date, Formatters.dateShort(context, millis))
                 } else ""
                 binding.reminderDetail.text = detail + estimateSuffix

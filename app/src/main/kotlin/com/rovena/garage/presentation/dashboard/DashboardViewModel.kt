@@ -17,6 +17,7 @@ import com.rovena.garage.domain.usecase.DueStatusCalculator
 import com.rovena.garage.domain.usecase.FuelStatsCalculator
 import com.rovena.garage.domain.usecase.HealthScoreCalculator
 import com.rovena.garage.domain.usecase.MileageIntelligenceCalculator
+import com.rovena.garage.domain.usecase.PriorityEngine
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -47,6 +48,7 @@ data class DashboardUiState(
     val fuelAvgL100Km: Double? = null,
     val monthlyCost: Double = 0.0,
     val upcomingTasks: List<UpcomingTaskUi> = emptyList(),
+    val vehicleStatus: PriorityEngine.VehicleStatus = PriorityEngine.VehicleStatus.HEALTHY,
     val recentActivity: List<TimelineEventEntity> = emptyList(),
     val distanceUnit: com.rovena.garage.domain.model.DistanceUnit = com.rovena.garage.domain.model.DistanceUnit.KM,
     val fuelEconomyUnit: com.rovena.garage.domain.model.FuelEconomyUnit = com.rovena.garage.domain.model.FuelEconomyUnit.L_100KM,
@@ -177,20 +179,63 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
             )
         }
 
-        val upcomingTasks = reminders.mapNotNull { reminder ->
-            DueStatusCalculator.evaluate(
-                currentMileageKm = vehicle.currentMileageKm,
-                today = today,
-                dueMileageKm = reminder.dueMileageKm,
-                dueDate = reminder.dueDateMillis?.toLocalDate(),
-                averageKmPerDay = averageKmPerDay
-            )?.let { eval ->
-                UpcomingTaskUi(
-                    reminder.title, eval.status, eval.remainingKm, eval.remainingDays,
+        // "Needs Your Attention" (spec: unified priority engine) - every source of
+        // something actually needing the user's attention (overdue/due-soon maintenance,
+        // expiring/expired documents, due/overdue reminders) evaluated the same way and
+        // combined into one ranked list, rather than three separate lists the user would
+        // have to cross-reference themselves. PriorityEngine drops anything not yet urgent
+        // (UPCOMING) so this never becomes a dump of every tracked item.
+        data class AttentionCandidate(val attentionItem: PriorityEngine.AttentionItem, val estimatedDateMillis: Long?)
+
+        val maintenanceCandidates = maintenance
+            .filter { it.nextDueMileageKm != null || it.nextDueDateMillis != null }
+            .mapNotNull { record ->
+                val eval = DueStatusCalculator.evaluate(
+                    currentMileageKm = vehicle.currentMileageKm, today = today,
+                    dueMileageKm = record.nextDueMileageKm, dueDate = record.nextDueDateMillis?.toLocalDate(),
+                    averageKmPerDay = averageKmPerDay
+                ) ?: return@mapNotNull null
+                AttentionCandidate(
+                    PriorityEngine.AttentionItem(PriorityEngine.AttentionSourceType.MAINTENANCE, record.id, record.category.name, eval.status, eval.remainingKm, eval.remainingDays),
                     estimatedDateMillisFor(eval.remainingDays, eval.estimatedDueDate)
                 )
             }
-        }.sortedBy { it.status.ordinal }
+
+        val documentCandidates = documents.mapNotNull { doc ->
+            val expiry = doc.expiryDateMillis ?: return@mapNotNull null
+            val eval = DueStatusCalculator.evaluate(
+                currentMileageKm = vehicle.currentMileageKm, today = today,
+                dueMileageKm = null, dueDate = expiry.toLocalDate(),
+                averageKmPerDay = averageKmPerDay
+            ) ?: return@mapNotNull null
+            AttentionCandidate(
+                PriorityEngine.AttentionItem(PriorityEngine.AttentionSourceType.DOCUMENT, doc.id, doc.name, eval.status, eval.remainingKm, eval.remainingDays),
+                estimatedDateMillisFor(eval.remainingDays, eval.estimatedDueDate)
+            )
+        }
+
+        val reminderCandidates = reminders.mapNotNull { reminder ->
+            val eval = DueStatusCalculator.evaluate(
+                currentMileageKm = vehicle.currentMileageKm, today = today,
+                dueMileageKm = reminder.dueMileageKm, dueDate = reminder.dueDateMillis?.toLocalDate(),
+                averageKmPerDay = averageKmPerDay
+            ) ?: return@mapNotNull null
+            AttentionCandidate(
+                PriorityEngine.AttentionItem(PriorityEngine.AttentionSourceType.REMINDER, reminder.id, reminder.title, eval.status, eval.remainingKm, eval.remainingDays),
+                estimatedDateMillisFor(eval.remainingDays, eval.estimatedDueDate)
+            )
+        }
+
+        val attentionCandidates = maintenanceCandidates + documentCandidates + reminderCandidates
+        val estimateByKey = attentionCandidates.associate { (it.attentionItem.type to it.attentionItem.sourceId) to it.estimatedDateMillis }
+        val priorityResult = PriorityEngine.build(attentionCandidates.map { it.attentionItem })
+
+        val upcomingTasks = priorityResult.items.map { attentionItem ->
+            UpcomingTaskUi(
+                attentionItem.title, attentionItem.status, attentionItem.remainingKm, attentionItem.remainingDays,
+                estimateByKey[attentionItem.type to attentionItem.sourceId]
+            )
+        }
 
         val fuelEntries = fuel.sortedBy { it.mileageKm }.map {
             FuelStatsCalculator.FuelEntry(
@@ -217,6 +262,7 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
             fuelAvgL100Km = fuelStats.averageLitersPer100Km,
             monthlyCost = monthlyFuel + monthlyMaintenance + monthlyExpense,
             upcomingTasks = upcomingTasks.take(5),
+            vehicleStatus = priorityResult.vehicleStatus,
             recentActivity = timeline.take(6),
             distanceUnit = settings.distanceUnit,
             fuelEconomyUnit = settings.fuelEconomyUnit,

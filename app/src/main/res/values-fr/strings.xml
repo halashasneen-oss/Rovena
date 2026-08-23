@@ -142,8 +142,9 @@
     <string name="dashboard_next_service">Prochain entretien</string>
     <string name="dashboard_fuel">Carburant</string>
     <string name="dashboard_monthly_cost">Coût mensuel</string>
-    <string name="dashboard_upcoming_tasks">Tâches à venir</string>
-    <string name="dashboard_no_upcoming_tasks">Aucune tâche à venir. Tout est à jour.</string>
+    <string name="dashboard_upcoming_tasks">Nécessite votre attention</string>
+    <string name="dashboard_no_upcoming_tasks">Tout est à jour - rien ne nécessite votre attention pour le moment.</string>
+    <string name="dashboard_attention_count">%1$d élément(s) nécessitent votre attention</string>
     <string name="dashboard_recent_activity">Activité récente</string>
     <string name="dashboard_no_recent_activity">Aucune activité pour le moment.</string>
     <string name="dashboard_quick_actions">Actions rapides</string>
