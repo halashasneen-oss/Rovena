@@ -58,4 +58,21 @@ object Formatters {
         val formatter = DateTimeFormatter.ofPattern("d MMM", locale)
         return Instant.ofEpochMilli(epochMillis).atZone(ZoneId.systemDefault()).toLocalDate().format(formatter)
     }
+
+    /**
+     * Relative section-header label for a date-grouped list (Timeline 2.0):
+     * "Today" / "Yesterday" for the two most recent days, [dateShort] (day +
+     * month) for anything else this year, [date] (day + month + year) once
+     * the entry is from a previous year.
+     */
+    fun timelineSectionLabel(context: Context, epochMillis: Long): String {
+        val entryDate = Instant.ofEpochMilli(epochMillis).atZone(ZoneId.systemDefault()).toLocalDate()
+        val today = java.time.LocalDate.now()
+        return when {
+            entryDate == today -> context.getString(R.string.date_today)
+            entryDate == today.minusDays(1) -> context.getString(R.string.date_yesterday)
+            entryDate.year == today.year -> dateShort(context, epochMillis)
+            else -> date(context, epochMillis)
+        }
+    }
 }

@@ -303,6 +303,8 @@
     <string name="timeline_empty_title">لا يوجد شيء هنا بعد</string>
     <string name="timeline_empty_message">سيظهر هنا الوقود والصيانة والمصاريف والمزيد عند إضافتها.</string>
     <string name="timeline_filter_all">الكل</string>
+    <string name="date_today">اليوم</string>
+    <string name="date_yesterday">أمس</string>
 
     <string name="reminder_basis_mileage">المسافة المقطوعة</string>
     <string name="reminder_basis_date">التاريخ</string>
@@ -320,6 +322,7 @@
 
     <string name="insights_monthly_spending">الإنفاق الشهري</string>
     <string name="insights_fuel_trend">اتجاه استهلاك الوقود</string>
+    <string name="insights_maintenance_trend">اتجاه تكلفة الصيانة</string>
     <string name="insights_category_breakdown">توزيع المصاريف</string>
     <string name="insights_total_distance">إجمالي المسافة</string>
     <string name="insights_avg_consumption">متوسط الاستهلاك</string>

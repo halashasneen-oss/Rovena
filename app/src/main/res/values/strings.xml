@@ -320,6 +320,8 @@
     <string name="timeline_empty_title">Nothing here yet</string>
     <string name="timeline_empty_message">Fuel, maintenance, expenses and more will show up here as you add them.</string>
     <string name="timeline_filter_all">All</string>
+    <string name="date_today">Today</string>
+    <string name="date_yesterday">Yesterday</string>
 
     <string name="reminder_basis_mileage">Mileage</string>
     <string name="reminder_basis_date">Date</string>
@@ -337,6 +339,7 @@
 
     <string name="insights_monthly_spending">Monthly Spending</string>
     <string name="insights_fuel_trend">Fuel Consumption Trend</string>
+    <string name="insights_maintenance_trend">Maintenance Cost Trend</string>
     <string name="insights_category_breakdown">Expense Breakdown</string>
     <string name="insights_total_distance">Total Distance</string>
     <string name="insights_avg_consumption">Avg Consumption</string>

@@ -13,13 +13,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
 import com.rovena.garage.R
+import com.rovena.garage.data.local.entities.TimelineEventEntity
 import com.rovena.garage.databinding.FragmentGenericListBinding
 import com.rovena.garage.domain.model.TimelineEventType
-import com.rovena.garage.presentation.common.TimelineEventAdapter
 import com.rovena.garage.presentation.common.appContainer
 import com.rovena.garage.presentation.common.resolveVehicleId
 import com.rovena.garage.presentation.common.viewModelFactory
+import com.rovena.garage.utils.Formatters
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 
 class TimelineFragment : Fragment(R.layout.fragment_generic_list) {
 
@@ -30,7 +34,7 @@ class TimelineFragment : Fragment(R.layout.fragment_generic_list) {
         viewModelFactory { TimelineViewModel(appContainer, resolveVehicleId(appContainer)) }
     }
 
-    private val adapter = TimelineEventAdapter()
+    private val adapter = SectionedTimelineAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentGenericListBinding.bind(inflater.inflate(R.layout.fragment_generic_list, container, false))
@@ -53,7 +57,7 @@ class TimelineFragment : Fragment(R.layout.fragment_generic_list) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    adapter.submitList(state.events)
+                    adapter.submitList(groupByDateSection(state.events))
                     val empty = !state.isLoading && state.events.isEmpty()
                     binding.emptyState.root.visibility = if (empty) View.VISIBLE else View.GONE
                     binding.listRecycler.visibility = if (empty) View.GONE else View.VISIBLE
@@ -82,6 +86,27 @@ class TimelineFragment : Fragment(R.layout.fragment_generic_list) {
             chip.setOnCheckedChangeListener { _, checked -> if (checked) viewModel.setFilter(type) }
             binding.filterChipGroup.addView(chip)
         }
+    }
+
+    /**
+     * Timeline 2.0: inserts a [TimelineListItem.Header] before the first
+     * event of each calendar day (relying on [events] already being sorted
+     * most-recent-first, per `TimelineDao.observeByVehicle`'s `ORDER BY
+     * dateMillis DESC`) so consecutive same-day entries share one "TODAY" /
+     * "AUG 15" section header instead of repeating their own date.
+     */
+    private fun groupByDateSection(events: List<TimelineEventEntity>): List<TimelineListItem> {
+        val items = mutableListOf<TimelineListItem>()
+        var lastDate: LocalDate? = null
+        for (event in events) {
+            val eventDate = Instant.ofEpochMilli(event.dateMillis).atZone(ZoneId.systemDefault()).toLocalDate()
+            if (eventDate != lastDate) {
+                items.add(TimelineListItem.Header(Formatters.timelineSectionLabel(requireContext(), event.dateMillis)))
+                lastDate = eventDate
+            }
+            items.add(TimelineListItem.Event(event))
+        }
+        return items
     }
 
     override fun onDestroyView() {

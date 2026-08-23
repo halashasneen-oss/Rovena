@@ -27,6 +27,8 @@ data class InsightsUiState(
     val fuelStats: FuelStatsCalculator.FuelStats? = null,
     val expenseStats: ExpenseAggregator.ExpenseStats? = null,
     val monthlySpend: List<MonthlySpend> = emptyList(),
+    /** Maintenance-only cost per month, isolated from [monthlySpend]'s fuel+maintenance+expense combined total, so a maintenance cost trend doesn't get masked by fuel price swings. */
+    val maintenanceMonthlySpend: List<MonthlySpend> = emptyList(),
     val categoryBreakdown: List<CategorySlice> = emptyList(),
     val totalDistanceKm: Int? = null,
     val maintenanceCount: Int = 0,
@@ -74,6 +76,10 @@ class InsightsViewModel(private val container: AppContainer, vehicleIdFlow: Flow
                 val expTotal = expenses.filter { YearMonth.from(Instant.ofEpochMilli(it.dateMillis).atZone(ZoneId.systemDefault()).toLocalDate()) == month }.sumOf { it.amount }
                 MonthlySpend(month, fuelTotal + maintTotal + expTotal)
             }
+            val maintenanceMonthlySpend = months.map { month ->
+                val maintTotal = maintenance.filter { YearMonth.from(Instant.ofEpochMilli(it.dateMillis).atZone(ZoneId.systemDefault()).toLocalDate()) == month }.sumOf { it.cost ?: 0.0 }
+                MonthlySpend(month, maintTotal)
+            }
 
             val categoryBreakdown = expenseStats.totalByCategory.entries
                 .sortedByDescending { it.value }
@@ -82,7 +88,8 @@ class InsightsViewModel(private val container: AppContainer, vehicleIdFlow: Flow
 
             InsightsUiState(
                 vehicleId = vehicle.id, hasVehicle = true, fuelStats = fuelStats, expenseStats = expenseStats,
-                monthlySpend = monthlySpend, categoryBreakdown = categoryBreakdown, totalDistanceKm = totalDistance,
+                monthlySpend = monthlySpend, maintenanceMonthlySpend = maintenanceMonthlySpend,
+                categoryBreakdown = categoryBreakdown, totalDistanceKm = totalDistance,
                 maintenanceCount = maintenance.size, isLoading = false
             )
         }

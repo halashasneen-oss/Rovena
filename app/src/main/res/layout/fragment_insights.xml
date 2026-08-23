@@ -54,6 +54,16 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <com.google.android.material.card.MaterialCardView style="?attr/materialCardViewStyle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                    <TextView style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/insights_maintenance_trend" />
+                    <TextView android:id="@+id/maintenanceTrendEmpty" style="@style/TextAppearance.Rovena.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/not_enough_data" android:visibility="gone" />
+                    <com.rovena.garage.presentation.common.charts.BarChartView
+                        android:id="@+id/maintenanceTrendChart"
+                        android:layout_width="match_parent" android:layout_height="160dp" android:layout_marginTop="12dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <com.google.android.material.card.MaterialCardView style="?attr/materialCardViewStyle" android:layout_width="match_parent" android:layout_height="wrap_content">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
                     <TextView style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/insights_category_breakdown" />

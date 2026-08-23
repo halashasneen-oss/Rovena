@@ -303,6 +303,8 @@
     <string name="timeline_empty_title">Rien ici pour le moment</string>
     <string name="timeline_empty_message">Carburant, entretien, dépenses et plus apparaîtront ici au fur et à mesure.</string>
     <string name="timeline_filter_all">Tout</string>
+    <string name="date_today">Aujourd\'hui</string>
+    <string name="date_yesterday">Hier</string>
 
     <string name="reminder_basis_mileage">Kilométrage</string>
     <string name="reminder_basis_date">Date</string>
@@ -320,6 +322,7 @@
 
     <string name="insights_monthly_spending">Dépenses mensuelles</string>
     <string name="insights_fuel_trend">Tendance de consommation</string>
+    <string name="insights_maintenance_trend">Tendance des coûts d\'entretien</string>
     <string name="insights_category_breakdown">Répartition des dépenses</string>
     <string name="insights_total_distance">Distance totale</string>
     <string name="insights_avg_consumption">Consommation moyenne</string>

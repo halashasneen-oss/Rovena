@@ -91,6 +91,18 @@ class InsightsFragment : Fragment(R.layout.fragment_insights) {
             binding.fuelTrendEmpty.visibility = View.VISIBLE
         }
 
+        val maintenanceHasSpend = state.maintenanceMonthlySpend.any { it.total > 0 }
+        if (maintenanceHasSpend) {
+            binding.maintenanceTrendChart.visibility = View.VISIBLE
+            binding.maintenanceTrendEmpty.visibility = View.GONE
+            binding.maintenanceTrendChart.bars = state.maintenanceMonthlySpend.map {
+                BarChartView.Bar(it.month.month.getDisplayName(TextStyle.SHORT, Locale.getDefault()), it.total.toFloat())
+            }
+        } else {
+            binding.maintenanceTrendChart.visibility = View.GONE
+            binding.maintenanceTrendEmpty.visibility = View.VISIBLE
+        }
+
         binding.categoryDonut.slices = state.categoryBreakdown.mapIndexed { index, slice ->
             DonutChartView.Slice(slice.total.toFloat(), chartColors[index % chartColors.size])
         }
