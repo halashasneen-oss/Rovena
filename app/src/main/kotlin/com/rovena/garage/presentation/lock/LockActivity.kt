@@ -16,6 +16,7 @@ import com.rovena.garage.data.repository.PinVerifyResult
 import com.rovena.garage.databinding.ActivityLockBinding
 import com.rovena.garage.presentation.common.appContainer
 import com.rovena.garage.utils.PinHasher
+import com.rovena.garage.utils.applyEdgeToEdgeInsets
 import kotlinx.coroutines.launch
 
 class LockActivity : AppCompatActivity() {
@@ -38,6 +39,7 @@ class LockActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLockBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applyEdgeToEdgeInsets(binding.root)
 
         setupKeypad()
 

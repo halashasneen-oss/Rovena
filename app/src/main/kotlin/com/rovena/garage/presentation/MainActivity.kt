@@ -19,6 +19,7 @@ import com.rovena.garage.presentation.common.viewModelFactory
 import com.rovena.garage.presentation.lock.LockActivity
 import com.rovena.garage.presentation.onboarding.OnboardingActivity
 import com.rovena.garage.presentation.quickadd.QuickAddSheet
+import com.rovena.garage.utils.applyEdgeToEdgeInsets
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -43,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applyEdgeToEdgeInsets(binding.root)
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         navController = navHostFragment.navController

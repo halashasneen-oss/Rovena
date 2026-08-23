@@ -12,6 +12,7 @@ import com.rovena.garage.databinding.ActivityOnboardingBinding
 import com.rovena.garage.presentation.MainActivity
 import com.rovena.garage.presentation.common.appContainer
 import com.rovena.garage.presentation.vehicleform.VehicleFormFragment
+import com.rovena.garage.utils.applyEdgeToEdgeInsets
 import kotlinx.coroutines.launch
 
 class OnboardingActivity : AppCompatActivity() {
@@ -24,6 +25,7 @@ class OnboardingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applyEdgeToEdgeInsets(binding.root)
 
         adapter = OnboardingPagerAdapter(this)
         binding.onboardingPager.adapter = adapter
