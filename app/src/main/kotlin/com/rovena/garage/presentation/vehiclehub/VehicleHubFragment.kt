@@ -162,10 +162,27 @@ class VehicleHubFragment : Fragment(R.layout.fragment_vehicle_hub) {
     }
 
     private fun generatePdf() {
+        val options = arrayOf(getString(R.string.pdf_vehicle_summary_title), getString(R.string.pdf_sale_report_title))
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.action_generate_pdf)
+            .setItems(options) { _, which -> if (which == 0) generateSummaryPdf() else generateSalePdf() }
+            .show()
+    }
+
+    private fun generateSummaryPdf() {
         val vehicleId = viewModel.uiState.value.vehicle?.id ?: return
         viewLifecycleOwner.lifecycleScope.launch {
             val vehicle = appContainer.vehicleRepository.getById(vehicleId) ?: return@launch
             val file = com.rovena.garage.utils.VehicleSummaryPdfGenerator.generate(requireContext(), appContainer, vehicle)
+            com.rovena.garage.utils.PdfViewerLauncher.open(this@VehicleHubFragment, file)
+        }
+    }
+
+    private fun generateSalePdf() {
+        val vehicleId = viewModel.uiState.value.vehicle?.id ?: return
+        viewLifecycleOwner.lifecycleScope.launch {
+            val vehicle = appContainer.vehicleRepository.getById(vehicleId) ?: return@launch
+            val file = com.rovena.garage.utils.VehicleSalePdfGenerator.generate(requireContext(), appContainer, vehicle)
             com.rovena.garage.utils.PdfViewerLauncher.open(this@VehicleHubFragment, file)
         }
     }

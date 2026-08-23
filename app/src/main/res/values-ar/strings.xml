@@ -190,6 +190,13 @@
     <string name="action_continue">متابعة</string>
 
     <string name="hub_section_maintenance">الصيانة</string>
+    <string name="service_plan_apply_action">تطبيق خطة صيانة</string>
+    <string name="service_plan_dialog_title">اختر خطة صيانة</string>
+    <string name="service_plan_minor_service">صيانة بسيطة</string>
+    <string name="service_plan_major_service">صيانة شاملة</string>
+    <string name="service_plan_brake_service">صيانة الفرامل</string>
+    <string name="service_plan_form_message">سيؤدي هذا إلى إضافة %1$d سجلات صيانة تشترك في التاريخ والمسافة والورشة أدناه - راجعها قبل التأكيد.</string>
+    <string name="service_plan_added_success">تمت إضافة %1$d سجلات صيانة.</string>
     <string name="hub_section_fuel">الوقود</string>
     <string name="hub_section_expenses">المصاريف</string>
     <string name="hub_section_documents">المستندات</string>
@@ -304,6 +311,14 @@
     <string name="pdf_expense_report_title">تقرير المصاريف</string>
     <string name="pdf_fuel_report_title">تقرير الوقود</string>
     <string name="pdf_total">الإجمالي</string>
+    <string name="pdf_sale_report_title">تقرير بيع المركبة</string>
+    <string name="pdf_sale_last_inspection_date">آخر فحص</string>
+    <string name="pdf_sale_no_inspection">لم يتم تسجيل أي فحص لهذه المركبة بعد.</string>
+    <string name="pdf_sale_fuel_economy">استهلاك الوقود</string>
+    <string name="pdf_sale_documents_current">حالة المستندات</string>
+    <string name="pdf_sale_documents_ok">محدّثة</string>
+    <string name="pdf_sale_documents_expired">انتهت صلاحية مستند واحد أو أكثر</string>
+    <string name="pdf_footer_sale_report">تم إنشاؤه محليًا بواسطة روفينا من سجل هذه المركبة الخاص.</string>
     <string name="timeline_empty_title">لا يوجد شيء هنا بعد</string>
     <string name="timeline_empty_message">سيظهر هنا الوقود والصيانة والمصاريف والمزيد عند إضافتها.</string>
     <string name="timeline_filter_all">الكل</string>

@@ -190,6 +190,13 @@
     <string name="action_continue">Continuer</string>
 
     <string name="hub_section_maintenance">Entretien</string>
+    <string name="service_plan_apply_action">Appliquer un plan d\'entretien</string>
+    <string name="service_plan_dialog_title">Choisir un plan d\'entretien</string>
+    <string name="service_plan_minor_service">Entretien mineur</string>
+    <string name="service_plan_major_service">Entretien majeur</string>
+    <string name="service_plan_brake_service">Entretien des freins</string>
+    <string name="service_plan_form_message">Cela ajoutera %1$d enregistrements d\'entretien partageant la date, le kilométrage et l\'atelier ci-dessous - vérifiez avant de confirmer.</string>
+    <string name="service_plan_added_success">%1$d enregistrements d\'entretien ajoutés.</string>
     <string name="hub_section_fuel">Carburant</string>
     <string name="hub_section_expenses">Dépenses</string>
     <string name="hub_section_documents">Documents</string>
@@ -304,6 +311,14 @@
     <string name="pdf_expense_report_title">Rapport de dépenses</string>
     <string name="pdf_fuel_report_title">Rapport de carburant</string>
     <string name="pdf_total">Total</string>
+    <string name="pdf_sale_report_title">Rapport de vente du véhicule</string>
+    <string name="pdf_sale_last_inspection_date">Dernière inspection</string>
+    <string name="pdf_sale_no_inspection">Aucune inspection n\'a encore été enregistrée pour ce véhicule.</string>
+    <string name="pdf_sale_fuel_economy">Consommation de carburant</string>
+    <string name="pdf_sale_documents_current">État des documents</string>
+    <string name="pdf_sale_documents_ok">À jour</string>
+    <string name="pdf_sale_documents_expired">Un ou plusieurs documents ont expiré</string>
+    <string name="pdf_footer_sale_report">Généré localement par Rovena à partir de l\'historique enregistré de ce véhicule.</string>
     <string name="timeline_empty_title">Rien ici pour le moment</string>
     <string name="timeline_empty_message">Carburant, entretien, dépenses et plus apparaîtront ici au fur et à mesure.</string>
     <string name="timeline_filter_all">Tout</string>

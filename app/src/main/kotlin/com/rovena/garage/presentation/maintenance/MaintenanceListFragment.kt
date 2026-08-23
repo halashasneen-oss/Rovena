@@ -1,9 +1,13 @@
 package com.rovena.garage.presentation.maintenance
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,12 +16,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rovena.garage.R
+import com.rovena.garage.data.local.entities.MaintenanceRecordEntity
 import com.rovena.garage.databinding.FragmentGenericListBinding
 import com.rovena.garage.domain.model.AppCurrency
+import com.rovena.garage.domain.usecase.ServicePlanCatalog
 import com.rovena.garage.presentation.common.appContainer
 import com.rovena.garage.presentation.common.resolveVehicleId
 import com.rovena.garage.presentation.common.viewModelFactory
+import com.rovena.garage.utils.DatePickerHelper
+import com.rovena.garage.utils.EnumLabels
 import com.rovena.garage.utils.Formatters
 import com.rovena.garage.utils.MaintenancePdfGenerator
 import com.rovena.garage.utils.PdfViewerLauncher
@@ -59,6 +68,9 @@ class MaintenanceListFragment : Fragment(R.layout.fragment_generic_list) {
         binding.pdfButton.visibility = View.VISIBLE
         binding.pdfButton.setOnClickListener { generatePdf() }
 
+        binding.servicePlanButton.visibility = View.VISIBLE
+        binding.servicePlanButton.setOnClickListener { showServicePlanChooserDialog() }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
@@ -71,6 +83,86 @@ class MaintenanceListFragment : Fragment(R.layout.fragment_generic_list) {
                 }
             }
         }
+    }
+
+    /**
+     * Spec: Service Plans / maintenance bundles. Applying a plan is still a
+     * two-step, fully-visible confirmation - a chooser, then one small form
+     * the user reviews before anything is saved - never a silent bulk-insert.
+     */
+    private fun showServicePlanChooserDialog() {
+        val plans = ServicePlanCatalog.PLANS
+        val labels = plans.map { getString(servicePlanLabel(it.id)) }.toTypedArray()
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.service_plan_dialog_title)
+            .setItems(labels) { _, which -> showServicePlanFormDialog(plans[which]) }
+            .show()
+    }
+
+    private fun showServicePlanFormDialog(plan: ServicePlanCatalog.ServicePlan) {
+        val vehicleId = viewModel.uiState.value.vehicleId ?: return
+        viewLifecycleOwner.lifecycleScope.launch {
+            val vehicle = appContainer.vehicleRepository.getById(vehicleId) ?: return@launch
+            var dateMillis = System.currentTimeMillis()
+
+            val dateButton = Button(requireContext())
+            dateButton.text = Formatters.date(requireContext(), dateMillis)
+            dateButton.setOnClickListener {
+                DatePickerHelper.show(childFragmentManager, "service_plan_date", dateMillis) { picked ->
+                    dateMillis = picked
+                    dateButton.text = Formatters.date(requireContext(), picked)
+                }
+            }
+            val mileageInput = EditText(requireContext()).apply {
+                hint = getString(R.string.vehicle_field_mileage)
+                inputType = InputType.TYPE_CLASS_NUMBER
+                setText(vehicle.currentMileageKm.toString())
+            }
+            val workshopInput = EditText(requireContext()).apply {
+                hint = getString(R.string.maintenance_field_workshop)
+            }
+            val container = LinearLayout(requireContext()).apply {
+                orientation = LinearLayout.VERTICAL
+                val pad = (20 * resources.displayMetrics.density).toInt()
+                setPadding(pad, pad, pad, pad)
+                addView(dateButton)
+                addView(mileageInput)
+                addView(workshopInput)
+            }
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(servicePlanLabel(plan.id)))
+                .setMessage(getString(R.string.service_plan_form_message, plan.categories.size))
+                .setView(container)
+                .setPositiveButton(R.string.action_continue) { _, _ ->
+                    val mileage = mileageInput.text.toString().toIntOrNull() ?: vehicle.currentMileageKm
+                    val workshop = workshopInput.text.toString().trim().ifBlank { null }
+                    applyServicePlan(vehicleId, plan, dateMillis, mileage, workshop)
+                }
+                .setNegativeButton(R.string.action_cancel, null)
+                .show()
+        }
+    }
+
+    private fun applyServicePlan(vehicleId: Long, plan: ServicePlanCatalog.ServicePlan, dateMillis: Long, mileageKm: Int, workshop: String?) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            plan.categories.forEach { category ->
+                appContainer.maintenanceRepository.addOrUpdate(
+                    MaintenanceRecordEntity(
+                        vehicleId = vehicleId, dateMillis = dateMillis, mileageKm = mileageKm, category = category,
+                        description = getString(EnumLabels.of(category)), workshop = workshop
+                    )
+                )
+            }
+            android.widget.Toast.makeText(requireContext(), getString(R.string.service_plan_added_success, plan.categories.size), android.widget.Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun servicePlanLabel(planId: String): Int = when (planId) {
+        "minor_service" -> R.string.service_plan_minor_service
+        "major_service" -> R.string.service_plan_major_service
+        "brake_service" -> R.string.service_plan_brake_service
+        else -> R.string.service_plan_dialog_title
     }
 
     private fun generatePdf() {

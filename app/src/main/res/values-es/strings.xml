@@ -190,6 +190,13 @@
     <string name="action_continue">Continuar</string>
 
     <string name="hub_section_maintenance">Mantenimiento</string>
+    <string name="service_plan_apply_action">Aplicar plan de servicio</string>
+    <string name="service_plan_dialog_title">Elige un plan de servicio</string>
+    <string name="service_plan_minor_service">Servicio menor</string>
+    <string name="service_plan_major_service">Servicio mayor</string>
+    <string name="service_plan_brake_service">Servicio de frenos</string>
+    <string name="service_plan_form_message">Esto agregará %1$d registros de mantenimiento que comparten la fecha, el kilometraje y el taller a continuación - revisa antes de confirmar.</string>
+    <string name="service_plan_added_success">Se agregaron %1$d registros de mantenimiento.</string>
     <string name="hub_section_fuel">Combustible</string>
     <string name="hub_section_expenses">Gastos</string>
     <string name="hub_section_documents">Documentos</string>
@@ -304,6 +311,14 @@
     <string name="pdf_expense_report_title">Informe de gastos</string>
     <string name="pdf_fuel_report_title">Informe de combustible</string>
     <string name="pdf_total">Total</string>
+    <string name="pdf_sale_report_title">Informe de Venta del Vehículo</string>
+    <string name="pdf_sale_last_inspection_date">Última inspección</string>
+    <string name="pdf_sale_no_inspection">Aún no se ha registrado ninguna inspección para este vehículo.</string>
+    <string name="pdf_sale_fuel_economy">Consumo de combustible</string>
+    <string name="pdf_sale_documents_current">Estado de la documentación</string>
+    <string name="pdf_sale_documents_ok">Al día</string>
+    <string name="pdf_sale_documents_expired">Uno o más documentos han vencido</string>
+    <string name="pdf_footer_sale_report">Generado localmente por Rovena a partir del historial registrado de este vehículo.</string>
     <string name="timeline_empty_title">Aún no hay nada aquí</string>
     <string name="timeline_empty_message">El combustible, mantenimiento, gastos y más aparecerán aquí a medida que los agregues.</string>
     <string name="timeline_filter_all">Todo</string>

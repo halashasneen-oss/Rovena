@@ -56,6 +56,16 @@
                 android:src="@drawable/ic_document"
                 android:contentDescription="@string/action_generate_pdf"
                 android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/servicePlanButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_service"
+                android:contentDescription="@string/service_plan_apply_action"
+                android:visibility="gone" />
         </LinearLayout>
 
         <com.google.android.material.chip.ChipGroup

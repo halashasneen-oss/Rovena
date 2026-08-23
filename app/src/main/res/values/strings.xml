@@ -207,6 +207,13 @@
 
     <!-- Vehicle hub sections -->
     <string name="hub_section_maintenance">Maintenance</string>
+    <string name="service_plan_apply_action">Apply Service Plan</string>
+    <string name="service_plan_dialog_title">Choose a Service Plan</string>
+    <string name="service_plan_minor_service">Minor Service</string>
+    <string name="service_plan_major_service">Major Service</string>
+    <string name="service_plan_brake_service">Brake Service</string>
+    <string name="service_plan_form_message">This will add %1$d maintenance records sharing the date, mileage, and workshop below - review before confirming.</string>
+    <string name="service_plan_added_success">%1$d maintenance records added.</string>
     <string name="hub_section_fuel">Fuel</string>
     <string name="hub_section_expenses">Expenses</string>
     <string name="hub_section_documents">Documents</string>
@@ -321,6 +328,14 @@
     <string name="pdf_expense_report_title">Expense Report</string>
     <string name="pdf_fuel_report_title">Fuel Report</string>
     <string name="pdf_total">Total</string>
+    <string name="pdf_sale_report_title">Vehicle Sale Report</string>
+    <string name="pdf_sale_last_inspection_date">Last inspection</string>
+    <string name="pdf_sale_no_inspection">No inspection has been logged for this vehicle yet.</string>
+    <string name="pdf_sale_fuel_economy">Fuel Economy</string>
+    <string name="pdf_sale_documents_current">Documentation status</string>
+    <string name="pdf_sale_documents_ok">Up to date</string>
+    <string name="pdf_sale_documents_expired">One or more documents have expired</string>
+    <string name="pdf_footer_sale_report">Generated locally by Rovena from this vehicle\'s own logged history.</string>
     <string name="timeline_empty_title">Nothing here yet</string>
     <string name="timeline_empty_message">Fuel, maintenance, expenses and more will show up here as you add them.</string>
     <string name="timeline_filter_all">All</string>
