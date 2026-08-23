@@ -102,6 +102,19 @@
     <string name="health_status_critical">حرج</string>
     <string name="health_status_not_enough_data">بيانات غير كافية</string>
 
+    <string name="health_category_maintenance_recency">حداثة الصيانة</string>
+    <string name="health_category_overdue_maintenance">صيانة متأخرة</string>
+    <string name="health_category_brakes">الفرامل</string>
+    <string name="health_category_tires">الإطارات</string>
+    <string name="health_category_battery">البطارية</string>
+    <string name="health_category_fluids">السوائل</string>
+    <string name="health_category_engine_service">صيانة المحرك</string>
+    <string name="health_category_transmission_service">صيانة ناقل الحركة</string>
+    <string name="health_category_documentation">الوثائق</string>
+    <string name="health_detail_title">تفاصيل مؤشر الصحة</string>
+    <string name="health_detail_no_data">لا توجد بيانات بعد</string>
+    <string name="health_detail_confidence">موثوقية البيانات: %1$d%% من البيانات المتوقعة متوفرة. الفئات التي لا تحتوي على بيانات تُستبعد من الحساب ولا يتم معاقبتها.</string>
+
     <string name="due_status_upcoming">قادم</string>
     <string name="due_status_due_soon">مستحق قريباً</string>
     <string name="due_status_due">مستحق</string>
@@ -235,6 +248,7 @@
     <string name="reminder_notification_body_km">متبقٍ %1$d كم</string>
     <string name="reminder_notification_body_days">متبقٍ %1$d يوم</string>
     <string name="reminder_notification_body_overdue">متأخر</string>
+    <string name="reminder_notification_body_with_vehicle">%1$s • %2$s</string>
     <string name="document_expiry_notification_title">%1$s سينتهي قريباً</string>
     <string name="document_expiry_notification_body">ينتهي في %1$s</string>
     <string name="inspection_empty_title">لا توجد فحوصات بعد</string>
@@ -309,9 +323,9 @@
 
     <string name="settings_section_data">البيانات</string>
     <string name="settings_row_backup">إنشاء نسخة احتياطية</string>
-    <string name="settings_row_backup_subtitle">تصدير ملف نسخة احتياطية .motiva</string>
+    <string name="settings_row_backup_subtitle">تصدير ملف نسخة احتياطية .rovena</string>
     <string name="settings_row_restore">استعادة نسخة احتياطية</string>
-    <string name="settings_row_restore_subtitle">استيراد ملف نسخة احتياطية .motiva</string>
+    <string name="settings_row_restore_subtitle">استيراد ملف نسخة احتياطية .rovena</string>
 
     <string name="settings_section_units">الوحدات</string>
     <string name="settings_row_distance_unit">وحدة المسافة</string>
@@ -351,7 +365,7 @@
     <string name="currency_custom_hint">مثال: CAD</string>
 
     <string name="backup_title">النسخ الاحتياطي والاستعادة</string>
-    <string name="backup_description">أنشئ ملف نسخة احتياطية .motiva يحتوي على كل سيارة وسجل وصورة ومستند - أو استعد نسخة احتياطية محفوظة مسبقاً. تبقى جميع البيانات على جهازك ما لم تختر نقل الملف بنفسك.</string>
+    <string name="backup_description">أنشئ ملف نسخة احتياطية .rovena يحتوي على كل سيارة وسجل وصورة ومستند - أو استعد نسخة احتياطية محفوظة مسبقاً. تبقى جميع البيانات على جهازك ما لم تختر نقل الملف بنفسك.</string>
     <string name="backup_created_success">تم إنشاء نسخة احتياطية تحتوي على %1$d سيارة</string>
     <string name="backup_error">حدث خطأ ما: %1$s</string>
     <string name="backup_invalid_corrupt">ملف النسخة الاحتياطية هذا تالف أو غير قابل للقراءة.</string>

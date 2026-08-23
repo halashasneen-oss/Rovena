@@ -12,11 +12,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import coil.load
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rovena.garage.R
 import com.rovena.garage.databinding.FragmentVehicleHubBinding
 import com.rovena.garage.databinding.ItemHubSectionBinding
 import com.rovena.garage.domain.model.DistanceUnit
-import com.rovena.garage.domain.model.HealthStatus
+import com.rovena.garage.domain.model.HealthCategory
 import com.rovena.garage.presentation.common.appContainer
 import com.rovena.garage.presentation.common.viewModelFactory
 import com.rovena.garage.utils.EnumLabels
@@ -24,6 +25,7 @@ import com.rovena.garage.utils.Formatters
 import com.rovena.garage.utils.StatusColors
 import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.math.roundToInt
 
 class VehicleHubFragment : Fragment(R.layout.fragment_vehicle_hub) {
 
@@ -52,6 +54,7 @@ class VehicleHubFragment : Fragment(R.layout.fragment_vehicle_hub) {
             findNavController().navigate(R.id.vehicleFormFragment, bundleOf("vehicleId" to 0L))
         }
         binding.generatePdfButton.setOnClickListener { generatePdf() }
+        binding.healthCard.setOnClickListener { showHealthDetailDialog() }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -118,6 +121,29 @@ class VehicleHubFragment : Fragment(R.layout.fragment_vehicle_hub) {
             getString(R.string.hub_active_reminders, state.reminderCount)) {
             findNavController().navigate(R.id.reminderListFragment, bundleOf("vehicleId" to vehicle.id))
         }
+    }
+
+    private fun showHealthDetailDialog() {
+        val state = viewModel.uiState.value
+        val categoryOrder = listOf(
+            HealthCategory.MAINTENANCE_RECENCY, HealthCategory.OVERDUE_MAINTENANCE,
+            HealthCategory.BRAKES, HealthCategory.TIRES, HealthCategory.BATTERY, HealthCategory.FLUIDS,
+            HealthCategory.ENGINE_SERVICE, HealthCategory.TRANSMISSION_SERVICE, HealthCategory.DOCUMENTATION
+        )
+        val lines = categoryOrder.joinToString("\n") { category ->
+            val label = getString(EnumLabels.of(category))
+            val score = state.healthCategoryBreakdown[category]
+            val valueText = if (score == null) getString(R.string.health_detail_no_data) else score.toString()
+            "$label: $valueText"
+        }
+        val confidencePercent = (state.healthKnownWeightRatio * 100).roundToInt().coerceIn(0, 100)
+        val message = lines + "\n\n" + getString(R.string.health_detail_confidence, confidencePercent)
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.health_detail_title)
+            .setMessage(message)
+            .setPositiveButton(R.string.action_close, null)
+            .show()
     }
 
     private fun bindSection(section: ItemHubSectionBinding, icon: Int, title: String, subtitle: String, onClick: () -> Unit) {

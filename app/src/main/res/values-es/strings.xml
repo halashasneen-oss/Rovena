@@ -102,6 +102,19 @@
     <string name="health_status_critical">Crítico</string>
     <string name="health_status_not_enough_data">Datos insuficientes</string>
 
+    <string name="health_category_maintenance_recency">Recencia de mantenimiento</string>
+    <string name="health_category_overdue_maintenance">Mantenimiento vencido</string>
+    <string name="health_category_brakes">Frenos</string>
+    <string name="health_category_tires">Neumáticos</string>
+    <string name="health_category_battery">Batería</string>
+    <string name="health_category_fluids">Fluidos</string>
+    <string name="health_category_engine_service">Servicio del motor</string>
+    <string name="health_category_transmission_service">Servicio de transmisión</string>
+    <string name="health_category_documentation">Documentación</string>
+    <string name="health_detail_title">Detalles de la puntuación de salud</string>
+    <string name="health_detail_no_data">Aún sin datos</string>
+    <string name="health_detail_confidence">Confianza de datos: %1$d%% de los datos esperados están disponibles. Las categorías sin datos se excluyen de la puntuación en lugar de penalizarse.</string>
+
     <string name="due_status_upcoming">Próximo</string>
     <string name="due_status_due_soon">Vence pronto</string>
     <string name="due_status_due">Vencido</string>
@@ -235,6 +248,7 @@
     <string name="reminder_notification_body_km">%1$d KM restantes</string>
     <string name="reminder_notification_body_days">%1$d días restantes</string>
     <string name="reminder_notification_body_overdue">Atrasado</string>
+    <string name="reminder_notification_body_with_vehicle">%1$s • %2$s</string>
     <string name="document_expiry_notification_title">%1$s vence pronto</string>
     <string name="document_expiry_notification_body">Vence el %1$s</string>
     <string name="inspection_empty_title">Aún no hay inspecciones</string>
@@ -309,9 +323,9 @@
 
     <string name="settings_section_data">Datos</string>
     <string name="settings_row_backup">Crear copia de seguridad</string>
-    <string name="settings_row_backup_subtitle">Exportar un archivo de copia de seguridad .motiva</string>
+    <string name="settings_row_backup_subtitle">Exportar un archivo de copia de seguridad .rovena</string>
     <string name="settings_row_restore">Restaurar copia de seguridad</string>
-    <string name="settings_row_restore_subtitle">Importar un archivo de copia de seguridad .motiva</string>
+    <string name="settings_row_restore_subtitle">Importar un archivo de copia de seguridad .rovena</string>
 
     <string name="settings_section_units">Unidades</string>
     <string name="settings_row_distance_unit">Unidad de distancia</string>
@@ -351,7 +365,7 @@
     <string name="currency_custom_hint">ej. CAD</string>
 
     <string name="backup_title">Copia de seguridad y restauración</string>
-    <string name="backup_description">Crea un archivo de copia de seguridad .motiva con cada vehículo, registro, foto y documento, o restaura uno guardado anteriormente. Todo permanece en tu dispositivo a menos que decidas mover el archivo tú mismo.</string>
+    <string name="backup_description">Crea un archivo de copia de seguridad .rovena con cada vehículo, registro, foto y documento, o restaura uno guardado anteriormente. Todo permanece en tu dispositivo a menos que decidas mover el archivo tú mismo.</string>
     <string name="backup_created_success">Copia de seguridad creada con %1$d vehículo(s)</string>
     <string name="backup_error">Ocurrió un error: %1$s</string>
     <string name="backup_invalid_corrupt">Este archivo de copia de seguridad está corrupto o es ilegible.</string>

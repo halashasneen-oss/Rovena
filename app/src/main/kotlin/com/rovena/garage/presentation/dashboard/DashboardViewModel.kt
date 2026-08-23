@@ -63,7 +63,8 @@ private data class RecordSet1(
 private data class RecordSet2(
     val timeline: List<TimelineEventEntity>,
     val documents: List<DocumentEntity>,
-    val settings: com.rovena.garage.data.local.entities.AppSettingsEntity
+    val settings: com.rovena.garage.data.local.entities.AppSettingsEntity,
+    val conditionScores: com.rovena.garage.data.repository.InspectionConditionScores
 )
 
 class DashboardViewModel(private val container: AppContainer) : ViewModel() {
@@ -89,11 +90,12 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
                 val set2 = combine(
                     container.timelineRepository.observeRecent(vehicle.id, 6),
                     container.documentRepository.observeByVehicle(vehicle.id),
-                    container.settingsRepository.observe()
-                ) { timeline, documents, settings -> RecordSet2(timeline, documents, settings) }
+                    container.settingsRepository.observe(),
+                    container.inspectionRepository.observeLatestConditionScores(vehicle.id)
+                ) { timeline, documents, settings, conditionScores -> RecordSet2(timeline, documents, settings, conditionScores) }
 
                 combine(set1, set2) { s1, s2 ->
-                    buildState(s1.vehicle ?: vehicle, s1.maintenance, s1.fuel, s1.expenses, s1.reminders, s2.timeline, s2.documents, s2.settings)
+                    buildState(s1.vehicle ?: vehicle, s1.maintenance, s1.fuel, s1.expenses, s1.reminders, s2.timeline, s2.documents, s2.settings, s2.conditionScores)
                 }
             }
         }
@@ -107,7 +109,8 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
         reminders: List<ReminderEntity>,
         timeline: List<TimelineEventEntity>,
         documents: List<DocumentEntity>,
-        settings: com.rovena.garage.data.local.entities.AppSettingsEntity
+        settings: com.rovena.garage.data.local.entities.AppSettingsEntity,
+        conditionScores: com.rovena.garage.data.repository.InspectionConditionScores
     ): DashboardUiState {
         val today = LocalDate.now()
         val nowMillis = System.currentTimeMillis()
@@ -126,10 +129,10 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
             daysSinceLastMaintenance = daysSinceLastMaintenance,
             overdueMaintenanceCount = if (tracked > 0) overdue else null,
             totalActiveMaintenanceItems = if (tracked > 0) tracked else null,
-            brakesConditionScore = null,
-            tiresConditionScore = null,
-            batteryConditionScore = null,
-            fluidsConditionScore = null,
+            brakesConditionScore = conditionScores.brakes,
+            tiresConditionScore = conditionScores.tires,
+            batteryConditionScore = conditionScores.battery,
+            fluidsConditionScore = conditionScores.fluids,
             engineServiceUpToDate = if (!hasOilRecord) null else overdue == 0,
             transmissionServiceUpToDate = null,
             hasExpiredDocument = if (documents.isNotEmpty()) hasExpiredDoc else null,

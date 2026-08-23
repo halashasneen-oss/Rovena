@@ -30,7 +30,7 @@ Every feature in the original specification has a real, working implementation �
 - Unified Timeline with type filters, auto-synced from every other feature
 - Insights with custom-drawn bar/line/donut charts (no chart library dependency)
 - Local reminders (mileage/date/both, recurring) with real Android notifications via WorkManager
-- Local backup/restore (`.motiva` format) via Storage Access Framework, with "replace" and "add as new vehicles" restore modes; hardened against Zip Slip path traversal and zip-bomb archives, with full inspection/photo restoration and collision-safe file handling (see [Security](#security) and [Backup format](#backup-format-motiva))
+- Local backup/restore (`.rovena` format) via Storage Access Framework, with "replace" and "add as new vehicles" restore modes; hardened against Zip Slip path traversal and zip-bomb archives, with full inspection/photo restoration and collision-safe file handling (see [Security](#security) and [Backup format](#backup-format-rovena))
 - App Lock: PBKDF2WithHmacSHA256-hashed PIN (6+ digits) with temporary lockout after repeated failures, + BiometricPrompt, process-lifecycle-aware re-lock that can't be bypassed via back navigation, deep links, notifications, or recreation
 - Settings: garage, notifications, security, appearance (light/dark/system), data, units, currency (7 fixed + custom), language, about/privacy/terms/licenses
 - Full localization: English, Arabic (RTL), French, Spanish — 350/350 keys translated in every locale
@@ -106,11 +106,13 @@ The same file also documents the deterministic rules used to turn raw signals (d
 
 Vehicle inspections use a separate, simpler scorer (`InspectionScoreCalculator`): GOOD = 100 points, ATTENTION = 55, PROBLEM = 10, UNKNOWN items are excluded from the average rather than penalized.
 
+**Health Score ↔ Inspection integration**: the brakes/tires/battery/fluids sub-scores are no longer left blank. `InspectionRepository.observeLatestConditionScores()` reads the vehicle's most recent inspection and maps each relevant item's status (GOOD/ATTENTION/PROBLEM/UNKNOWN) onto the same 100/55/10/`null` scale via `InspectionScoreCalculator.conditionScoreFor()`, feeding real condition data into both the Dashboard and Vehicle Hub health scores instead of always excluding those four categories. Tapping the health score on the Vehicle Hub screen opens a detail dialog listing every category's current value and a "data confidence" percentage (`knownWeightRatio`), so the number is never a black box.
+
 ---
 
-## Backup format (`.motiva`)
+## Backup format (`.rovena`)
 
-A `.motiva` file is a plain ZIP (renamed for clarity) containing:
+A `.rovena` file is a plain ZIP (renamed for clarity) containing:
 
 ```
 manifest.json      { backupFormatVersion, databaseSchemaVersion, appVersionCode, appVersionName,
@@ -134,14 +136,14 @@ files/receipts/*    copies of every expense receipt photo
 - **No `INTERNET` permission is declared in the manifest at all.** The app cannot make a network request even if some code tried to.
 - No Firebase, no analytics SDK, no crash-reporting SDK, no remote logging.
 - `data_extraction_rules.xml` explicitly excludes the database, files, and shared prefs from Android's cloud backup and device-transfer flows, and `android:allowBackup="false"` on top of that.
-- The only way data ever leaves the device is a `.motiva` file the user explicitly creates and then chooses to share themselves.
+- The only way data ever leaves the device is a `.rovena` file the user explicitly creates and then chooses to share themselves.
 
 ## Security
 
 - **PIN storage**: the raw PIN is never persisted. `PinHasher` (pure `java.security`/`javax.crypto`, no Android dependency) derives a key via `PBKDF2WithHmacSHA256` (120,000 iterations, 256-bit output) from the PIN and a random 16-byte per-install salt (`SecureRandom`); only the salt and derived hash are stored. Verification uses a constant-time comparison. Minimum PIN length is 6 digits (up to 10). This replaced an earlier, weaker hand-rolled repeated-SHA-256 loop - PBKDF2 is a real, purpose-built password/PIN KDF with a standardized security analysis behind its iteration-count-based slowdown; a bare hash loop is not an equivalent construction.
-- **Lockout**: 5 consecutive wrong PIN attempts trigger a 30-second lockout (`SettingsRepository.verifyPin`), enforced *before* the PIN hash is even touched so a locked-out caller can't burn the deliberately-slow KDF cost by hammering the unlock screen. The lockout always expires on its own - there is no permanent lockout and no account to reset a PIN through by design, so losing a PIN means clearing app data (or restoring a `.motiva` backup made before it was set).
+- **Lockout**: 5 consecutive wrong PIN attempts trigger a 30-second lockout (`SettingsRepository.verifyPin`), enforced *before* the PIN hash is even touched so a locked-out caller can't burn the deliberately-slow KDF cost by hammering the unlock screen. The lockout always expires on its own - there is no permanent lockout and no account to reset a PIN through by design, so losing a PIN means clearing app data (or restoring a `.rovena` backup made before it was set).
 - **App Lock cannot be bypassed** via back navigation (canceling the lock screen closes `MainActivity` instead of revealing it), deep links (no other exported activity or intent-filter exists), notifications (every notification's `PendingIntent` routes through `MainActivity`, which re-checks the lock on every `onResume`), or Activity recreation/configuration changes (re-lock state lives in the `Application` subclass via `ProcessLifecycleOwner`, armed whenever the *whole app* - not just one Activity - leaves the foreground, so a system photo picker or file chooser opening briefly doesn't false-trigger a re-lock).
-- **Backup archive safety**: see [Backup format](#backup-format-motiva) above - Zip Slip path-traversal defense (`BackupPathValidator`, unit-tested with `../`, `..\`, and absolute-path attack vectors) and zip-bomb entry/size limits are enforced for every `.motiva` file before any of its bytes touch disk.
+- **Backup archive safety**: see [Backup format](#backup-format-rovena) above - Zip Slip path-traversal defense (`BackupPathValidator`, unit-tested with `../`, `..\`, and absolute-path attack vectors) and zip-bomb entry/size limits are enforced for every `.rovena` file before any of its bytes touch disk. Restore never gates on file extension, so backups created by earlier app versions under the old `.motiva` name still restore correctly.
 - **No network surface at all** - see [Offline architecture & privacy](#offline-architecture--privacy).
 
 ## Permissions
@@ -267,10 +269,24 @@ Rovena/
 
 ---
 
+## ROVENA V2 — Intelligent Digital Garage (this pass)
+
+A follow-up QA/enhancement pass targeting a coherent, verifiable slice of a much larger "intelligent garage" specification (product-intelligence philosophy, a local rules-based Vehicle Intelligence Engine, a unified Reminder/Notification Center, Vehicle Lifecycle 2.0, Mileage/Fuel/Maintenance Intelligence, Parts/Warranty tracking, encrypted backups, global search, and more). Implemented this pass:
+
+- **Health Score ↔ Inspection integration** (previously the single biggest gap): brakes/tires/battery/fluids sub-scores now come from the vehicle's latest real inspection instead of always being `null`. See the Health Score section above.
+- **Health Score transparency**: a new tap-to-view detail dialog on the Vehicle Hub screen shows every category's current value plus a data-confidence percentage, addressing the "score as a black box" concern.
+- **Backup format renamed** `.motiva` → `.rovena` throughout the app, strings (all 4 locales), and this README. Restore never gated on file extension, so backups created by earlier versions under the old name still restore correctly with no user action needed.
+- **Reminder notifications now name the vehicle** (`"BMW 320i • 12 KM remaining"` instead of just the reminder title), removing the ambiguity a multi-vehicle garage previously had about which car a notification referred to.
+- **Verified, not changed**: audited whether Maintenance and Expense records could double-count the same cost. They are only ever written by the user through their own independent forms — there is no code path that auto-creates one from the other — so the dashboard's `fuel + maintenance + expense` monthly total is not structurally double-counting. The only residual risk is a user manually logging the same real-world cost twice, which is a UX/education matter rather than a defect.
+
+**Deliberately deferred this pass** (disclosed rather than silently dropped, matching the previous QA pass's approach): the general-purpose Vehicle Intelligence "insight" text generator, a unified "Needs Attention" priority engine on the dashboard, Mileage Intelligence (average distance + predicted next-service date), Smart Daily/Weekly summaries, in-app global search, the optional encrypted `.rovena.secure` backup format, Parts History/Warranty/Service-Plan tracking, a dedicated Vehicle Sale Report, Vehicle Notes, centralized notification-scheduler hardening (reboot/timezone/dedup survival beyond what `ReminderCheckWorker` already does), and Inspection→Maintenance-task suggestion flows. These are substantial, independently scoped features better suited to their own focused passes than a partial, unverified implementation squeezed into this one.
+
+---
+
 ## Known limitations / honest disclosure
 
 - **`compileSdk`/`targetSdk` are still 34, not 36.** Bumping them requires a matching Android Gradle Plugin upgrade (8.5.2 does not support compiling against API 36) and cannot be verified in this sandbox at all — a blind toolchain bump risked breaking every other fix in this pass with no way to debug it locally. Deliberately deferred rather than attempted blind; recommended as its own isolated follow-up change, verified independently via CI before anything else is layered on top of it.
-- Forgetting your App Lock PIN currently has no in-app recovery flow (there's no account to reset it through, by design) — clearing app data is the only way out, which erases local data unless you have a `.motiva` backup. Worth a "recovery codes" feature in a future version.
+- Forgetting your App Lock PIN currently has no in-app recovery flow (there's no account to reset it through, by design) — clearing app data is the only way out, which erases local data unless you have a `.rovena` backup. Worth a "recovery codes" feature in a future version.
 - Removing a photo from the maintenance-record photo strip (or deleting a maintenance record entirely) does not currently delete the underlying file from internal storage, only the database row - a minor storage leak, not a data-loss or security issue. The same gap does **not** exist for inspection-item photos or vehicle deletion, both of which do clean up their files (see [Security](#security) and `InspectionRepository.delete()`/`VehicleRepository.deleteVehicle()`).
 - Inspection-item photos are not yet embedded into the generated Inspection PDF report (notes and estimated cost are). A reasonable next enhancement, not attempted in this pass.
 - Espresso/instrumented UI tests are not written yet (need a device/emulator - see [Testing](#testing)). Backup/restore, inspection photos, and PIN lockout are covered by Robolectric + in-memory-Room integration tests instead, which exercise the real DAOs and transactions without needing a device.

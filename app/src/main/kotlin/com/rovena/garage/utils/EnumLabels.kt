@@ -7,6 +7,7 @@ import com.rovena.garage.domain.model.DocumentType
 import com.rovena.garage.domain.model.DueStatus
 import com.rovena.garage.domain.model.ExpenseCategory
 import com.rovena.garage.domain.model.FuelType
+import com.rovena.garage.domain.model.HealthCategory
 import com.rovena.garage.domain.model.HealthStatus
 import com.rovena.garage.domain.model.InspectionItemKey
 import com.rovena.garage.domain.model.InspectionItemStatus
@@ -134,6 +135,19 @@ object EnumLabels {
         HealthStatus.ATTENTION_NEEDED -> R.string.health_status_attention_needed
         HealthStatus.CRITICAL -> R.string.health_status_critical
         HealthStatus.NOT_ENOUGH_DATA -> R.string.health_status_not_enough_data
+    }
+
+    @StringRes
+    fun of(category: HealthCategory): Int = when (category) {
+        HealthCategory.MAINTENANCE_RECENCY -> R.string.health_category_maintenance_recency
+        HealthCategory.OVERDUE_MAINTENANCE -> R.string.health_category_overdue_maintenance
+        HealthCategory.BRAKES -> R.string.health_category_brakes
+        HealthCategory.TIRES -> R.string.health_category_tires
+        HealthCategory.BATTERY -> R.string.health_category_battery
+        HealthCategory.FLUIDS -> R.string.health_category_fluids
+        HealthCategory.ENGINE_SERVICE -> R.string.health_category_engine_service
+        HealthCategory.TRANSMISSION_SERVICE -> R.string.health_category_transmission_service
+        HealthCategory.DOCUMENTATION -> R.string.health_category_documentation
     }
 
     @StringRes

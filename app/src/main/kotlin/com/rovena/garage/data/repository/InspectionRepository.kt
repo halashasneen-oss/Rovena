@@ -6,11 +6,33 @@ import com.rovena.garage.data.local.dao.InspectionItemDao
 import com.rovena.garage.data.local.database.RovenaDatabase
 import com.rovena.garage.data.local.entities.InspectionEntity
 import com.rovena.garage.data.local.entities.InspectionItemEntity
+import com.rovena.garage.domain.model.InspectionItemKey
 import com.rovena.garage.domain.model.PhotoLinkedType
 import com.rovena.garage.domain.model.TimelineEventType
 import com.rovena.garage.domain.usecase.InspectionScoreCalculator
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import java.io.File
+
+/**
+ * A vehicle's latest-inspection condition per Health Score category (spec: Health
+ * Score <-> Inspection integration). Each field is null when the vehicle has never
+ * been inspected, or the latest inspection never evaluated that item - both mean
+ * "no data", matching how [com.rovena.garage.domain.usecase.HealthScoreCalculator]
+ * treats a null category input (excluded from the score, not penalized).
+ */
+data class InspectionConditionScores(
+    val brakes: Int?,
+    val tires: Int?,
+    val battery: Int?,
+    val fluids: Int?
+) {
+    companion object {
+        val EMPTY = InspectionConditionScores(null, null, null, null)
+    }
+}
 
 class InspectionRepository(
     private val inspectionDao: InspectionDao,
@@ -24,6 +46,23 @@ class InspectionRepository(
     fun observeLatest(vehicleId: Long): Flow<InspectionEntity?> = inspectionDao.observeLatest(vehicleId)
 
     fun observeItems(inspectionId: Long): Flow<List<InspectionItemEntity>> = itemDao.observeByInspection(inspectionId)
+
+    fun observeLatestConditionScores(vehicleId: Long): Flow<InspectionConditionScores> =
+        inspectionDao.observeLatest(vehicleId).flatMapLatest { latest ->
+            if (latest == null) {
+                flowOf(InspectionConditionScores.EMPTY)
+            } else {
+                itemDao.observeByInspection(latest.id).map { items ->
+                    val byKey = items.associateBy { it.itemKey }
+                    InspectionConditionScores(
+                        brakes = byKey[InspectionItemKey.BRAKES]?.status?.let(InspectionScoreCalculator::conditionScoreFor),
+                        tires = byKey[InspectionItemKey.TIRES]?.status?.let(InspectionScoreCalculator::conditionScoreFor),
+                        battery = byKey[InspectionItemKey.BATTERY]?.status?.let(InspectionScoreCalculator::conditionScoreFor),
+                        fluids = byKey[InspectionItemKey.FLUIDS]?.status?.let(InspectionScoreCalculator::conditionScoreFor)
+                    )
+                }
+            }
+        }
 
     suspend fun getById(id: Long): InspectionEntity? = inspectionDao.getById(id)
 

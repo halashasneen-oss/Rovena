@@ -48,12 +48,16 @@ class ReminderCheckWorker(context: Context, params: WorkerParameters) : Coroutin
 
             val remainingKm = evaluation.remainingKm
             val remainingDays = evaluation.remainingDays
-            val body = when {
+            val statusBody = when {
                 evaluation.status == DueStatus.OVERDUE -> applicationContext.getString(R.string.reminder_notification_body_overdue)
                 remainingKm != null -> applicationContext.getString(R.string.reminder_notification_body_km, remainingKm)
                 remainingDays != null -> applicationContext.getString(R.string.reminder_notification_body_days, remainingDays.toInt())
                 else -> ""
             }
+            // Multi-vehicle garages: without the vehicle name, a reminder notification is
+            // ambiguous about which car it refers to.
+            val vehicleLabel = "${vehicle.make} ${vehicle.model}"
+            val body = applicationContext.getString(R.string.reminder_notification_body_with_vehicle, vehicleLabel, statusBody)
             NotificationHelper.showReminderNotification(
                 applicationContext,
                 reminder.id,

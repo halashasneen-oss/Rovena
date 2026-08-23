@@ -34,12 +34,17 @@ data class BackupInspection(
 )
 
 /**
- * Creates and restores `.motiva` backup files (spec #20): a zip containing a
+ * Creates and restores `.rovena` backup files (spec #20): a zip containing a
  * manifest, a full snapshot of the Room database, and every locally-stored
  * photo/document/receipt file, all read/written through Storage Access
  * Framework `Uri`s so nothing needs broad storage permissions.
  *
- * Security note: [inspect] is the *only* place a `.motiva` archive's bytes
+ * Backward compatibility: restore never gates on file extension - the SAF
+ * document picker accepts any file and validity is judged purely from the
+ * zip's contents (manifest + database), so backup files created by earlier
+ * app versions under the old `.motiva` extension still restore correctly.
+ *
+ * Security note: [inspect] is the *only* place a `.rovena` archive's bytes
  * are ever written to disk, so it is the single choke point where a
  * malicious archive must be defeated - Zip Slip path traversal
  * ([BackupPathValidator]) and zip-bomb entry/size limits are both enforced
@@ -96,7 +101,7 @@ object BackupManager {
 
             container.backupMetadataRepository.record(
                 BackupMetadataEntity(
-                    fileName = destination.lastPathSegment ?: "backup.motiva",
+                    fileName = destination.lastPathSegment ?: "backup.rovena",
                     type = BackupRecordType.CREATED,
                     backupFormatVersion = BackupVersionValidator.CURRENT_BACKUP_FORMAT_VERSION,
                     vehicleCount = vehicleCount,

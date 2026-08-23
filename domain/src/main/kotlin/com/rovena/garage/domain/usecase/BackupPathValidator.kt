@@ -3,7 +3,7 @@ package com.rovena.garage.domain.usecase
 import java.io.File
 
 /**
- * Zip Slip / path traversal defense for `.motiva` backup extraction. A
+ * Zip Slip / path traversal defense for `.rovena` backup extraction. A
  * malicious archive can name an entry "../../../etc/passwd" (or an absolute
  * path, or a Windows-style "..\..\evil.txt") hoping `File(root, entry.name)`
  * will write outside the intended extraction directory. This validator is

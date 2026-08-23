@@ -13,6 +13,7 @@ import com.rovena.garage.domain.model.InspectionItemKey
 import com.rovena.garage.domain.model.InspectionItemStatus
 import com.rovena.garage.domain.model.PhotoLinkedType
 import com.rovena.garage.domain.model.TransmissionType
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -123,5 +124,48 @@ class InspectionRepositoryTest {
 
         assertTrue(photoRepository.getByLinkOnce(PhotoLinkedType.INSPECTION_ITEM, itemId).isEmpty())
         assertNull(repository.getById(inspectionId))
+    }
+
+    @Test
+    fun `condition scores are null for a vehicle that was never inspected`() = runTest {
+        val scores = repository.observeLatestConditionScores(vehicleId).first()
+        assertNull(scores.brakes)
+        assertNull(scores.tires)
+        assertNull(scores.battery)
+        assertNull(scores.fluids)
+    }
+
+    @Test
+    fun `condition scores reflect the latest inspection's item statuses, excluding unknown items`() = runTest {
+        repository.saveInspection(
+            InspectionEntity(vehicleId = vehicleId, dateMillis = 1_000L, mileageKm = 50_000),
+            listOf(
+                InspectionItemEntity(inspectionId = 0, categoryGroup = InspectionCategoryGroup.MECHANICAL, itemKey = InspectionItemKey.BRAKES, status = InspectionItemStatus.GOOD),
+                InspectionItemEntity(inspectionId = 0, categoryGroup = InspectionCategoryGroup.MECHANICAL, itemKey = InspectionItemKey.TIRES, status = InspectionItemStatus.ATTENTION),
+                InspectionItemEntity(inspectionId = 0, categoryGroup = InspectionCategoryGroup.MECHANICAL, itemKey = InspectionItemKey.BATTERY, status = InspectionItemStatus.PROBLEM),
+                InspectionItemEntity(inspectionId = 0, categoryGroup = InspectionCategoryGroup.MECHANICAL, itemKey = InspectionItemKey.FLUIDS, status = InspectionItemStatus.UNKNOWN)
+            )
+        )
+
+        val scores = repository.observeLatestConditionScores(vehicleId).first()
+        assertEquals(100, scores.brakes)
+        assertEquals(55, scores.tires)
+        assertEquals(10, scores.battery)
+        assertNull(scores.fluids)
+    }
+
+    @Test
+    fun `condition scores follow the most recently saved inspection`() = runTest {
+        repository.saveInspection(
+            InspectionEntity(vehicleId = vehicleId, dateMillis = 1_000L, mileageKm = 50_000),
+            listOf(InspectionItemEntity(inspectionId = 0, categoryGroup = InspectionCategoryGroup.MECHANICAL, itemKey = InspectionItemKey.BRAKES, status = InspectionItemStatus.PROBLEM))
+        )
+        repository.saveInspection(
+            InspectionEntity(vehicleId = vehicleId, dateMillis = 2_000L, mileageKm = 51_000),
+            listOf(InspectionItemEntity(inspectionId = 0, categoryGroup = InspectionCategoryGroup.MECHANICAL, itemKey = InspectionItemKey.BRAKES, status = InspectionItemStatus.GOOD))
+        )
+
+        val scores = repository.observeLatestConditionScores(vehicleId).first()
+        assertEquals(100, scores.brakes)
     }
 }

@@ -51,7 +51,7 @@ class BackupFragment : Fragment(R.layout.fragment_backup) {
         binding.backButton.setOnClickListener { findNavController().popBackStack() }
 
         binding.createBackupButton.setOnClickListener {
-            val fileName = "rovena_backup_${SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(System.currentTimeMillis())}.motiva"
+            val fileName = "rovena_backup_${SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(System.currentTimeMillis())}.rovena"
             createDocument.launch(fileName)
         }
         binding.restoreBackupButton.setOnClickListener {

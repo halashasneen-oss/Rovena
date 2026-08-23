@@ -111,6 +111,19 @@
     <string name="health_status_critical">Critical</string>
     <string name="health_status_not_enough_data">Not Enough Data</string>
 
+    <string name="health_category_maintenance_recency">Maintenance Recency</string>
+    <string name="health_category_overdue_maintenance">Overdue Maintenance</string>
+    <string name="health_category_brakes">Brakes</string>
+    <string name="health_category_tires">Tires</string>
+    <string name="health_category_battery">Battery</string>
+    <string name="health_category_fluids">Fluids</string>
+    <string name="health_category_engine_service">Engine Service</string>
+    <string name="health_category_transmission_service">Transmission Service</string>
+    <string name="health_category_documentation">Documentation</string>
+    <string name="health_detail_title">Health Score Details</string>
+    <string name="health_detail_no_data">No data yet</string>
+    <string name="health_detail_confidence">Data confidence: %1$d%% of expected data available. Categories with no data are excluded from the score rather than penalized.</string>
+
     <!-- Due statuses -->
     <string name="due_status_upcoming">Upcoming</string>
     <string name="due_status_due_soon">Due Soon</string>
@@ -252,6 +265,7 @@
     <string name="reminder_notification_body_km">%1$d KM remaining</string>
     <string name="reminder_notification_body_days">%1$d days remaining</string>
     <string name="reminder_notification_body_overdue">Overdue</string>
+    <string name="reminder_notification_body_with_vehicle">%1$s • %2$s</string>
     <string name="document_expiry_notification_title">%1$s expiring soon</string>
     <string name="document_expiry_notification_body">Expires %1$s</string>
     <string name="inspection_empty_title">No inspections yet</string>
@@ -326,9 +340,9 @@
 
     <string name="settings_section_data">Data</string>
     <string name="settings_row_backup">Create Backup</string>
-    <string name="settings_row_backup_subtitle">Export a .motiva backup file</string>
+    <string name="settings_row_backup_subtitle">Export a .rovena backup file</string>
     <string name="settings_row_restore">Restore Backup</string>
-    <string name="settings_row_restore_subtitle">Import a .motiva backup file</string>
+    <string name="settings_row_restore_subtitle">Import a .rovena backup file</string>
 
     <string name="settings_section_units">Units</string>
     <string name="settings_row_distance_unit">Distance Unit</string>
@@ -368,7 +382,7 @@
     <string name="currency_custom_hint">e.g. CAD</string>
 
     <string name="backup_title">Backup &amp; Restore</string>
-    <string name="backup_description">Create a .motiva backup file containing every vehicle, record, photo and document - or restore one you saved earlier. Everything stays on your device unless you choose to move the file yourself.</string>
+    <string name="backup_description">Create a .rovena backup file containing every vehicle, record, photo and document - or restore one you saved earlier. Everything stays on your device unless you choose to move the file yourself.</string>
     <string name="backup_created_success">Backup created with %1$d vehicle(s)</string>
     <string name="backup_error">Something went wrong: %1$s</string>
     <string name="backup_invalid_corrupt">This backup file is corrupt or unreadable.</string>

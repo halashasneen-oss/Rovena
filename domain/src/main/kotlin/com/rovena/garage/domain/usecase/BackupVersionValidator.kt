@@ -1,7 +1,7 @@
 package com.rovena.garage.domain.usecase
 
 /**
- * Pure validation rules for the `.motiva` backup format. The actual zip/file
+ * Pure validation rules for the `.rovena` backup format. The actual zip/file
  * I/O lives in the app module (needs Android SAF); this object only decides
  * whether a parsed manifest is safe to restore.
  */

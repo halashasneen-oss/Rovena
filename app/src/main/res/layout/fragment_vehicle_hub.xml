@@ -53,10 +53,15 @@
                     tools:text="2020 · Petrol · Automatic · 142,850 KM" />
 
                 <LinearLayout
+                    android:id="@+id/healthCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:contentDescription="@string/health_detail_title"
                     android:layout_marginTop="16dp">
 
                     <FrameLayout
@@ -85,6 +90,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         tools:text="Excellent" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginStart="8dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_info"
+                        app:tint="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton

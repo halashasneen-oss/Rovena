@@ -40,4 +40,17 @@ object InspectionScoreCalculator {
 
         return Result(score, good, attention, problem, unknown)
     }
+
+    /**
+     * Maps a single inspection item's status to a 0-100 condition score using the same
+     * point scale as [calculate] - used to feed real inspection results into
+     * HealthScoreCalculator's per-category sub-scores (brakes/tires/battery/fluids).
+     * UNKNOWN means "not evaluated", so it is excluded (null) rather than penalized.
+     */
+    fun conditionScoreFor(status: InspectionItemStatus): Int? = when (status) {
+        InspectionItemStatus.GOOD -> GOOD_POINTS
+        InspectionItemStatus.ATTENTION -> ATTENTION_POINTS
+        InspectionItemStatus.PROBLEM -> PROBLEM_POINTS
+        InspectionItemStatus.UNKNOWN -> null
+    }
 }

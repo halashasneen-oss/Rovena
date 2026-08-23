@@ -35,4 +35,12 @@ class InspectionScoreCalculatorTest {
         assertEquals(1, result.problemCount)
         assertEquals(1, result.unknownCount)
     }
+
+    @Test
+    fun `conditionScoreFor maps each status to the same point scale used by calculate`() {
+        assertEquals(100, InspectionScoreCalculator.conditionScoreFor(InspectionItemStatus.GOOD))
+        assertEquals(55, InspectionScoreCalculator.conditionScoreFor(InspectionItemStatus.ATTENTION))
+        assertEquals(10, InspectionScoreCalculator.conditionScoreFor(InspectionItemStatus.PROBLEM))
+        assertNull(InspectionScoreCalculator.conditionScoreFor(InspectionItemStatus.UNKNOWN))
+    }
 }
