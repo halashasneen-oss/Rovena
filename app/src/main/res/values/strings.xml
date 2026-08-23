@@ -219,6 +219,10 @@
     <string name="note_hint">Note</string>
     <string name="note_add_title">Add Note</string>
     <string name="note_edit_title">Edit Note</string>
+    <string name="search_hint">Search your garage</string>
+    <string name="search_empty_title">No results</string>
+    <string name="search_empty_message">Try a different word - search covers every vehicle, maintenance record, fuel fill-up, expense, and document.</string>
+    <string name="action_search">Search</string>
     <string name="hub_records_count">%d records</string>
     <string name="hub_documents_expired">%d expired</string>
     <string name="hub_active_reminders">%d active</string>

@@ -202,6 +202,10 @@
     <string name="note_hint">Note</string>
     <string name="note_add_title">Ajouter une note</string>
     <string name="note_edit_title">Modifier la note</string>
+    <string name="search_hint">Rechercher dans votre garage</string>
+    <string name="search_empty_title">Aucun résultat</string>
+    <string name="search_empty_message">Essayez un autre mot - la recherche couvre chaque véhicule, entretien, plein de carburant, dépense et document.</string>
+    <string name="action_search">Rechercher</string>
     <string name="hub_records_count">%d enregistrements</string>
     <string name="hub_documents_expired">%d expiré(s)</string>
     <string name="hub_active_reminders">%d actif(s)</string>

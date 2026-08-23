@@ -158,6 +158,12 @@
         <argument android:name="vehicleId" app:argType="long" android:defaultValue="0L" />
     </fragment>
 
+    <!-- Global Search -->
+    <fragment
+        android:id="@+id/globalSearchFragment"
+        android:name="com.rovena.garage.presentation.search.GlobalSearchFragment"
+        android:label="@string/search_hint" />
+
     <!-- Backup / Restore -->
     <fragment
         android:id="@+id/backupFragment"

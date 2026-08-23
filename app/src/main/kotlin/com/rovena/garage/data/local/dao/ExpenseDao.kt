@@ -58,6 +58,12 @@ interface ExpenseDao {
     )
     fun search(vehicleId: Long, query: String): Flow<List<ExpenseEntity>>
 
+    @Query(
+        "SELECT * FROM expenses WHERE description LIKE '%' || :query || '%' OR vendor LIKE '%' || :query || '%' " +
+            "ORDER BY dateMillis DESC LIMIT 20"
+    )
+    fun searchAcrossGarage(query: String): Flow<List<ExpenseEntity>>
+
     @Query("SELECT COUNT(*) FROM expenses WHERE vehicleId = :vehicleId")
     fun observeCount(vehicleId: Long): Flow<Int>
 }

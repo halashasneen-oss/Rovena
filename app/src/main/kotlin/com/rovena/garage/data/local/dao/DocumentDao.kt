@@ -50,4 +50,7 @@ interface DocumentDao {
 
     @Query("SELECT COUNT(*) FROM documents WHERE vehicleId = :vehicleId")
     fun observeCount(vehicleId: Long): Flow<Int>
+
+    @Query("SELECT * FROM documents WHERE name LIKE '%' || :query || '%' ORDER BY createdAt DESC LIMIT 20")
+    fun searchAcrossGarage(query: String): Flow<List<DocumentEntity>>
 }

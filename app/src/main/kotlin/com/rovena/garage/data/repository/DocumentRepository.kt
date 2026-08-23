@@ -36,6 +36,8 @@ class DocumentRepository(
 
     fun observeCount(vehicleId: Long): Flow<Int> = documentDao.observeCount(vehicleId)
 
+    fun searchAcrossGarage(query: String): Flow<List<DocumentEntity>> = documentDao.searchAcrossGarage(query)
+
     suspend fun getById(id: Long): DocumentEntity? = documentDao.getById(id)
 
     suspend fun countExpired(vehicleId: Long, nowMillis: Long = System.currentTimeMillis()): Int =

@@ -32,6 +32,8 @@ class MaintenanceRepository(
 
     fun search(vehicleId: Long, query: String): Flow<List<MaintenanceRecordEntity>> = maintenanceDao.search(vehicleId, query)
 
+    fun searchAcrossGarage(query: String): Flow<List<MaintenanceRecordEntity>> = maintenanceDao.searchAcrossGarage(query)
+
     suspend fun getById(id: Long): MaintenanceRecordEntity? = maintenanceDao.getById(id)
 
     suspend fun addOrUpdate(record: MaintenanceRecordEntity): Long {

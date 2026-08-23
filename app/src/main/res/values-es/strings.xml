@@ -202,6 +202,10 @@
     <string name="note_hint">Nota</string>
     <string name="note_add_title">Añadir nota</string>
     <string name="note_edit_title">Editar nota</string>
+    <string name="search_hint">Buscar en tu garaje</string>
+    <string name="search_empty_title">Sin resultados</string>
+    <string name="search_empty_message">Prueba con otra palabra - la búsqueda cubre cada vehículo, mantenimiento, repostaje, gasto y documento.</string>
+    <string name="action_search">Buscar</string>
     <string name="hub_records_count">%d registros</string>
     <string name="hub_documents_expired">%d vencido(s)</string>
     <string name="hub_active_reminders">%d activo(s)</string>

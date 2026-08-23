@@ -56,4 +56,10 @@ interface FuelDao {
             "AND (station LIKE '%' || :query || '%' OR notes LIKE '%' || :query || '%') ORDER BY dateMillis DESC"
     )
     fun search(vehicleId: Long, query: String): Flow<List<FuelRecordEntity>>
+
+    @Query(
+        "SELECT * FROM fuel_records WHERE station LIKE '%' || :query || '%' OR notes LIKE '%' || :query || '%' " +
+            "ORDER BY dateMillis DESC LIMIT 20"
+    )
+    fun searchAcrossGarage(query: String): Flow<List<FuelRecordEntity>>
 }

@@ -50,6 +50,13 @@ interface MaintenanceDao {
     )
     fun search(vehicleId: Long, query: String): Flow<List<MaintenanceRecordEntity>>
 
+    @Query(
+        "SELECT * FROM maintenance_records " +
+            "WHERE description LIKE '%' || :query || '%' OR workshop LIKE '%' || :query || '%' OR notes LIKE '%' || :query || '%' " +
+            "ORDER BY dateMillis DESC LIMIT 20"
+    )
+    fun searchAcrossGarage(query: String): Flow<List<MaintenanceRecordEntity>>
+
     @Query("SELECT * FROM maintenance_records WHERE vehicleId = :vehicleId ORDER BY dateMillis DESC LIMIT :limit")
     fun observeRecent(vehicleId: Long, limit: Int): Flow<List<MaintenanceRecordEntity>>
 

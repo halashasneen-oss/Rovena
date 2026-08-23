@@ -48,6 +48,7 @@ class GarageFragment : Fragment(R.layout.fragment_garage) {
         binding.emptyState.emptyAction.setOnClickListener { navigateToForm(0L) }
 
         binding.fabAddVehicle.setOnClickListener { navigateToForm(0L) }
+        binding.searchButton.setOnClickListener { findNavController().navigate(R.id.globalSearchFragment) }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

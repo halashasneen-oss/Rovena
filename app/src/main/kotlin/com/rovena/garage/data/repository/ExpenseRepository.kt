@@ -29,6 +29,8 @@ class ExpenseRepository(
 
     fun search(vehicleId: Long, query: String): Flow<List<ExpenseEntity>> = expenseDao.search(vehicleId, query)
 
+    fun searchAcrossGarage(query: String): Flow<List<ExpenseEntity>> = expenseDao.searchAcrossGarage(query)
+
     suspend fun getById(id: Long): ExpenseEntity? = expenseDao.getById(id)
 
     suspend fun addOrUpdate(expense: ExpenseEntity): Long {

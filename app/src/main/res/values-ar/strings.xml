@@ -202,6 +202,10 @@
     <string name="note_hint">ملاحظة</string>
     <string name="note_add_title">إضافة ملاحظة</string>
     <string name="note_edit_title">تعديل الملاحظة</string>
+    <string name="search_hint">ابحث في كراجك</string>
+    <string name="search_empty_title">لا توجد نتائج</string>
+    <string name="search_empty_message">جرّب كلمة أخرى - يشمل البحث كل سيارة وسجل صيانة وتعبئة وقود ومصروف ومستند.</string>
+    <string name="action_search">بحث</string>
     <string name="hub_records_count">%d سجل</string>
     <string name="hub_documents_expired">%d منتهي الصلاحية</string>
     <string name="hub_active_reminders">%d نشط</string>

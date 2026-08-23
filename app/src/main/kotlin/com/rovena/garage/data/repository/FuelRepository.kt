@@ -25,6 +25,8 @@ class FuelRepository(
 
     fun search(vehicleId: Long, query: String): Flow<List<FuelRecordEntity>> = fuelDao.search(vehicleId, query)
 
+    fun searchAcrossGarage(query: String): Flow<List<FuelRecordEntity>> = fuelDao.searchAcrossGarage(query)
+
     suspend fun getById(id: Long): FuelRecordEntity? = fuelDao.getById(id)
 
     suspend fun checkMileage(vehicleId: Long, newMileageKm: Int): MileageValidator.MileageCheck {
