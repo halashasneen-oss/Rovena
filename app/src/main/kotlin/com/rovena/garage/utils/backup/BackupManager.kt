@@ -332,7 +332,7 @@ object BackupManager {
     }
 
     /** Opens [dbFile] through the app's real Room builder (with its full migration chain) and forces it to actually read, then closes it - throws if the file is unreadable or fails to migrate. Never mutates [RovenaDatabase]'s cached singleton. */
-    private fun verifyDatabaseOpens(context: Context, dbFile: File) {
+    private suspend fun verifyDatabaseOpens(context: Context, dbFile: File) {
         val db = Room.databaseBuilder(context, RovenaDatabase::class.java, dbFile.absolutePath)
             .allowMainThreadQueries()
             .addMigrations(*com.rovena.garage.data.local.database.Migrations.ALL)
