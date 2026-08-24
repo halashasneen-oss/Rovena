@@ -60,6 +60,11 @@ class GarageFragment : Fragment(R.layout.fragment_garage) {
                 }
             }
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appContainer.settingsRepository.observe().collect { adapter.setDistanceUnit(it.distanceUnit) }
+            }
+        }
     }
 
     private fun showOptions(card: VehicleCardUi, anchor: View) {

@@ -3,6 +3,7 @@ package com.rovena.garage.utils
 import android.content.Context
 import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.VehicleEntity
+import com.rovena.garage.domain.model.DistanceUnit
 import com.rovena.garage.domain.model.InspectionCategoryGroup
 import com.rovena.garage.domain.model.InspectionItemStatus
 import com.rovena.garage.presentation.inspection.InspectionFormState
@@ -12,7 +13,7 @@ import java.io.File
 
 object InspectionPdfGenerator {
 
-    fun generate(context: Context, vehicle: VehicleEntity, state: InspectionFormState): File {
+    fun generate(context: Context, vehicle: VehicleEntity, state: InspectionFormState, distanceUnit: DistanceUnit = DistanceUnit.KM): File {
         val pdf = PdfBuilder(context)
         val context = context.withWesternNumerals()
         pdf.title(context.getString(R.string.pdf_inspection_report_title))
@@ -21,7 +22,7 @@ object InspectionPdfGenerator {
 
         pdf.keyValueRow(context.getString(R.string.pdf_vehicle), "${vehicle.make} ${vehicle.model} (${vehicle.year})")
         pdf.keyValueRow(context.getString(R.string.maintenance_field_date), Formatters.date(context, state.dateMillis))
-        pdf.keyValueRow(context.getString(R.string.vehicle_field_mileage), Formatters.mileage(context, state.mileage.toIntOrNull() ?: vehicle.currentMileageKm, com.rovena.garage.domain.model.DistanceUnit.KM))
+        pdf.keyValueRow(context.getString(R.string.vehicle_field_mileage), Formatters.mileage(context, state.mileage.toIntOrNull() ?: vehicle.currentMileageKm, distanceUnit))
         vehicle.vin?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_vin), it) }
         vehicle.licensePlate?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_plate), it) }
         pdf.spacer()

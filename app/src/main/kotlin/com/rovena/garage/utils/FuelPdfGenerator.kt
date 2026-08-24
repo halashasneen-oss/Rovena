@@ -16,7 +16,7 @@ import java.time.ZoneId
 
 object FuelPdfGenerator {
 
-    fun generate(context: Context, vehicle: VehicleEntity, records: List<FuelRecordEntity>): File {
+    fun generate(context: Context, vehicle: VehicleEntity, records: List<FuelRecordEntity>, distanceUnit: DistanceUnit = DistanceUnit.KM): File {
         val entries = records.sortedBy { it.mileageKm }.map {
             FuelStatsCalculator.FuelEntry(
                 date = Instant.ofEpochMilli(it.dateMillis).atZone(ZoneId.systemDefault()).toLocalDate(),
@@ -43,13 +43,13 @@ object FuelPdfGenerator {
         pdf.keyValueRow(context.getString(R.string.fuel_stats_avg, "").trim(), Formatters.fuelEconomy(context, stats.averageLitersPer100Km, FuelEconomyUnit.L_100KM))
         pdf.keyValueRow(context.getString(R.string.fuel_stats_best, "").trim(), Formatters.fuelEconomy(context, stats.bestLitersPer100Km, FuelEconomyUnit.L_100KM))
         pdf.keyValueRow(context.getString(R.string.fuel_stats_worst, "").trim(), Formatters.fuelEconomy(context, stats.worstLitersPer100Km, FuelEconomyUnit.L_100KM))
-        stats.totalDistanceKm?.let { pdf.keyValueRow(context.getString(R.string.insights_total_distance), Formatters.mileage(context, it, DistanceUnit.KM)) }
+        stats.totalDistanceKm?.let { pdf.keyValueRow(context.getString(R.string.insights_total_distance), Formatters.mileage(context, it, distanceUnit)) }
 
         pdf.spacer()
         pdf.sectionHeader(context.getString(R.string.hub_section_fuel))
         records.sortedByDescending { it.dateMillis }.forEach { record ->
             pdf.bodyLine("${Formatters.date(context, record.dateMillis)} · ${record.liters} L · ${Formatters.currency(context, record.totalCost, record.currencyCode)}")
-            pdf.caption("  " + Formatters.mileage(context, record.mileageKm, DistanceUnit.KM) + (record.station?.let { " · $it" } ?: ""))
+            pdf.caption("  " + Formatters.mileage(context, record.mileageKm, distanceUnit) + (record.station?.let { " · $it" } ?: ""))
         }
 
         pdf.spacer()

@@ -4,7 +4,6 @@ import android.content.Context
 import com.rovena.garage.AppContainer
 import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.VehicleEntity
-import com.rovena.garage.domain.model.DistanceUnit
 import com.rovena.garage.domain.usecase.CurrencyAggregator
 import com.rovena.garage.utils.pdf.PdfBuilder
 import com.rovena.garage.utils.pdf.withWesternNumerals
@@ -22,6 +21,7 @@ object VehicleSummaryPdfGenerator {
         val reminders = firstOnce(container.reminderRepository.observeActive(vehicle.id))
         val conditionScores = container.inspectionRepository.observeLatestConditionScores(vehicle.id).first()
         val health = HealthInputsBuilder.calculate(vehicle, maintenance, documents, conditionScores)
+        val distanceUnit = container.settingsRepository.getOrDefault().distanceUnit
 
         val pdf = PdfBuilder(context)
         val context = context.withWesternNumerals()
@@ -34,7 +34,7 @@ object VehicleSummaryPdfGenerator {
         vehicle.trim?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_trim), it) }
         pdf.keyValueRow(context.getString(R.string.vehicle_field_fuel_type), context.getString(EnumLabels.of(vehicle.fuelType)))
         pdf.keyValueRow(context.getString(R.string.vehicle_field_transmission), context.getString(EnumLabels.of(vehicle.transmission)))
-        pdf.keyValueRow(context.getString(R.string.vehicle_field_mileage), Formatters.mileage(context, vehicle.currentMileageKm, DistanceUnit.KM))
+        pdf.keyValueRow(context.getString(R.string.vehicle_field_mileage), Formatters.mileage(context, vehicle.currentMileageKm, distanceUnit))
         vehicle.vin?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_vin), it) }
         vehicle.licensePlate?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_plate), it) }
         vehicle.color?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_color), it) }

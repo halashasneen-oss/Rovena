@@ -38,6 +38,8 @@ class VehicleHubFragment : Fragment(R.layout.fragment_vehicle_hub) {
         viewModelFactory { VehicleHubViewModel(appContainer, argVehicleId) }
     }
 
+    private var distanceUnit: DistanceUnit = DistanceUnit.KM
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentVehicleHubBinding.bind(inflater.inflate(R.layout.fragment_vehicle_hub, container, false))
         return binding.root
@@ -61,6 +63,11 @@ class VehicleHubFragment : Fragment(R.layout.fragment_vehicle_hub) {
                 viewModel.uiState.collect { state -> render(state) }
             }
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appContainer.settingsRepository.observe().collect { distanceUnit = it.distanceUnit }
+            }
+        }
     }
 
     private fun render(state: VehicleHubUiState) {
@@ -79,7 +86,7 @@ class VehicleHubFragment : Fragment(R.layout.fragment_vehicle_hub) {
             vehicle.year.toString(),
             getString(EnumLabels.of(vehicle.fuelType)),
             getString(EnumLabels.of(vehicle.transmission)),
-            Formatters.mileage(requireContext(), vehicle.currentMileageKm, DistanceUnit.KM)
+            Formatters.mileage(requireContext(), vehicle.currentMileageKm, distanceUnit)
         ).joinToString(" · ")
         vehicle.photoPath?.let { binding.vehicleImage.load(File(it)) { crossfade(true) } }
 

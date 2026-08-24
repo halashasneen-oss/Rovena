@@ -9,12 +9,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.InspectionEntity
 import com.rovena.garage.databinding.ItemRecordRowBinding
+import com.rovena.garage.domain.model.DistanceUnit
 import com.rovena.garage.domain.usecase.HealthScoreCalculator
 import com.rovena.garage.utils.EnumLabels
 import com.rovena.garage.utils.Formatters
 import com.rovena.garage.utils.StatusColors
 
 class InspectionAdapter(private val onClick: (InspectionEntity) -> Unit) : ListAdapter<InspectionEntity, InspectionAdapter.VH>(DIFF) {
+
+    private var distanceUnit: DistanceUnit = DistanceUnit.KM
+
+    fun setDistanceUnit(unit: DistanceUnit) {
+        distanceUnit = unit
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val binding = ItemRecordRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -27,7 +35,7 @@ class InspectionAdapter(private val onClick: (InspectionEntity) -> Unit) : ListA
         fun bind(inspection: InspectionEntity) {
             val context = binding.root.context
             binding.recordTitle.text = context.getString(R.string.inspection_title)
-            binding.recordSubtitle.text = "${Formatters.date(context, inspection.dateMillis)} · ${Formatters.mileage(context, inspection.mileageKm, com.rovena.garage.domain.model.DistanceUnit.KM)}"
+            binding.recordSubtitle.text = "${Formatters.date(context, inspection.dateMillis)} · ${Formatters.mileage(context, inspection.mileageKm, distanceUnit)}"
             binding.recordAmount.text = inspection.overallScore?.let { "$it / 100" } ?: context.getString(R.string.not_enough_data)
             if (inspection.overallScore != null) {
                 binding.recordStatus.visibility = android.view.View.VISIBLE

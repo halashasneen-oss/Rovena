@@ -12,6 +12,13 @@ import com.rovena.garage.utils.Formatters
 
 class FuelAdapter(private val onClick: (FuelRecordEntity) -> Unit) : ListAdapter<FuelRecordEntity, FuelAdapter.VH>(DIFF) {
 
+    private var distanceUnit: DistanceUnit = DistanceUnit.KM
+
+    fun setDistanceUnit(unit: DistanceUnit) {
+        distanceUnit = unit
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val binding = ItemRecordRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return VH(binding)
@@ -23,7 +30,7 @@ class FuelAdapter(private val onClick: (FuelRecordEntity) -> Unit) : ListAdapter
         fun bind(record: FuelRecordEntity) {
             val context = binding.root.context
             binding.recordTitle.text = "${record.liters} L" + if (record.isFullTank) "" else " · " + context.getString(com.rovena.garage.R.string.fuel_partial)
-            binding.recordSubtitle.text = "${Formatters.date(context, record.dateMillis)} · ${Formatters.mileage(context, record.mileageKm, DistanceUnit.KM)}"
+            binding.recordSubtitle.text = "${Formatters.date(context, record.dateMillis)} · ${Formatters.mileage(context, record.mileageKm, distanceUnit)}"
             binding.recordAmount.text = Formatters.currency(context, record.totalCost, record.currencyCode)
             binding.recordStatus.visibility = android.view.View.GONE
             binding.root.setOnClickListener { onClick(record) }

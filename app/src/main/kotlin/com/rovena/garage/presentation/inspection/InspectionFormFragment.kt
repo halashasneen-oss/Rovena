@@ -276,7 +276,8 @@ class InspectionFormFragment : Fragment(R.layout.fragment_inspection_form) {
         val state = viewModel.state.value
         viewLifecycleOwner.lifecycleScope.launch {
             val vehicle = appContainer.vehicleRepository.getById(state.vehicleId) ?: return@launch
-            val file = InspectionPdfGenerator.generate(requireContext(), vehicle, state)
+            val distanceUnit = appContainer.settingsRepository.getOrDefault().distanceUnit
+            val file = InspectionPdfGenerator.generate(requireContext(), vehicle, state, distanceUnit)
             val uri = androidx.core.content.FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.fileprovider", file)
             val intent = android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
                 setDataAndType(uri, "application/pdf")

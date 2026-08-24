@@ -70,13 +70,19 @@ class FuelListFragment : Fragment(R.layout.fragment_generic_list) {
                 }
             }
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appContainer.settingsRepository.observe().collect { adapter.setDistanceUnit(it.distanceUnit) }
+            }
+        }
     }
 
     private fun generatePdf() {
         val vehicleId = viewModel.uiState.value.vehicleId ?: return
         viewLifecycleOwner.lifecycleScope.launch {
             val vehicle = appContainer.vehicleRepository.getById(vehicleId) ?: return@launch
-            val file = FuelPdfGenerator.generate(requireContext(), vehicle, viewModel.uiState.value.records)
+            val distanceUnit = appContainer.settingsRepository.getOrDefault().distanceUnit
+            val file = FuelPdfGenerator.generate(requireContext(), vehicle, viewModel.uiState.value.records, distanceUnit)
             PdfViewerLauncher.open(this@FuelListFragment, file)
         }
     }

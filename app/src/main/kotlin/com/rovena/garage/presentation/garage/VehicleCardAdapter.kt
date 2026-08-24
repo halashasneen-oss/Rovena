@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.rovena.garage.databinding.ItemVehicleCardBinding
+import com.rovena.garage.domain.model.DistanceUnit
 import com.rovena.garage.utils.Formatters
 import com.rovena.garage.utils.StatusColors
 import java.io.File
@@ -16,6 +17,13 @@ class VehicleCardAdapter(
     private val onClick: (VehicleCardUi) -> Unit,
     private val onMoreClick: (VehicleCardUi, android.view.View) -> Unit
 ) : ListAdapter<VehicleCardUi, VehicleCardAdapter.VH>(DIFF) {
+
+    private var distanceUnit: DistanceUnit = DistanceUnit.KM
+
+    fun setDistanceUnit(unit: DistanceUnit) {
+        distanceUnit = unit
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val binding = ItemVehicleCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -28,7 +36,7 @@ class VehicleCardAdapter(
         fun bind(card: VehicleCardUi) {
             val context = binding.root.context
             binding.vehicleTitle.text = "${card.vehicle.make} ${card.vehicle.model}"
-            binding.vehicleSubtitle.text = "${card.vehicle.year} · ${Formatters.mileage(context, card.vehicle.currentMileageKm, com.rovena.garage.domain.model.DistanceUnit.KM)}"
+            binding.vehicleSubtitle.text = "${card.vehicle.year} · ${Formatters.mileage(context, card.vehicle.currentMileageKm, distanceUnit)}"
             binding.primaryBadge.visibility = if (card.vehicle.isPrimary) android.view.View.VISIBLE else android.view.View.GONE
             binding.healthScoreText.text = card.healthScore?.toString() ?: "--"
             val color = ContextCompat.getColor(context, StatusColors.of(card.healthStatus))

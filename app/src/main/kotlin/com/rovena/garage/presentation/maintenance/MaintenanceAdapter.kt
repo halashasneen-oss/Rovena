@@ -7,12 +7,20 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rovena.garage.databinding.ItemRecordRowBinding
+import com.rovena.garage.domain.model.DistanceUnit
 import com.rovena.garage.utils.EnumLabels
 import com.rovena.garage.utils.Formatters
 import com.rovena.garage.utils.StatusColors
 
 class MaintenanceAdapter(private val onClick: (MaintenanceRowUi) -> Unit) :
     ListAdapter<MaintenanceRowUi, MaintenanceAdapter.VH>(DIFF) {
+
+    private var distanceUnit: DistanceUnit = DistanceUnit.KM
+
+    fun setDistanceUnit(unit: DistanceUnit) {
+        distanceUnit = unit
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val binding = ItemRecordRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -25,7 +33,7 @@ class MaintenanceAdapter(private val onClick: (MaintenanceRowUi) -> Unit) :
         fun bind(row: MaintenanceRowUi) {
             val context = binding.root.context
             binding.recordTitle.text = context.getString(EnumLabels.of(row.record.category))
-            binding.recordSubtitle.text = "${Formatters.date(context, row.record.dateMillis)} · ${Formatters.mileage(context, row.record.mileageKm, com.rovena.garage.domain.model.DistanceUnit.KM)}"
+            binding.recordSubtitle.text = "${Formatters.date(context, row.record.dateMillis)} · ${Formatters.mileage(context, row.record.mileageKm, distanceUnit)}"
             binding.recordAmount.text = row.record.cost?.let {
                 Formatters.currency(context, it, row.record.currencyCode)
             } ?: ""

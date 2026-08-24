@@ -12,7 +12,7 @@ import java.io.File
 
 object MaintenancePdfGenerator {
 
-    fun generate(context: Context, vehicle: VehicleEntity, records: List<MaintenanceRecordEntity>): File {
+    fun generate(context: Context, vehicle: VehicleEntity, records: List<MaintenanceRecordEntity>, distanceUnit: DistanceUnit = DistanceUnit.KM): File {
         val pdf = PdfBuilder(context)
         val context = context.withWesternNumerals()
         pdf.title(context.getString(R.string.pdf_maintenance_report_title))
@@ -31,7 +31,7 @@ object MaintenancePdfGenerator {
         sorted.forEach { record ->
             val costText = record.cost?.let { Formatters.currency(context, it, record.currencyCode) } ?: ""
             pdf.bodyLine("${Formatters.date(context, record.dateMillis)} · ${context.getString(EnumLabels.of(record.category))} · $costText")
-            pdf.caption("  ${record.description}" + (record.workshop?.let { " · $it" } ?: "") + " · " + Formatters.mileage(context, record.mileageKm, DistanceUnit.KM))
+            pdf.caption("  ${record.description}" + (record.workshop?.let { " · $it" } ?: "") + " · " + Formatters.mileage(context, record.mileageKm, distanceUnit))
         }
 
         pdf.spacer()

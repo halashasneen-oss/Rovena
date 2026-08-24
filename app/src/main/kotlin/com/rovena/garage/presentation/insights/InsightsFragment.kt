@@ -42,6 +42,8 @@ class InsightsFragment : Fragment(R.layout.fragment_insights) {
             .map { ContextCompat.getColor(requireContext(), it) }
     }
 
+    private var distanceUnit: DistanceUnit = DistanceUnit.KM
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentInsightsBinding.bind(inflater.inflate(R.layout.fragment_insights, container, false))
         return binding.root
@@ -57,6 +59,11 @@ class InsightsFragment : Fragment(R.layout.fragment_insights) {
                 viewModel.uiState.collect { state -> render(state) }
             }
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appContainer.settingsRepository.observe().collect { distanceUnit = it.distanceUnit }
+            }
+        }
     }
 
     private fun render(state: InsightsUiState) {
@@ -70,7 +77,7 @@ class InsightsFragment : Fragment(R.layout.fragment_insights) {
         binding.emptyState.root.visibility = View.GONE
 
         bindStat(binding.statDistance, getString(R.string.insights_total_distance),
-            state.totalDistanceKm?.let { Formatters.mileage(requireContext(), it, DistanceUnit.KM) } ?: getString(R.string.not_enough_data))
+            state.totalDistanceKm?.let { Formatters.mileage(requireContext(), it, distanceUnit) } ?: getString(R.string.not_enough_data))
         bindStat(binding.statConsumption, getString(R.string.insights_avg_consumption),
             Formatters.fuelEconomy(requireContext(), state.fuelStats?.averageLitersPer100Km, FuelEconomyUnit.L_100KM))
         bindStat(binding.statCostPerKm, getString(R.string.insights_cost_per_km),

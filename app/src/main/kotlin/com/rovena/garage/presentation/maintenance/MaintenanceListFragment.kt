@@ -86,6 +86,11 @@ class MaintenanceListFragment : Fragment(R.layout.fragment_generic_list) {
                 }
             }
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appContainer.settingsRepository.observe().collect { adapter.setDistanceUnit(it.distanceUnit) }
+            }
+        }
     }
 
     private fun showFilterDialog() {
@@ -187,7 +192,8 @@ class MaintenanceListFragment : Fragment(R.layout.fragment_generic_list) {
         viewLifecycleOwner.lifecycleScope.launch {
             val vehicle = appContainer.vehicleRepository.getById(vehicleId) ?: return@launch
             val records = viewModel.uiState.value.rows.map { it.record }
-            val file = MaintenancePdfGenerator.generate(requireContext(), vehicle, records)
+            val distanceUnit = appContainer.settingsRepository.getOrDefault().distanceUnit
+            val file = MaintenancePdfGenerator.generate(requireContext(), vehicle, records, distanceUnit)
             PdfViewerLauncher.open(this@MaintenanceListFragment, file)
         }
     }

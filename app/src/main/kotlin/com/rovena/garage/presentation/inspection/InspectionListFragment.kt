@@ -62,6 +62,11 @@ class InspectionListFragment : Fragment(R.layout.fragment_generic_list) {
                 }
             }
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appContainer.settingsRepository.observe().collect { adapter.setDistanceUnit(it.distanceUnit) }
+            }
+        }
     }
 
     override fun onDestroyView() {

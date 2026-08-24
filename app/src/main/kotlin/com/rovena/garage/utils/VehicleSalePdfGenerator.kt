@@ -4,7 +4,6 @@ import android.content.Context
 import com.rovena.garage.AppContainer
 import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.VehicleEntity
-import com.rovena.garage.domain.model.DistanceUnit
 import com.rovena.garage.domain.model.FuelEconomyUnit
 import com.rovena.garage.domain.model.InspectionItemKey
 import com.rovena.garage.domain.model.InspectionItemStatus
@@ -57,6 +56,7 @@ object VehicleSalePdfGenerator {
             )
         }
         val fuelStats = FuelStatsCalculator.compute(fuelEntries)
+        val distanceUnit = container.settingsRepository.getOrDefault().distanceUnit
 
         val pdf = PdfBuilder(context)
         val context = context.withWesternNumerals()
@@ -69,7 +69,7 @@ object VehicleSalePdfGenerator {
         vehicle.trim?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_trim), it) }
         pdf.keyValueRow(context.getString(R.string.vehicle_field_fuel_type), context.getString(EnumLabels.of(vehicle.fuelType)))
         pdf.keyValueRow(context.getString(R.string.vehicle_field_transmission), context.getString(EnumLabels.of(vehicle.transmission)))
-        pdf.keyValueRow(context.getString(R.string.vehicle_field_mileage), Formatters.mileage(context, vehicle.currentMileageKm, DistanceUnit.KM), valueAccent = true)
+        pdf.keyValueRow(context.getString(R.string.vehicle_field_mileage), Formatters.mileage(context, vehicle.currentMileageKm, distanceUnit), valueAccent = true)
         vehicle.vin?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_vin), it) }
         vehicle.licensePlate?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_plate), it) }
         vehicle.color?.let { pdf.keyValueRow(context.getString(R.string.vehicle_field_color), it) }
@@ -102,7 +102,7 @@ object VehicleSalePdfGenerator {
         maintenance.forEach { record ->
             val costText = record.cost?.let { Formatters.currency(context, it, record.currencyCode) } ?: ""
             pdf.bodyLine("${Formatters.date(context, record.dateMillis)} · ${context.getString(EnumLabels.of(record.category))} · $costText")
-            pdf.caption("  ${record.description}" + (record.workshop?.let { " · $it" } ?: "") + " · " + Formatters.mileage(context, record.mileageKm, DistanceUnit.KM))
+            pdf.caption("  ${record.description}" + (record.workshop?.let { " · $it" } ?: "") + " · " + Formatters.mileage(context, record.mileageKm, distanceUnit))
         }
 
         pdf.sectionHeader(context.getString(R.string.hub_section_documents))
