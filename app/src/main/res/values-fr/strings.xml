@@ -184,6 +184,7 @@
     <string name="vehicle_field_notes">Notes</string>
     <string name="vehicle_field_set_primary">Définir comme véhicule principal</string>
     <string name="action_save">Enregistrer</string>
+    <string name="action_add">Ajouter</string>
     <string name="error_required">Ce champ est requis</string>
     <string name="error_invalid_year">Entrez une année valide</string>
     <string name="error_invalid_mileage">Entrez un kilométrage valide</string>

@@ -184,6 +184,7 @@
     <string name="vehicle_field_notes">ملاحظات</string>
     <string name="vehicle_field_set_primary">تعيينها كسيارة رئيسية</string>
     <string name="action_save">حفظ</string>
+    <string name="action_add">إضافة</string>
     <string name="error_required">هذا الحقل مطلوب</string>
     <string name="error_invalid_year">أدخل سنة صحيحة</string>
     <string name="error_invalid_mileage">أدخل مسافة مقطوعة صحيحة</string>

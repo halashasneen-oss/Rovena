@@ -200,6 +200,7 @@
     <string name="vehicle_field_notes">Notes</string>
     <string name="vehicle_field_set_primary">Set as primary vehicle</string>
     <string name="action_save">Save</string>
+    <string name="action_add">Add</string>
     <string name="error_required">This field is required</string>
     <string name="error_invalid_year">Enter a valid year</string>
     <string name="error_invalid_mileage">Enter a valid mileage</string>
