@@ -16,6 +16,9 @@ import com.rovena.garage.R
 import com.rovena.garage.databinding.FragmentExpenseFormBinding
 import com.rovena.garage.domain.model.ExpenseCategory
 import com.rovena.garage.presentation.common.appContainer
+import com.rovena.garage.presentation.common.confirmDelete
+import com.rovena.garage.presentation.common.guardUnsavedChanges
+import com.rovena.garage.presentation.common.setOnDebouncedClickListener
 import com.rovena.garage.presentation.common.viewModelFactory
 import com.rovena.garage.utils.DatePickerHelper
 import com.rovena.garage.utils.EnumLabels
@@ -37,6 +40,7 @@ class ExpenseFormFragment : Fragment(R.layout.fragment_expense_form) {
     }
 
     private var isBinding = false
+    private var isDirty = false
 
     private val pickReceipt = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri ?: return@registerForActivityResult
@@ -44,7 +48,10 @@ class ExpenseFormFragment : Fragment(R.layout.fragment_expense_form) {
         val destFile = File(destDir, "${UUID.randomUUID()}.jpg")
         runCatching {
             requireContext().contentResolver.openInputStream(uri)?.use { input -> destFile.outputStream().use { input.copyTo(it) } }
-        }.onSuccess { viewModel.update { it.copy(receiptPhotoPath = destFile.absolutePath) } }
+        }.onSuccess {
+            isDirty = true
+            viewModel.update { it.copy(receiptPhotoPath = destFile.absolutePath) }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -58,11 +65,13 @@ class ExpenseFormFragment : Fragment(R.layout.fragment_expense_form) {
         val categoryLabels = ExpenseCategory.values().map { getString(EnumLabels.of(it)) }
         binding.categoryDropdown.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, categoryLabels))
         binding.categoryDropdown.setOnItemClickListener { _, _, position, _ ->
+            isDirty = true
             viewModel.update { it.copy(category = ExpenseCategory.values()[position]) }
         }
 
         binding.dateButton.setOnClickListener {
             DatePickerHelper.show(childFragmentManager, "expense_date", viewModel.state.value.dateMillis) { millis ->
+                isDirty = true
                 viewModel.update { it.copy(dateMillis = millis) }
             }
         }
@@ -75,8 +84,9 @@ class ExpenseFormFragment : Fragment(R.layout.fragment_expense_form) {
         wire(binding.vendorInput) { viewModel.update { s -> s.copy(vendor = it) } }
         wire(binding.notesInput) { viewModel.update { s -> s.copy(notes = it) } }
 
-        binding.saveButton.setOnClickListener { viewModel.save() }
-        binding.deleteButton.setOnClickListener { viewModel.delete() }
+        binding.saveButton.setOnDebouncedClickListener { viewModel.save() }
+        binding.deleteButton.setOnDebouncedClickListener { confirmDelete { viewModel.delete() } }
+        guardUnsavedChanges { isDirty }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -110,7 +120,10 @@ class ExpenseFormFragment : Fragment(R.layout.fragment_expense_form) {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: android.text.Editable?) {
-                if (!isBinding) onChanged(s?.toString().orEmpty())
+                if (!isBinding) {
+                    isDirty = true
+                    onChanged(s?.toString().orEmpty())
+                }
             }
         })
     }

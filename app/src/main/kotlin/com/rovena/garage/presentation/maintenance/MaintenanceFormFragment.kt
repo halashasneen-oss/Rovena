@@ -16,6 +16,9 @@ import com.rovena.garage.databinding.FragmentMaintenanceFormBinding
 import com.rovena.garage.domain.model.MaintenanceCategory
 import com.rovena.garage.presentation.common.PhotoStripController
 import com.rovena.garage.presentation.common.appContainer
+import com.rovena.garage.presentation.common.confirmDelete
+import com.rovena.garage.presentation.common.guardUnsavedChanges
+import com.rovena.garage.presentation.common.setOnDebouncedClickListener
 import com.rovena.garage.presentation.common.viewModelFactory
 import com.rovena.garage.utils.DatePickerHelper
 import com.rovena.garage.utils.EnumLabels
@@ -34,9 +37,13 @@ class MaintenanceFormFragment : Fragment(R.layout.fragment_maintenance_form) {
         viewModelFactory { MaintenanceFormViewModel(appContainer, vehicleId, recordId) }
     }
 
-    private val photoController = PhotoStripController(this) { paths -> viewModel.update { it.copy(photoPaths = paths) } }
+    private val photoController = PhotoStripController(this) { paths ->
+        isDirty = true
+        viewModel.update { it.copy(photoPaths = paths) }
+    }
 
     private var isBinding = false
+    private var isDirty = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMaintenanceFormBinding.bind(inflater.inflate(R.layout.fragment_maintenance_form, container, false))
@@ -49,16 +56,19 @@ class MaintenanceFormFragment : Fragment(R.layout.fragment_maintenance_form) {
         val categoryLabels = MaintenanceCategory.values().map { getString(EnumLabels.of(it)) }
         binding.categoryDropdown.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, categoryLabels))
         binding.categoryDropdown.setOnItemClickListener { _, _, position, _ ->
+            isDirty = true
             viewModel.update { it.copy(category = MaintenanceCategory.values()[position]) }
         }
 
         binding.dateButton.setOnClickListener {
             DatePickerHelper.show(childFragmentManager, "maintenance_date", viewModel.state.value.dateMillis) { millis ->
+                isDirty = true
                 viewModel.update { it.copy(dateMillis = millis) }
             }
         }
         binding.nextDueDateButton.setOnClickListener {
             DatePickerHelper.show(childFragmentManager, "maintenance_next_due", viewModel.state.value.nextDueDateMillis) { millis ->
+                isDirty = true
                 viewModel.update { it.copy(nextDueDateMillis = millis) }
             }
         }
@@ -72,8 +82,9 @@ class MaintenanceFormFragment : Fragment(R.layout.fragment_maintenance_form) {
         wire(binding.notesInput) { viewModel.update { s -> s.copy(notes = it) } }
         wire(binding.nextDueMileageInput) { viewModel.update { s -> s.copy(nextDueMileage = it) } }
 
-        binding.saveButton.setOnClickListener { viewModel.save() }
-        binding.deleteButton.setOnClickListener { viewModel.delete() }
+        binding.saveButton.setOnDebouncedClickListener { viewModel.save() }
+        binding.deleteButton.setOnDebouncedClickListener { confirmDelete { viewModel.delete() } }
+        guardUnsavedChanges { isDirty }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -126,7 +137,10 @@ class MaintenanceFormFragment : Fragment(R.layout.fragment_maintenance_form) {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: android.text.Editable?) {
-                if (!isBinding) onChanged(s?.toString().orEmpty())
+                if (!isBinding) {
+                    isDirty = true
+                    onChanged(s?.toString().orEmpty())
+                }
             }
         })
     }

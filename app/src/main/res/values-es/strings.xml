@@ -200,6 +200,11 @@
     <string name="action_set_primary">Establecer como principal</string>
     <string name="delete_vehicle_confirm_title">¿Eliminar este vehículo?</string>
     <string name="delete_vehicle_confirm_message">Todo el mantenimiento, combustible, gastos, documentos, inspecciones y recordatorios de este vehículo se eliminarán permanentemente. Esta acción no se puede deshacer.</string>
+    <string name="delete_record_confirm_title">¿Eliminar este registro?</string>
+    <string name="delete_record_confirm_message">Esta acción no se puede deshacer.</string>
+    <string name="discard_changes_confirm_title">¿Descartar los cambios?</string>
+    <string name="discard_changes_confirm_message">Tiene cambios sin guardar que se perderán.</string>
+    <string name="discard_changes_confirm_action">Descartar</string>
     <string name="action_cancel">Cancelar</string>
     <string name="action_continue">Continuar</string>
 
@@ -425,6 +430,13 @@
     <string name="settings_row_backup_subtitle">Exportar un archivo de copia de seguridad .rovena</string>
     <string name="settings_row_restore">Restaurar copia de seguridad</string>
     <string name="settings_row_restore_subtitle">Importar un archivo de copia de seguridad .rovena</string>
+    <string name="settings_row_clear_all_data">Borrar todos los datos</string>
+    <string name="settings_row_clear_all_data_subtitle">Elimina permanentemente todos los vehículos y sus registros</string>
+    <string name="clear_all_data_confirm_title">¿Borrar todos los datos?</string>
+    <string name="clear_all_data_confirm_message">Esto elimina permanentemente todos los vehículos y todos sus registros de mantenimiento, combustible, gastos, documentos, inspecciones, recordatorios, notas y piezas, junto con sus fotos. La configuración de la aplicación (tema, idioma, PIN, etc.) no se verá afectada. Esta acción no se puede deshacer. Considere crear una copia de seguridad primero.\n\nEscriba \"%1$s\" para confirmar.</string>
+    <string name="clear_all_data_confirm_hint">Escriba %1$s</string>
+    <string name="clear_all_data_confirm_action">Borrar todo</string>
+    <string name="clear_all_data_done">Se han borrado todos los datos de los vehículos.</string>
 
     <string name="settings_section_units">Unidades</string>
     <string name="settings_row_distance_unit">Unidad de distancia</string>

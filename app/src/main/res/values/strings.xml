@@ -216,6 +216,11 @@
     <string name="action_set_primary">Set as Primary</string>
     <string name="delete_vehicle_confirm_title">Delete this vehicle?</string>
     <string name="delete_vehicle_confirm_message">All maintenance, fuel, expense, document, inspection and reminder records for this vehicle will be permanently deleted. This cannot be undone.</string>
+    <string name="delete_record_confirm_title">Delete this record?</string>
+    <string name="delete_record_confirm_message">This cannot be undone.</string>
+    <string name="discard_changes_confirm_title">Discard changes?</string>
+    <string name="discard_changes_confirm_message">You have unsaved changes that will be lost.</string>
+    <string name="discard_changes_confirm_action">Discard</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_continue">Continue</string>
 
@@ -442,6 +447,13 @@
     <string name="settings_row_backup_subtitle">Export a .rovena backup file</string>
     <string name="settings_row_restore">Restore Backup</string>
     <string name="settings_row_restore_subtitle">Import a .rovena backup file</string>
+    <string name="settings_row_clear_all_data">Clear All Data</string>
+    <string name="settings_row_clear_all_data_subtitle">Permanently delete every vehicle and its records</string>
+    <string name="clear_all_data_confirm_title">Clear all data?</string>
+    <string name="clear_all_data_confirm_message">This permanently deletes every vehicle and all of its maintenance, fuel, expense, document, inspection, reminder, note, and part records, along with their photos. Your app settings (theme, language, PIN, etc.) are not affected. This cannot be undone. Consider creating a backup first.\n\nType \"%1$s\" to confirm.</string>
+    <string name="clear_all_data_confirm_hint">Type %1$s</string>
+    <string name="clear_all_data_confirm_action">Clear Everything</string>
+    <string name="clear_all_data_done">All vehicle data has been cleared.</string>
 
     <string name="settings_section_units">Units</string>
     <string name="settings_row_distance_unit">Distance Unit</string>

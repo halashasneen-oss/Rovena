@@ -17,6 +17,7 @@ import com.rovena.garage.data.local.entities.PartEntity
 import com.rovena.garage.databinding.DialogPartEditBinding
 import com.rovena.garage.databinding.FragmentGenericListBinding
 import com.rovena.garage.presentation.common.appContainer
+import com.rovena.garage.presentation.common.confirmDelete
 import com.rovena.garage.presentation.common.resolveVehicleId
 import com.rovena.garage.presentation.common.viewModelFactory
 import com.rovena.garage.utils.DatePickerHelper
@@ -128,7 +129,7 @@ class PartListFragment : Fragment(R.layout.fragment_generic_list) {
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.option_edit -> showEditDialog(row.part)
-                R.id.option_delete -> viewModel.delete(row.part)
+                R.id.option_delete -> confirmDelete { viewModel.delete(row.part) }
             }
             true
         }

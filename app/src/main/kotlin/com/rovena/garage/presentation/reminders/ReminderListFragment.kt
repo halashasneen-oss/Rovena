@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.rovena.garage.R
 import com.rovena.garage.databinding.FragmentGenericListBinding
 import com.rovena.garage.presentation.common.appContainer
+import com.rovena.garage.presentation.common.confirmDelete
 import com.rovena.garage.presentation.common.resolveVehicleId
 import com.rovena.garage.presentation.common.viewModelFactory
 import kotlinx.coroutines.launch
@@ -74,7 +75,7 @@ class ReminderListFragment : Fragment(R.layout.fragment_generic_list) {
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.option_edit -> navigateToForm(row.reminder.vehicleId, row.reminder.id)
-                R.id.option_delete -> viewModel.delete(row.reminder)
+                R.id.option_delete -> confirmDelete { viewModel.delete(row.reminder) }
             }
             true
         }

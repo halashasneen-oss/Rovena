@@ -200,6 +200,11 @@
     <string name="action_set_primary">تعيين كرئيسية</string>
     <string name="delete_vehicle_confirm_title">هل تريد حذف هذه السيارة؟</string>
     <string name="delete_vehicle_confirm_message">سيتم حذف جميع سجلات الصيانة والوقود والمصاريف والمستندات والفحوصات والتذكيرات الخاصة بهذه السيارة نهائياً. لا يمكن التراجع عن هذا الإجراء.</string>
+    <string name="delete_record_confirm_title">حذف هذا السجل؟</string>
+    <string name="delete_record_confirm_message">لا يمكن التراجع عن هذا الإجراء.</string>
+    <string name="discard_changes_confirm_title">تجاهل التغييرات؟</string>
+    <string name="discard_changes_confirm_message">لديك تغييرات غير محفوظة ستُفقد.</string>
+    <string name="discard_changes_confirm_action">تجاهل</string>
     <string name="action_cancel">إلغاء</string>
     <string name="action_continue">متابعة</string>
 
@@ -425,6 +430,13 @@
     <string name="settings_row_backup_subtitle">تصدير ملف نسخة احتياطية .rovena</string>
     <string name="settings_row_restore">استعادة نسخة احتياطية</string>
     <string name="settings_row_restore_subtitle">استيراد ملف نسخة احتياطية .rovena</string>
+    <string name="settings_row_clear_all_data">مسح كل البيانات</string>
+    <string name="settings_row_clear_all_data_subtitle">حذف جميع السيارات وسجلاتها نهائياً</string>
+    <string name="clear_all_data_confirm_title">مسح كل البيانات؟</string>
+    <string name="clear_all_data_confirm_message">سيؤدي هذا إلى حذف جميع السيارات وجميع سجلات الصيانة والوقود والمصاريف والمستندات والفحوصات والتذكيرات والملاحظات وقطع الغيار الخاصة بها، بالإضافة إلى صورها، نهائياً. لن تتأثر إعدادات التطبيق (المظهر، اللغة، رمز PIN، إلخ). لا يمكن التراجع عن هذا الإجراء. يُنصح بإنشاء نسخة احتياطية أولاً.\n\nاكتب \"%1$s\" للتأكيد.</string>
+    <string name="clear_all_data_confirm_hint">اكتب %1$s</string>
+    <string name="clear_all_data_confirm_action">مسح كل شيء</string>
+    <string name="clear_all_data_done">تم مسح جميع بيانات السيارات.</string>
 
     <string name="settings_section_units">الوحدات</string>
     <string name="settings_row_distance_unit">وحدة المسافة</string>

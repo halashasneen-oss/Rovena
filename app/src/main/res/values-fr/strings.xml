@@ -200,6 +200,11 @@
     <string name="action_set_primary">Définir comme principal</string>
     <string name="delete_vehicle_confirm_title">Supprimer ce véhicule ?</string>
     <string name="delete_vehicle_confirm_message">Tout l\'entretien, le carburant, les dépenses, les documents, les inspections et les rappels de ce véhicule seront définitivement supprimés. Cette action est irréversible.</string>
+    <string name="delete_record_confirm_title">Supprimer cet enregistrement ?</string>
+    <string name="delete_record_confirm_message">Cette action est irréversible.</string>
+    <string name="discard_changes_confirm_title">Abandonner les modifications ?</string>
+    <string name="discard_changes_confirm_message">Vous avez des modifications non enregistrées qui seront perdues.</string>
+    <string name="discard_changes_confirm_action">Abandonner</string>
     <string name="action_cancel">Annuler</string>
     <string name="action_continue">Continuer</string>
 
@@ -425,6 +430,13 @@
     <string name="settings_row_backup_subtitle">Exporter un fichier de sauvegarde .rovena</string>
     <string name="settings_row_restore">Restaurer une sauvegarde</string>
     <string name="settings_row_restore_subtitle">Importer un fichier de sauvegarde .rovena</string>
+    <string name="settings_row_clear_all_data">Effacer toutes les données</string>
+    <string name="settings_row_clear_all_data_subtitle">Supprime définitivement tous les véhicules et leurs enregistrements</string>
+    <string name="clear_all_data_confirm_title">Effacer toutes les données ?</string>
+    <string name="clear_all_data_confirm_message">Cette action supprime définitivement tous les véhicules ainsi que tous leurs enregistrements d\'entretien, de carburant, de dépenses, de documents, d\'inspections, de rappels, de notes et de pièces, ainsi que leurs photos. Les paramètres de l\'application (thème, langue, code PIN, etc.) ne sont pas affectés. Cette action est irréversible. Pensez à créer une sauvegarde au préalable.\n\nSaisissez « %1$s » pour confirmer.</string>
+    <string name="clear_all_data_confirm_hint">Saisissez %1$s</string>
+    <string name="clear_all_data_confirm_action">Tout effacer</string>
+    <string name="clear_all_data_done">Toutes les données des véhicules ont été effacées.</string>
 
     <string name="settings_section_units">Unités</string>
     <string name="settings_row_distance_unit">Unité de distance</string>

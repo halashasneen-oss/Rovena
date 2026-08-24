@@ -35,6 +35,7 @@
         <TextView style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:layout_marginTop="16dp" android:text="@string/settings_section_data" />
         <include android:id="@+id/rowBackup" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
         <include android:id="@+id/rowRestore" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <include android:id="@+id/rowClearAllData" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />
 
         <TextView style="@style/TextAppearance.Rovena.SectionHeader" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:layout_marginTop="16dp" android:text="@string/settings_section_units" />
         <include android:id="@+id/rowDistanceUnit" layout="@layout/item_settings_row" android:layout_width="match_parent" android:layout_height="wrap_content" />

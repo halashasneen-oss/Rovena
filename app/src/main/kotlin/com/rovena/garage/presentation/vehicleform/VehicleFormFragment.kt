@@ -19,6 +19,8 @@ import com.rovena.garage.databinding.FragmentVehicleFormBinding
 import com.rovena.garage.domain.model.FuelType
 import com.rovena.garage.domain.model.TransmissionType
 import com.rovena.garage.presentation.common.appContainer
+import com.rovena.garage.presentation.common.guardUnsavedChanges
+import com.rovena.garage.presentation.common.setOnDebouncedClickListener
 import com.rovena.garage.presentation.common.viewModelFactory
 import com.rovena.garage.utils.EnumLabels
 import kotlinx.coroutines.launch
@@ -60,6 +62,7 @@ class VehicleFormFragment : Fragment(R.layout.fragment_vehicle_form) {
                 destFile.outputStream().use { output -> input.copyTo(output) }
             }
         }.onSuccess {
+            isDirty = true
             binding.photoPicker.setImageURI(android.net.Uri.fromFile(destFile))
             viewModel.update { it.copy(photoPath = destFile.absolutePath) }
         }
@@ -76,12 +79,14 @@ class VehicleFormFragment : Fragment(R.layout.fragment_vehicle_form) {
         val fuelLabels = FuelType.values().map { getString(EnumLabels.of(it)) }
         binding.fuelTypeDropdown.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, fuelLabels))
         binding.fuelTypeDropdown.setOnItemClickListener { _, _, position, _ ->
+            isDirty = true
             viewModel.update { it.copy(fuelType = FuelType.values()[position]) }
         }
 
         val transmissionLabels = TransmissionType.values().map { getString(EnumLabels.of(it)) }
         binding.transmissionDropdown.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, transmissionLabels))
         binding.transmissionDropdown.setOnItemClickListener { _, _, position, _ ->
+            isDirty = true
             viewModel.update { it.copy(transmission = TransmissionType.values()[position]) }
         }
 
@@ -90,13 +95,17 @@ class VehicleFormFragment : Fragment(R.layout.fragment_vehicle_form) {
         binding.purchaseDateButton.setOnClickListener {
             val picker = MaterialDatePicker.Builder.datePicker().build()
             picker.addOnPositiveButtonClickListener { selection ->
+                isDirty = true
                 viewModel.update { it.copy(purchaseDateMillis = selection) }
                 binding.purchaseDateButton.text = com.rovena.garage.utils.Formatters.date(requireContext(), selection)
             }
             picker.show(childFragmentManager, "purchase_date")
         }
 
-        binding.primarySwitch.setOnCheckedChangeListener { _, checked -> viewModel.update { it.copy(isPrimary = checked) } }
+        binding.primarySwitch.setOnCheckedChangeListener { _, checked ->
+            if (!isBinding) isDirty = true
+            viewModel.update { it.copy(isPrimary = checked) }
+        }
 
         wireTextInput(binding.makeInput) { text -> viewModel.update { it.copy(make = text) } }
         wireTextInput(binding.modelInput) { text -> viewModel.update { it.copy(model = text) } }
@@ -111,7 +120,8 @@ class VehicleFormFragment : Fragment(R.layout.fragment_vehicle_form) {
         wireTextInput(binding.estimatedValueInput) { text -> viewModel.update { it.copy(estimatedValue = text) } }
         wireTextInput(binding.notesInput) { text -> viewModel.update { it.copy(notes = text) } }
 
-        binding.saveButton.setOnClickListener { viewModel.save() }
+        binding.saveButton.setOnDebouncedClickListener { viewModel.save() }
+        guardUnsavedChanges { isDirty }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -121,6 +131,7 @@ class VehicleFormFragment : Fragment(R.layout.fragment_vehicle_form) {
     }
 
     private var isBinding = false
+    private var isDirty = false
 
     private fun render(state: VehicleFormState) {
         if (state.isLoading) return
@@ -158,6 +169,7 @@ class VehicleFormFragment : Fragment(R.layout.fragment_vehicle_form) {
         binding.mileageLayout.error = state.errors["mileage"]?.let { getString(it) }
 
         if (state.isSaved) {
+            isDirty = false
             setFragmentResult(RESULT_KEY, Bundle().apply { putLong(RESULT_VEHICLE_ID, state.savedVehicleId) })
             if (!isOnboarding) {
                 findNavController().popBackStack()
@@ -170,7 +182,10 @@ class VehicleFormFragment : Fragment(R.layout.fragment_vehicle_form) {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: android.text.Editable?) {
-                if (!isBinding) onChanged(s?.toString().orEmpty())
+                if (!isBinding) {
+                    isDirty = true
+                    onChanged(s?.toString().orEmpty())
+                }
             }
         })
     }

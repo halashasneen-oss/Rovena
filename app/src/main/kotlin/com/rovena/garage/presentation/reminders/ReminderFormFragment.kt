@@ -15,6 +15,9 @@ import com.rovena.garage.R
 import com.rovena.garage.databinding.FragmentReminderFormBinding
 import com.rovena.garage.domain.model.ReminderBasis
 import com.rovena.garage.presentation.common.appContainer
+import com.rovena.garage.presentation.common.confirmDelete
+import com.rovena.garage.presentation.common.guardUnsavedChanges
+import com.rovena.garage.presentation.common.setOnDebouncedClickListener
 import com.rovena.garage.presentation.common.viewModelFactory
 import com.rovena.garage.utils.DatePickerHelper
 import com.rovena.garage.utils.EnumLabels
@@ -34,6 +37,7 @@ class ReminderFormFragment : Fragment(R.layout.fragment_reminder_form) {
     }
 
     private var isBinding = false
+    private var isDirty = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentReminderFormBinding.bind(inflater.inflate(R.layout.fragment_reminder_form, container, false))
@@ -46,18 +50,23 @@ class ReminderFormFragment : Fragment(R.layout.fragment_reminder_form) {
         val basisLabels = ReminderBasis.values().map { getString(EnumLabels.of(it)) }
         binding.basisDropdown.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, basisLabels))
         binding.basisDropdown.setOnItemClickListener { _, _, position, _ ->
+            isDirty = true
             viewModel.update { it.copy(basis = ReminderBasis.values()[position]) }
         }
 
         binding.dueDateButton.setOnClickListener {
             DatePickerHelper.show(childFragmentManager, "reminder_due_date", viewModel.state.value.dueDateMillis) { millis ->
+                isDirty = true
                 viewModel.update { it.copy(dueDateMillis = millis) }
             }
         }
 
         binding.recurringSwitch.setOnCheckedChangeListener { _, checked ->
             binding.intervalContainer.visibility = if (checked) View.VISIBLE else View.GONE
-            if (!isBinding) viewModel.update { it.copy(isRecurring = checked) }
+            if (!isBinding) {
+                isDirty = true
+                viewModel.update { it.copy(isRecurring = checked) }
+            }
         }
 
         wire(binding.titleInput) { viewModel.update { s -> s.copy(title = it) } }
@@ -66,8 +75,9 @@ class ReminderFormFragment : Fragment(R.layout.fragment_reminder_form) {
         wire(binding.intervalMonthsInput) { viewModel.update { s -> s.copy(intervalMonths = it) } }
         wire(binding.notesInput) { viewModel.update { s -> s.copy(notes = it) } }
 
-        binding.saveButton.setOnClickListener { viewModel.save() }
-        binding.deleteButton.setOnClickListener { viewModel.delete() }
+        binding.saveButton.setOnDebouncedClickListener { viewModel.save() }
+        binding.deleteButton.setOnDebouncedClickListener { confirmDelete { viewModel.delete() } }
+        guardUnsavedChanges { isDirty }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -106,7 +116,10 @@ class ReminderFormFragment : Fragment(R.layout.fragment_reminder_form) {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: android.text.Editable?) {
-                if (!isBinding) onChanged(s?.toString().orEmpty())
+                if (!isBinding) {
+                    isDirty = true
+                    onChanged(s?.toString().orEmpty())
+                }
             }
         })
     }

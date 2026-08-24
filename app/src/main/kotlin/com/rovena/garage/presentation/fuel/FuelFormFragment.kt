@@ -15,6 +15,9 @@ import com.rovena.garage.R
 import com.rovena.garage.databinding.FragmentFuelFormBinding
 import com.rovena.garage.domain.model.FuelType
 import com.rovena.garage.presentation.common.appContainer
+import com.rovena.garage.presentation.common.confirmDelete
+import com.rovena.garage.presentation.common.guardUnsavedChanges
+import com.rovena.garage.presentation.common.setOnDebouncedClickListener
 import com.rovena.garage.presentation.common.viewModelFactory
 import com.rovena.garage.utils.DatePickerHelper
 import com.rovena.garage.utils.EnumLabels
@@ -34,6 +37,7 @@ class FuelFormFragment : Fragment(R.layout.fragment_fuel_form) {
     }
 
     private var isBinding = false
+    private var isDirty = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentFuelFormBinding.bind(inflater.inflate(R.layout.fragment_fuel_form, container, false))
@@ -46,11 +50,13 @@ class FuelFormFragment : Fragment(R.layout.fragment_fuel_form) {
         val fuelLabels = FuelType.values().map { getString(EnumLabels.of(it)) }
         binding.fuelTypeDropdown.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, fuelLabels))
         binding.fuelTypeDropdown.setOnItemClickListener { _, _, position, _ ->
+            isDirty = true
             viewModel.update { it.copy(fuelType = FuelType.values()[position]) }
         }
 
         binding.dateButton.setOnClickListener {
             DatePickerHelper.show(childFragmentManager, "fuel_date", viewModel.state.value.dateMillis) { millis ->
+                isDirty = true
                 viewModel.update { it.copy(dateMillis = millis) }
             }
         }
@@ -62,10 +68,16 @@ class FuelFormFragment : Fragment(R.layout.fragment_fuel_form) {
         wire(binding.stationInput) { viewModel.update { s -> s.copy(station = it) } }
         wire(binding.notesInput) { viewModel.update { s -> s.copy(notes = it) } }
 
-        binding.fullTankSwitch.setOnCheckedChangeListener { _, checked -> if (!isBinding) viewModel.update { it.copy(isFullTank = checked) } }
+        binding.fullTankSwitch.setOnCheckedChangeListener { _, checked ->
+            if (!isBinding) {
+                isDirty = true
+                viewModel.update { it.copy(isFullTank = checked) }
+            }
+        }
 
-        binding.saveButton.setOnClickListener { viewModel.save() }
-        binding.deleteButton.setOnClickListener { viewModel.delete() }
+        binding.saveButton.setOnDebouncedClickListener { viewModel.save() }
+        binding.deleteButton.setOnDebouncedClickListener { confirmDelete { viewModel.delete() } }
+        guardUnsavedChanges { isDirty }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -104,7 +116,10 @@ class FuelFormFragment : Fragment(R.layout.fragment_fuel_form) {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: android.text.Editable?) {
-                if (!isBinding) onChanged(s?.toString().orEmpty())
+                if (!isBinding) {
+                    isDirty = true
+                    onChanged(s?.toString().orEmpty())
+                }
             }
         })
     }

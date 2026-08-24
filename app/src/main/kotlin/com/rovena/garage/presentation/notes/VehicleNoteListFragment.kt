@@ -17,6 +17,7 @@ import com.rovena.garage.data.local.entities.VehicleNoteEntity
 import com.rovena.garage.databinding.DialogNoteEditBinding
 import com.rovena.garage.databinding.FragmentGenericListBinding
 import com.rovena.garage.presentation.common.appContainer
+import com.rovena.garage.presentation.common.confirmDelete
 import com.rovena.garage.presentation.common.resolveVehicleId
 import com.rovena.garage.presentation.common.viewModelFactory
 import kotlinx.coroutines.launch
@@ -87,7 +88,7 @@ class VehicleNoteListFragment : Fragment(R.layout.fragment_generic_list) {
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.option_edit -> showEditDialog(note)
-                R.id.option_delete -> viewModel.delete(note)
+                R.id.option_delete -> confirmDelete { viewModel.delete(note) }
             }
             true
         }

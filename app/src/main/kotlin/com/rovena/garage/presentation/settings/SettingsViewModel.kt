@@ -88,4 +88,19 @@ class SettingsViewModel(private val container: AppContainer) : ViewModel() {
     fun generateSampleData() {
         viewModelScope.launch { com.rovena.garage.utils.SampleDataGenerator.generate(container) }
     }
+
+    /**
+     * Deletes every vehicle via [com.rovena.garage.data.repository.VehicleRepository.deleteVehicle],
+     * reusing its already-transactional cascade (child records) + best-effort file cleanup
+     * (photos/documents/receipts) rather than a raw Room clearAllTables() - which would also
+     * wipe the app_settings table (theme/language/PIN/etc.), not just garage content.
+     */
+    fun clearAllData(onComplete: () -> Unit) {
+        viewModelScope.launch {
+            container.vehicleRepository.getAllOnce().forEach { vehicle ->
+                container.vehicleRepository.deleteVehicle(vehicle)
+            }
+            onComplete()
+        }
+    }
 }

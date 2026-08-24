@@ -22,6 +22,9 @@ import com.rovena.garage.domain.model.InspectionItemKey
 import com.rovena.garage.domain.model.InspectionItemStatus
 import com.rovena.garage.presentation.common.PhotoStripController
 import com.rovena.garage.presentation.common.appContainer
+import com.rovena.garage.presentation.common.confirmDelete
+import com.rovena.garage.presentation.common.guardUnsavedChanges
+import com.rovena.garage.presentation.common.setOnDebouncedClickListener
 import com.rovena.garage.presentation.common.viewModelFactory
 import com.rovena.garage.utils.DatePickerHelper
 import com.rovena.garage.utils.EnumLabels
@@ -47,11 +50,13 @@ class InspectionFormFragment : Fragment(R.layout.fragment_inspection_form) {
     // dynamically-built per-row buttons exist), so one controller is reused for whichever
     // item's dialog is currently showing - see currentPhotoItemKey.
     private val photoController = PhotoStripController(this) { paths ->
+        isDirty = true
         currentPhotoItemKey?.let { key -> viewModel.updateItem(key) { it.copy(photoPaths = paths) } }
     }
     private var currentPhotoItemKey: InspectionItemKey? = null
 
     private var isBinding = false
+    private var isDirty = false
     private var rowsBuilt = false
     private var saveOutcomeHandled = false
     private val rowBindings = mutableMapOf<InspectionItemKey, ItemInspectionCheckBinding>()
@@ -66,16 +71,18 @@ class InspectionFormFragment : Fragment(R.layout.fragment_inspection_form) {
 
         binding.dateButton.setOnClickListener {
             DatePickerHelper.show(childFragmentManager, "inspection_date", viewModel.state.value.dateMillis) { millis ->
+                isDirty = true
                 viewModel.update { it.copy(dateMillis = millis) }
             }
         }
 
-        binding.mileageInput.addTextChangedListener(simpleWatcher { text -> if (!isBinding) viewModel.update { it.copy(mileage = text) } })
-        binding.notesInput.addTextChangedListener(simpleWatcher { text -> if (!isBinding) viewModel.update { it.copy(notes = text) } })
+        binding.mileageInput.addTextChangedListener(simpleWatcher { text -> if (!isBinding) { isDirty = true; viewModel.update { it.copy(mileage = text) } } })
+        binding.notesInput.addTextChangedListener(simpleWatcher { text -> if (!isBinding) { isDirty = true; viewModel.update { it.copy(notes = text) } } })
 
-        binding.saveButton.setOnClickListener { viewModel.save() }
-        binding.deleteButton.setOnClickListener { viewModel.delete() }
+        binding.saveButton.setOnDebouncedClickListener { viewModel.save() }
+        binding.deleteButton.setOnDebouncedClickListener { confirmDelete { viewModel.delete() } }
         binding.pdfButton.setOnClickListener { generatePdf() }
+        guardUnsavedChanges { isDirty }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -192,6 +199,7 @@ class InspectionFormFragment : Fragment(R.layout.fragment_inspection_form) {
                 row.chipProblem.id -> InspectionItemStatus.PROBLEM
                 else -> InspectionItemStatus.UNKNOWN
             }
+            isDirty = true
             viewModel.updateItem(item.itemKey) { it.copy(status = newStatus) }
         }
 
@@ -264,6 +272,7 @@ class InspectionFormFragment : Fragment(R.layout.fragment_inspection_form) {
             .setTitle(getString(EnumLabels.of(itemKey)))
             .setView(dialogView)
             .setPositiveButton(R.string.action_save) { _, _ ->
+                isDirty = true
                 viewModel.updateItem(itemKey) {
                     it.copy(notes = notesInput.text.toString(), estimatedRepairCost = costInput.text.toString())
                 }

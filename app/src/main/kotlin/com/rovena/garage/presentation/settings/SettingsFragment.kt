@@ -64,6 +64,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         setupRow(binding.rowRestore, getString(R.string.settings_row_restore), getString(R.string.settings_row_restore_subtitle), showSwitch = false) {
             findNavController().navigate(R.id.backupFragment)
         }
+        setupRow(binding.rowClearAllData, getString(R.string.settings_row_clear_all_data), getString(R.string.settings_row_clear_all_data_subtitle), showSwitch = false) {
+            showClearAllDataDialog()
+        }
         setupRow(binding.rowAppLockTimeout, getString(R.string.settings_row_app_lock_timeout), "", showSwitch = false) { showAppLockTimeoutDialog() }
         setupRow(binding.rowTheme, getString(R.string.settings_row_theme), "", showSwitch = false) { showThemeDialog() }
         setupRow(binding.rowDistanceUnit, getString(R.string.settings_row_distance_unit), "", showSwitch = false) { showDistanceUnitDialog() }
@@ -328,6 +331,45 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 dialog.dismiss()
             }
             .show()
+    }
+
+    /**
+     * Strong ("type to confirm") guard, unlike the plain Delete/Cancel dialogs used
+     * elsewhere - this wipes every vehicle in the garage at once with no undo, so a
+     * single accidental tap must not be enough. The confirm word reuses the already
+     * translated action_delete string rather than introducing a new one the user
+     * would need to spell exactly in a language they may not type comfortably in.
+     */
+    private fun showClearAllDataDialog() {
+        val confirmWord = getString(R.string.action_delete)
+        val input = EditText(requireContext()).apply { hint = getString(R.string.clear_all_data_confirm_hint, confirmWord) }
+
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.clear_all_data_confirm_title)
+            .setMessage(getString(R.string.clear_all_data_confirm_message, confirmWord))
+            .setView(input)
+            .setPositiveButton(R.string.clear_all_data_confirm_action, null)
+            .setNegativeButton(R.string.action_cancel, null)
+            .create()
+
+        dialog.setOnShowListener {
+            val positiveButton = dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE)
+            positiveButton.isEnabled = false
+            input.addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    positiveButton.isEnabled = s?.toString()?.trim().equals(confirmWord, ignoreCase = true)
+                }
+            })
+            positiveButton.setOnClickListener {
+                dialog.dismiss()
+                viewModel.clearAllData {
+                    if (isAdded) android.widget.Toast.makeText(requireContext(), getString(R.string.clear_all_data_done), android.widget.Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        dialog.show()
     }
 
     private fun showTextDialog(titleRes: Int, bodyRes: Int) {
