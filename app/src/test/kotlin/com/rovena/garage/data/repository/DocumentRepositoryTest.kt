@@ -12,13 +12,16 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.io.File
 
 /**
  * Document expiry -> reminder lifecycle (spec #8): a document with an expiry date always
@@ -38,6 +41,7 @@ class DocumentRepositoryTest {
     private lateinit var db: RovenaDatabase
     private lateinit var repository: DocumentRepository
     private var vehicleId: Long = 0
+    private lateinit var tempDir: File
 
     @Before
     fun setUp() {
@@ -51,18 +55,20 @@ class DocumentRepositoryTest {
                 VehicleEntity(make = "Toyota", model = "Corolla", year = 2020, fuelType = FuelType.PETROL, transmission = TransmissionType.AUTOMATIC, currentMileageKm = 10_000)
             )
         }
+        tempDir = File.createTempFile("document_repo_test", "").apply { delete(); mkdirs() }
     }
 
     @After
     fun tearDown() {
         db.close()
+        tempDir.deleteRecursively()
     }
 
-    private fun newDocument(expiryDateMillis: Long?) = DocumentEntity(
+    private fun newDocument(expiryDateMillis: Long?, filePath: String = "/tmp/reg.pdf") = DocumentEntity(
         vehicleId = vehicleId,
         name = "Registration",
         type = DocumentType.REGISTRATION,
-        filePath = "/tmp/reg.pdf",
+        filePath = filePath,
         expiryDateMillis = expiryDateMillis
     )
 
@@ -115,5 +121,34 @@ class DocumentRepositoryTest {
         val (docId, reminderId) = repository.addOrUpdate(newDocument(expiryDateMillis = null))
         assertNull(reminderId)
         assertNull(repository.getById(docId)?.reminderId)
+    }
+
+    @Test
+    fun `deleting the document deletes its file from disk`() = runTest {
+        val file = File(tempDir, "reg.pdf").apply { writeText("fake pdf bytes") }
+        val (docId, _) = repository.addOrUpdate(newDocument(expiryDateMillis = null, filePath = file.absolutePath))
+        assertTrue(file.exists())
+        val saved = repository.getById(docId)!!
+
+        repository.delete(saved)
+
+        assertFalse(file.exists())
+    }
+
+    @Test
+    fun `replacing a document's file on edit deletes the old file`() = runTest {
+        val oldFile = File(tempDir, "old.pdf").apply { writeText("old bytes") }
+        val newFile = File(tempDir, "new.pdf").apply { writeText("new bytes") }
+        val (docId, _) = repository.addOrUpdate(newDocument(expiryDateMillis = null, filePath = oldFile.absolutePath))
+        val saved = repository.getById(docId)!!
+
+        // DocumentRepository.addOrUpdate() itself only ever writes the new path to the DB row -
+        // it never sees or deletes the previous file, since the diff/cleanup decision belongs to
+        // the caller (see DocumentFormViewModel.save()). This asserts that division of labor: the
+        // repository leaves the old file alone even when the path it's given changes.
+        repository.addOrUpdate(saved.copy(filePath = newFile.absolutePath))
+
+        assertTrue(oldFile.exists())
+        assertTrue(newFile.exists())
     }
 }
