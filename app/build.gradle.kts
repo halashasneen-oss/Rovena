@@ -12,6 +12,9 @@ android {
         applicationId = "com.rovena.garage"
         minSdk = 26
         targetSdk = 36
+        // Bump both on every Play Console upload: versionCode must strictly increase (Play
+        // rejects a re-upload otherwise), versionName is the user-visible string - see
+        // "Google Play Store submission checklist" in the README for the full release process.
         versionCode = 1
         versionName = "1.0.0"
 

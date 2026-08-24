@@ -249,6 +249,24 @@ export ROVENA_KEY_PASSWORD=...
 
 Without those set, the release build compiles unsigned (fine for local testing of R8/minification behavior; you'll need to sign before it's installable on a device that doesn't have debuggable builds enabled).
 
+### Google Play Store submission checklist
+
+Everything below was audited against what's actually in this repo, not assumed - split into what's already wired up vs. what's an external, one-time step Play Console requires that genuinely can't live in a code repo.
+
+**Already done (verified in this repo):**
+- `./gradlew :app:bundleProdRelease` produces the signed `.aab` Play Console needs; CI (`.github/workflows/android-build.yml`) builds and uploads both the release APK and AAB on every push, signing them automatically when the `ROVENA_KEYSTORE_*` secrets are configured.
+- R8 minification + resource shrinking are on (`isMinifyEnabled`/`isShrinkResources = true` in the `release` build type); the only `BuildConfig.DEBUG`-gated code is `RovenaApp`'s StrictMode logging (`penaltyLog`, never a crash), and the `dev` flavor's sample-data generator is compiled out of `prod` (`SAMPLE_DATA_ENABLED = false`) - no debug-only behavior or test backdoor reaches a release build.
+- The manifest's permission list (`POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED`, `USE_BIOMETRIC`, `VIBRATE`) is complete and each entry is justified under [Permissions](#permissions) - no `INTERNET` permission at all, consistent with the zero-network-calls claim under [Offline architecture & privacy](#offline-architecture--privacy).
+- The adaptive launcher icon (`mipmap-anydpi-v26/ic_launcher.xml` + foreground/background drawables) is a deliberate choice, not a missing-asset gap: legacy per-density PNG mipmaps are unnecessary since `minSdk` is 26 and adaptive icons have covered every supported device since API 26.
+
+**Before submitting (one-time steps outside this repo):**
+1. **Bump the version.** Edit `versionCode`/`versionName` in `app/build.gradle.kts` - `versionCode` must strictly increase on every Play Console upload, `versionName` is the user-facing string (semantic versioning recommended).
+2. **Host the privacy policy.** Play Console's Data Safety form requires a *publicly reachable URL* - the in-app Privacy screen (Settings → Privacy) alone doesn't satisfy that field. Its `privacy_body` string is written to be reused verbatim as that page's content; it just needs to be published somewhere (GitHub Pages, any static host) first. Deliberately not fabricating a URL here - that's a real hosting decision for whoever submits the listing.
+3. **Fill in the Data Safety form** with "no data collected, no data shared" - genuinely accurate for this app given no `INTERNET` permission and no analytics/ads/crash-reporting SDK anywhere in `build.gradle.kts`.
+4. **Store listing assets** (not code artifacts): a 512×512 hi-res icon, a 1024×500 feature graphic, and at least 2 phone screenshots per Play's current requirements.
+5. **Content rating questionnaire**: answer honestly - no user-generated public content, no ads, no objectionable material, so it should land in the lowest tier.
+6. Build/sign the release AAB and upload it as a new Play Console release.
+
 ---
 
 ## Running
