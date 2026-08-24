@@ -75,6 +75,7 @@ class ExpenseFormViewModel(private val container: AppContainer, private val vehi
             return
         }
         viewModelScope.launch {
+            val previousReceiptPath = if (s.id != 0L) container.expenseRepository.getById(s.id)?.receiptPhotoPath else null
             val entity = ExpenseEntity(
                 id = s.id, vehicleId = s.vehicleId, dateMillis = s.dateMillis, amount = amount!!, currencyCode = s.currencyCode,
                 category = s.category, description = s.description.trim().ifBlank { null },
@@ -82,6 +83,11 @@ class ExpenseFormViewModel(private val container: AppContainer, private val vehi
                 notes = s.notes.trim().ifBlank { null }, receiptPhotoPath = s.receiptPhotoPath
             )
             container.expenseRepository.addOrUpdate(entity)
+            // The user may have replaced or removed the receipt photo on an existing expense -
+            // the old file needs deleting too, or it leaks on disk forever.
+            if (previousReceiptPath != null && previousReceiptPath != entity.receiptPhotoPath) {
+                runCatching { java.io.File(previousReceiptPath).delete() }
+            }
             _state.value = _state.value.copy(isSaved = true, errors = emptyMap())
         }
     }

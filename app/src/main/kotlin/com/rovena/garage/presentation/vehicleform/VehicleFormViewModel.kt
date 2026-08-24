@@ -139,8 +139,14 @@ class VehicleFormViewModel(private val container: AppContainer, private val edit
             val id = if (s.id == 0L) {
                 container.vehicleRepository.addVehicle(entity)
             } else {
+                val previousPhotoPath = container.vehicleRepository.getById(s.id)?.photoPath
                 container.vehicleRepository.updateVehicle(entity)
                 if (s.isPrimary) container.vehicleRepository.setPrimary(s.id)
+                // The user may have replaced or removed the vehicle photo - the old file
+                // needs deleting too, or it leaks on disk forever.
+                if (previousPhotoPath != null && previousPhotoPath != entity.photoPath) {
+                    runCatching { java.io.File(previousPhotoPath).delete() }
+                }
                 s.id
             }
             _state.value = _state.value.copy(isSaved = true, savedVehicleId = id, errors = emptyMap())

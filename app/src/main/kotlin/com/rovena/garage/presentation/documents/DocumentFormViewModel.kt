@@ -65,12 +65,19 @@ class DocumentFormViewModel(private val container: AppContainer, private val veh
             return
         }
         viewModelScope.launch {
+            val previousFilePath = if (s.id != 0L) container.documentRepository.getById(s.id)?.filePath else null
             val entity = DocumentEntity(
                 id = s.id, vehicleId = s.vehicleId, name = s.name.trim(), type = s.type,
                 issueDateMillis = s.issueDateMillis, expiryDateMillis = s.expiryDateMillis,
                 notes = s.notes.trim().ifBlank { null }, filePath = s.filePath!!, mimeType = s.mimeType
             )
             val (_, reminderId) = container.documentRepository.addOrUpdate(entity)
+            // The user may have replaced the scanned file on an existing document - its DB
+            // row now points at the new file, so the old one needs deleting too, or it
+            // leaks on disk forever.
+            if (previousFilePath != null && previousFilePath != entity.filePath) {
+                runCatching { java.io.File(previousFilePath).delete() }
+            }
             _state.value = _state.value.copy(isSaved = true, savedReminderId = reminderId, errors = emptyMap())
         }
     }

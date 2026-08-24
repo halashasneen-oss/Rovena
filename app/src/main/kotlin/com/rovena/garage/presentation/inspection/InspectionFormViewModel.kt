@@ -169,12 +169,18 @@ class InspectionFormViewModel(private val container: AppContainer, private val v
             val savedItemsByKey = container.inspectionRepository.getItemsOnce(savedId).associateBy { it.itemKey }
             s.items.forEach { draft ->
                 val savedItemId = savedItemsByKey[draft.itemKey]?.id ?: return@forEach
+                // Photos the user removed from this item's strip since it was last loaded need
+                // their files deleted too, not just their DB rows - otherwise every removed
+                // photo leaks its file on disk forever.
+                val previousPaths = container.photoRepository.getByLinkOnce(PhotoLinkedType.INSPECTION_ITEM, savedItemId).map { it.filePath }
+                val removedPaths = previousPaths - draft.photoPaths.toSet()
                 container.photoRepository.deleteAllForLink(PhotoLinkedType.INSPECTION_ITEM, savedItemId)
                 draft.photoPaths.forEach { path ->
                     container.photoRepository.add(
                         VehiclePhotoEntity(vehicleId = s.vehicleId, linkedType = PhotoLinkedType.INSPECTION_ITEM, linkedId = savedItemId, filePath = path)
                     )
                 }
+                removedPaths.forEach { runCatching { java.io.File(it).delete() } }
             }
 
             val suggestions = s.items

@@ -9,6 +9,7 @@ import com.rovena.garage.domain.model.ExpenseCategory
 import com.rovena.garage.domain.model.TimelineEventType
 import com.rovena.garage.domain.usecase.ExpenseAggregator
 import kotlinx.coroutines.flow.Flow
+import java.io.File
 import java.time.Instant
 import java.time.ZoneId
 
@@ -47,9 +48,12 @@ class ExpenseRepository(
         id
     }
 
-    suspend fun delete(expense: ExpenseEntity) = database.withTransaction {
-        expenseDao.delete(expense)
-        timelineSyncer.removeForSource(TimelineEventType.EXPENSE, expense.id)
+    suspend fun delete(expense: ExpenseEntity) {
+        database.withTransaction {
+            expenseDao.delete(expense)
+            timelineSyncer.removeForSource(TimelineEventType.EXPENSE, expense.id)
+        }
+        expense.receiptPhotoPath?.let { runCatching { File(it).delete() } }
     }
 
     suspend fun computeStats(vehicleId: Long, totalDistanceKm: Int?): ExpenseAggregator.ExpenseStats {

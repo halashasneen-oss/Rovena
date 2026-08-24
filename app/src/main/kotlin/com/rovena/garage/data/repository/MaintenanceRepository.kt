@@ -8,14 +8,17 @@ import com.rovena.garage.data.local.entities.MaintenanceRecordEntity
 import com.rovena.garage.data.local.entities.VehicleEntity
 import com.rovena.garage.data.local.dao.VehicleDao
 import com.rovena.garage.domain.model.MaintenanceCategory
+import com.rovena.garage.domain.model.PhotoLinkedType
 import com.rovena.garage.domain.model.TimelineEventType
 import kotlinx.coroutines.flow.Flow
+import java.io.File
 
 class MaintenanceRepository(
     private val maintenanceDao: MaintenanceDao,
     private val vehicleDao: VehicleDao,
     private val timelineSyncer: TimelineSyncer,
-    private val database: RovenaDatabase
+    private val database: RovenaDatabase,
+    private val photoRepository: PhotoRepository
 ) {
     fun observeByVehicle(vehicleId: Long): Flow<List<MaintenanceRecordEntity>> = maintenanceDao.observeByVehicle(vehicleId)
 
@@ -52,9 +55,25 @@ class MaintenanceRepository(
         id
     }
 
-    suspend fun delete(record: MaintenanceRecordEntity) = database.withTransaction {
-        maintenanceDao.delete(record)
-        timelineSyncer.removeForSource(TimelineEventType.MAINTENANCE, record.id)
+    /**
+     * VehiclePhoto rows are a generic polymorphic link (linkedType/linkedId), not a real
+     * foreign key Room can cascade for us, so this record's photos - both the DB rows and
+     * their files on disk - are cleaned up explicitly before the delete commits.
+     */
+    suspend fun delete(record: MaintenanceRecordEntity) {
+        val photoFiles = mutableListOf<String>()
+        photoRepository.getByLinkOnce(PhotoLinkedType.MAINTENANCE, record.id).forEach { photo ->
+            photoFiles += photo.filePath
+            photo.thumbnailPath?.let { photoFiles += it }
+        }
+
+        database.withTransaction {
+            photoRepository.deleteAllForLink(PhotoLinkedType.MAINTENANCE, record.id)
+            maintenanceDao.delete(record)
+            timelineSyncer.removeForSource(TimelineEventType.MAINTENANCE, record.id)
+        }
+
+        photoFiles.forEach { runCatching { File(it).delete() } }
     }
 
     suspend fun overdueCount(vehicleId: Long, currentMileageKm: Int, nowMillis: Long = System.currentTimeMillis()): Int =

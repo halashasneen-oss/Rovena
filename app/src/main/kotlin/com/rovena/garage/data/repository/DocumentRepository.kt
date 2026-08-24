@@ -10,6 +10,7 @@ import com.rovena.garage.domain.model.ReminderBasis
 import com.rovena.garage.domain.model.ReminderCategory
 import com.rovena.garage.domain.model.TimelineEventType
 import kotlinx.coroutines.flow.Flow
+import java.io.File
 
 /**
  * Note on reminders: this repository only writes the Room rows for a
@@ -99,11 +100,14 @@ class DocumentRepository(
         docId to reminderId
     }
 
-    suspend fun delete(document: DocumentEntity) = database.withTransaction {
-        documentDao.delete(document)
-        timelineSyncer.removeForSource(TimelineEventType.DOCUMENT, document.id)
-        document.reminderId?.let { reminderId ->
-            reminderDao.getById(reminderId)?.let { reminderDao.delete(it) }
+    suspend fun delete(document: DocumentEntity) {
+        database.withTransaction {
+            documentDao.delete(document)
+            timelineSyncer.removeForSource(TimelineEventType.DOCUMENT, document.id)
+            document.reminderId?.let { reminderId ->
+                reminderDao.getById(reminderId)?.let { reminderDao.delete(it) }
+            }
         }
+        runCatching { File(document.filePath).delete() }
     }
 }

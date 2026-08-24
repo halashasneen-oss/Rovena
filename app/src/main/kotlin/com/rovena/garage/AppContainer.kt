@@ -38,7 +38,7 @@ class AppContainer(context: Context) {
     }
 
     val maintenanceRepository: MaintenanceRepository by lazy {
-        MaintenanceRepository(database.maintenanceDao(), database.vehicleDao(), timelineSyncer, database)
+        MaintenanceRepository(database.maintenanceDao(), database.vehicleDao(), timelineSyncer, database, photoRepository)
     }
 
     val fuelRepository: FuelRepository by lazy {

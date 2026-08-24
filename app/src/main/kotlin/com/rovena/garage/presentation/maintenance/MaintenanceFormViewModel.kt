@@ -128,6 +128,11 @@ class MaintenanceFormViewModel(
                 nextDueDateMillis = s.nextDueDateMillis
             )
             val savedId = container.maintenanceRepository.addOrUpdate(entity)
+            // Photos the user removed from the strip since the record was last loaded need
+            // their files deleted too, not just their DB rows - otherwise every removed photo
+            // leaks its file on disk forever (only the row was ever cleaned up here before).
+            val previousPaths = container.photoRepository.getByLinkOnce(PhotoLinkedType.MAINTENANCE, savedId).map { it.filePath }
+            val removedPaths = previousPaths - s.photoPaths.toSet()
             container.photoRepository.deleteAllForLink(PhotoLinkedType.MAINTENANCE, savedId)
             s.photoPaths.forEach { path ->
                 container.photoRepository.add(
@@ -139,6 +144,7 @@ class MaintenanceFormViewModel(
                     )
                 )
             }
+            removedPaths.forEach { runCatching { java.io.File(it).delete() } }
             _state.value = _state.value.copy(isSaved = true, errors = emptyMap())
         }
     }
@@ -147,8 +153,9 @@ class MaintenanceFormViewModel(
         val s = _state.value
         if (s.id == 0L) return
         viewModelScope.launch {
+            // maintenanceRepository.delete() already cleans up this record's linked photos
+            // (DB rows and files) - see MaintenanceRepository.delete().
             container.maintenanceRepository.getById(s.id)?.let { container.maintenanceRepository.delete(it) }
-            container.photoRepository.deleteAllForLink(PhotoLinkedType.MAINTENANCE, s.id)
             _state.value = _state.value.copy(isDeleted = true)
         }
     }
