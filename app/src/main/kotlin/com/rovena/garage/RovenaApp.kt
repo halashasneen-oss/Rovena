@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import android.os.StrictMode
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -51,6 +52,7 @@ class RovenaApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        enableStrictModeForDebugBuilds()
         createNotificationChannels()
         applyPersistedTheme()
         ReminderCheckWorker.schedule(this)
@@ -59,6 +61,32 @@ class RovenaApp : Application() {
                 backgroundedAtMillis = System.currentTimeMillis()
             }
         })
+    }
+
+    /**
+     * Debug-only (never affects a release build's behavior or performance): logs, rather than
+     * crashes on, any accidental main-thread disk/network access or leaked SQLite/Closeable
+     * object - this app is offline-first by design and every DB/file operation is already
+     * routed through `Dispatchers.IO` or Room's own suspend dispatching, so this exists purely
+     * to catch a *future* regression early instead of relying on that discipline holding by hand.
+     */
+    private fun enableStrictModeForDebugBuilds() {
+        if (!BuildConfig.DEBUG) return
+        StrictMode.setThreadPolicy(
+            StrictMode.ThreadPolicy.Builder()
+                .detectDiskReads()
+                .detectDiskWrites()
+                .detectNetwork()
+                .penaltyLog()
+                .build()
+        )
+        StrictMode.setVmPolicy(
+            StrictMode.VmPolicy.Builder()
+                .detectLeakedSqlLiteObjects()
+                .detectLeakedClosableObjects()
+                .penaltyLog()
+                .build()
+        )
     }
 
     /**
