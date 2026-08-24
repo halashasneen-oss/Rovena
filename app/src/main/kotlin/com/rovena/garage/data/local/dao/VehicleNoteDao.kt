@@ -32,4 +32,7 @@ interface VehicleNoteDao {
 
     @Query("SELECT COUNT(*) FROM vehicle_notes WHERE vehicleId = :vehicleId")
     fun observeCount(vehicleId: Long): Flow<Int>
+
+    @Query("SELECT * FROM vehicle_notes WHERE text LIKE '%' || :query || '%' ORDER BY updatedAtMillis DESC LIMIT 20")
+    fun searchAcrossGarage(query: String): Flow<List<VehicleNoteEntity>>
 }

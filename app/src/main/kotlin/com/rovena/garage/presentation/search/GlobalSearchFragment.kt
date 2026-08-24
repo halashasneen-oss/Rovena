@@ -66,17 +66,21 @@ class GlobalSearchFragment : Fragment(R.layout.fragment_global_search) {
     }
 
     private fun navigateToResult(result: GlobalSearchResult) {
+        // Parts and Notes have no dedicated per-record form destination (they're
+        // edited inline from their list screens), so those two route to the list
+        // screen scoped to the record's vehicle rather than to a record form.
         val destination = when (result.type) {
             SearchResultType.VEHICLE -> R.id.vehicleHubFragment
             SearchResultType.MAINTENANCE -> R.id.maintenanceFormFragment
             SearchResultType.FUEL -> R.id.fuelFormFragment
             SearchResultType.EXPENSE -> R.id.expenseFormFragment
             SearchResultType.DOCUMENT -> R.id.documentFormFragment
+            SearchResultType.PART -> R.id.partListFragment
+            SearchResultType.NOTE -> R.id.vehicleNoteListFragment
         }
-        val args = if (result.type == SearchResultType.VEHICLE) {
-            bundleOf("vehicleId" to result.vehicleId)
-        } else {
-            bundleOf("vehicleId" to result.vehicleId, "recordId" to result.id)
+        val args = when (result.type) {
+            SearchResultType.VEHICLE, SearchResultType.PART, SearchResultType.NOTE -> bundleOf("vehicleId" to result.vehicleId)
+            else -> bundleOf("vehicleId" to result.vehicleId, "recordId" to result.id)
         }
         findNavController().navigate(destination, args)
     }

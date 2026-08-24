@@ -334,6 +334,8 @@
     <string name="inspection_notes_dialog_title">Notes</string>
     <string name="inspection_field_estimated_cost">Estimated repair cost</string>
     <string name="action_generate_pdf">Generate PDF Report</string>
+    <string name="action_filter">Filter</string>
+    <string name="dashboard_switch_vehicle_title">Switch vehicle</string>
     <string name="pdf_inspection_report_title">Vehicle Inspection Report</string>
     <string name="pdf_generated_on">Generated on %1$s</string>
     <string name="pdf_vehicle">Vehicle</string>

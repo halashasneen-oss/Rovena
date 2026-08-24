@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rovena.garage.R
 import com.rovena.garage.databinding.FragmentDashboardBinding
 import com.rovena.garage.domain.model.HealthStatus
@@ -50,6 +51,15 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
 
         setupQuickActions()
 
+        binding.vehicleSwitcherRow.setOnClickListener { showVehicleSwitcher() }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appContainer.vehicleRepository.observeAll().collect { vehicles ->
+                    binding.vehicleSwitcherIcon.visibility = if (vehicles.size > 1) View.VISIBLE else View.GONE
+                }
+            }
+        }
+
         binding.emptyState.root.visibility = View.GONE
         binding.emptyState.emptyTitle.text = getString(R.string.garage_empty_title)
         binding.emptyState.emptyMessage.text = getString(R.string.garage_empty_message)
@@ -85,6 +95,32 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
     }
 
     private fun currentVehicleId(): Long? = viewModel.uiState.value.vehicle?.id
+
+    /**
+     * Quick multi-vehicle switch (spec: "the current vehicle must remain easily
+     * accessible"). Writes the same DataStore-backed "current vehicle" id that
+     * every list/detail screen resolves through (see VehicleIdResolver) - no
+     * separate ViewModel needed since it's a one-shot fetch + one-shot write.
+     */
+    private fun showVehicleSwitcher() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val vehicles = appContainer.vehicleRepository.getAllOnce()
+            if (vehicles.size <= 1) return@launch
+            val currentId = viewModel.uiState.value.vehicle?.id
+            val labels = vehicles.map { "${it.make} ${it.model} (${it.year})" }.toTypedArray()
+            val checkedIndex = vehicles.indexOfFirst { it.id == currentId }
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.dashboard_switch_vehicle_title)
+                .setSingleChoiceItems(labels, checkedIndex) { dialog, which ->
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        appContainer.userPreferences.setCurrentVehicleId(vehicles[which].id)
+                    }
+                    dialog.dismiss()
+                }
+                .setNegativeButton(R.string.action_cancel, null)
+                .show()
+        }
+    }
 
     private fun bindQuickAction(included: com.rovena.garage.databinding.ItemQuickActionBinding, icon: Int, label: Int, onClick: () -> Unit) {
         included.quickActionIcon.setImageResource(icon)

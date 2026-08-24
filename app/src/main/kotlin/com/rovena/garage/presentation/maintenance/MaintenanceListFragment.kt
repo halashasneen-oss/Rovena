@@ -20,6 +20,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rovena.garage.R
 import com.rovena.garage.data.local.entities.MaintenanceRecordEntity
 import com.rovena.garage.databinding.FragmentGenericListBinding
+import com.rovena.garage.domain.model.MaintenanceCategory
 import com.rovena.garage.domain.usecase.ServicePlanCatalog
 import com.rovena.garage.presentation.common.appContainer
 import com.rovena.garage.presentation.common.resolveVehicleId
@@ -70,6 +71,9 @@ class MaintenanceListFragment : Fragment(R.layout.fragment_generic_list) {
         binding.servicePlanButton.visibility = View.VISIBLE
         binding.servicePlanButton.setOnClickListener { showServicePlanChooserDialog() }
 
+        binding.filterButton.visibility = View.VISIBLE
+        binding.filterButton.setOnClickListener { showFilterDialog() }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
@@ -82,6 +86,20 @@ class MaintenanceListFragment : Fragment(R.layout.fragment_generic_list) {
                 }
             }
         }
+    }
+
+    private fun showFilterDialog() {
+        val categories = MaintenanceCategory.values()
+        val labels = arrayOf(getString(R.string.timeline_filter_all)) + categories.map { getString(EnumLabels.of(it)) }
+        val checkedIndex = viewModel.uiState.value.filter?.let { categories.indexOf(it) + 1 } ?: 0
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.action_filter)
+            .setSingleChoiceItems(labels, checkedIndex) { dialog, which ->
+                viewModel.setFilter(if (which == 0) null else categories[which - 1])
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.action_cancel, null)
+            .show()
     }
 
     /**

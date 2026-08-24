@@ -31,6 +31,8 @@ data class MaintenanceFormState(
     val nextDueDateMillis: Long? = null,
     val photoPaths: List<String> = emptyList(),
     val mileageWarning: MileageValidator.MileageCheck? = null,
+    /** Previously-used workshop names for this vehicle, for the workshop field's autocomplete. */
+    val workshopSuggestions: List<String> = emptyList(),
     val isLoading: Boolean = true,
     val isSaved: Boolean = false,
     val isDeleted: Boolean = false,
@@ -47,12 +49,16 @@ class MaintenanceFormViewModel(
     val state: StateFlow<MaintenanceFormState> = _state.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            val suggestions = container.maintenanceRepository.getWorkshopSuggestions(vehicleId)
+            _state.value = _state.value.copy(workshopSuggestions = suggestions)
+        }
         if (recordId != 0L) {
             viewModelScope.launch {
                 val record = container.maintenanceRepository.getById(recordId)
                 val photos = container.photoRepository.getByLinkOnce(PhotoLinkedType.MAINTENANCE, recordId).map { it.filePath }
                 if (record != null) {
-                    _state.value = MaintenanceFormState(
+                    _state.value = _state.value.copy(
                         id = record.id,
                         vehicleId = record.vehicleId,
                         dateMillis = record.dateMillis,
@@ -76,8 +82,10 @@ class MaintenanceFormViewModel(
             }
         } else {
             viewModelScope.launch {
+                val vehicle = container.vehicleRepository.getById(vehicleId)
                 val settings = container.settingsRepository.getOrDefault()
                 _state.value = _state.value.copy(
+                    mileage = vehicle?.currentMileageKm?.toString().orEmpty(),
                     currencyCode = EnumLabels.effectiveCurrencyCode(settings.currency, settings.customCurrencyCode),
                     isLoading = false
                 )

@@ -48,6 +48,16 @@
                 tools:text="1,240 JOD" />
 
             <ImageButton
+                android:id="@+id/filterButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_filter"
+                android:contentDescription="@string/action_filter"
+                android:visibility="gone" />
+
+            <ImageButton
                 android:id="@+id/pdfButton"
                 android:layout_width="48dp"
                 android:layout_height="48dp"

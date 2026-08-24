@@ -81,6 +81,8 @@ class MaintenanceRepository(
 
     suspend fun activeTrackedCount(vehicleId: Long): Int = maintenanceDao.countActiveTracked(vehicleId)
 
+    suspend fun getWorkshopSuggestions(vehicleId: Long): List<String> = maintenanceDao.getDistinctWorkshops(vehicleId)
+
     suspend fun daysSinceLastMaintenance(vehicleId: Long, nowMillis: Long = System.currentTimeMillis()): Int? {
         val last = maintenanceDao.getLastMaintenanceDateMillis(vehicleId) ?: return null
         return ((nowMillis - last) / (1000L * 60 * 60 * 24)).toInt()

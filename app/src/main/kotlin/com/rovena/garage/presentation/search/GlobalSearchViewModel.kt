@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 
-enum class SearchResultType { VEHICLE, MAINTENANCE, FUEL, EXPENSE, DOCUMENT }
+enum class SearchResultType { VEHICLE, MAINTENANCE, FUEL, EXPENSE, DOCUMENT, PART, NOTE }
 
 data class GlobalSearchResult(
     val type: SearchResultType,
@@ -35,6 +35,11 @@ private data class SearchPartial(
     val maintenance: List<com.rovena.garage.data.local.entities.MaintenanceRecordEntity>,
     val fuel: List<com.rovena.garage.data.local.entities.FuelRecordEntity>,
     val expenses: List<com.rovena.garage.data.local.entities.ExpenseEntity>
+)
+
+private data class SearchPartial2(
+    val parts: List<com.rovena.garage.data.local.entities.PartEntity>,
+    val notes: List<com.rovena.garage.data.local.entities.VehicleNoteEntity>
 )
 
 /**
@@ -62,11 +67,17 @@ class GlobalSearchViewModel(private val container: AppContainer) : ViewModel() {
             container.expenseRepository.searchAcrossGarage(query)
         ) { vehicles, maintenance, fuel, expenses -> SearchPartial(vehicles, maintenance, fuel, expenses) }
 
+        val partial2 = combine(
+            container.partRepository.searchAcrossGarage(query),
+            container.vehicleNoteRepository.searchAcrossGarage(query)
+        ) { parts, notes -> SearchPartial2(parts, notes) }
+
         combine(
             partial,
+            partial2,
             container.documentRepository.searchAcrossGarage(query),
             container.vehicleRepository.observeAll()
-        ) { p, documents, allVehicles ->
+        ) { p, p2, documents, allVehicles ->
             val vehicleNameById = allVehicles.associate { it.id to "${it.make} ${it.model}" }
             fun vehicleName(vehicleId: Long) = vehicleNameById[vehicleId].orEmpty()
 
@@ -82,6 +93,8 @@ class GlobalSearchViewModel(private val container: AppContainer) : ViewModel() {
                 documents.forEach {
                     add(GlobalSearchResult(SearchResultType.DOCUMENT, it.id, it.vehicleId, it.name, vehicleName(it.vehicleId), EnumLabels.of(it.type)))
                 }
+                p2.parts.forEach { add(GlobalSearchResult(SearchResultType.PART, it.id, it.vehicleId, it.name, vehicleName(it.vehicleId))) }
+                p2.notes.forEach { add(GlobalSearchResult(SearchResultType.NOTE, it.id, it.vehicleId, it.text, vehicleName(it.vehicleId))) }
             }
             GlobalSearchUiState(query, results, false)
         }

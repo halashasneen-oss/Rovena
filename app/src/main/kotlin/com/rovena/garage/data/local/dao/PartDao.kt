@@ -35,4 +35,7 @@ interface PartDao {
 
     @Query("SELECT * FROM parts WHERE vehicleId = :vehicleId AND (warrantyExpiryDateMillis IS NOT NULL OR warrantyExpiryMileageKm IS NOT NULL)")
     fun observeWithWarranty(vehicleId: Long): Flow<List<PartEntity>>
+
+    @Query("SELECT * FROM parts WHERE name LIKE '%' || :query || '%' OR notes LIKE '%' || :query || '%' ORDER BY installedDateMillis DESC LIMIT 20")
+    fun searchAcrossGarage(query: String): Flow<List<PartEntity>>
 }

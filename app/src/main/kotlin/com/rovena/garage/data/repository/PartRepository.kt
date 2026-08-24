@@ -33,6 +33,8 @@ class PartRepository(
 
     fun observeWithWarranty(vehicleId: Long): Flow<List<PartEntity>> = partDao.observeWithWarranty(vehicleId)
 
+    fun searchAcrossGarage(query: String): Flow<List<PartEntity>> = partDao.searchAcrossGarage(query)
+
     suspend fun getById(id: Long): PartEntity? = partDao.getById(id)
 
     suspend fun addOrUpdate(part: PartEntity): Long = database.withTransaction {

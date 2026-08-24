@@ -90,4 +90,8 @@ interface MaintenanceDao {
             "AND (nextDueMileageKm IS NOT NULL OR nextDueDateMillis IS NOT NULL)"
     )
     suspend fun countActiveTracked(vehicleId: Long): Int
+
+    /** Previously-used workshop names for this vehicle, for the maintenance form's autocomplete - see MaintenanceFormViewModel. */
+    @Query("SELECT DISTINCT workshop FROM maintenance_records WHERE vehicleId = :vehicleId AND workshop IS NOT NULL ORDER BY workshop")
+    suspend fun getDistinctWorkshops(vehicleId: Long): List<String>
 }

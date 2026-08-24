@@ -57,6 +57,7 @@ class FuelFormViewModel(private val container: AppContainer, private val vehicle
                 val vehicle = container.vehicleRepository.getById(vehicleId)
                 val settings = container.settingsRepository.getOrDefault()
                 _state.value = _state.value.copy(
+                    mileage = vehicle?.currentMileageKm?.toString().orEmpty(),
                     fuelType = vehicle?.fuelType ?: _state.value.fuelType,
                     currencyCode = EnumLabels.effectiveCurrencyCode(settings.currency, settings.customCurrencyCode),
                     isLoading = false

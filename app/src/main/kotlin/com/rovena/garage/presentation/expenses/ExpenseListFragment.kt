@@ -12,11 +12,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rovena.garage.R
 import com.rovena.garage.databinding.FragmentGenericListBinding
+import com.rovena.garage.domain.model.ExpenseCategory
 import com.rovena.garage.presentation.common.appContainer
 import com.rovena.garage.presentation.common.resolveVehicleId
 import com.rovena.garage.presentation.common.viewModelFactory
+import com.rovena.garage.utils.EnumLabels
 import com.rovena.garage.utils.ExpensePdfGenerator
 import com.rovena.garage.utils.Formatters
 import com.rovena.garage.utils.PdfViewerLauncher
@@ -57,6 +60,9 @@ class ExpenseListFragment : Fragment(R.layout.fragment_generic_list) {
         binding.pdfButton.visibility = View.VISIBLE
         binding.pdfButton.setOnClickListener { generatePdf() }
 
+        binding.filterButton.visibility = View.VISIBLE
+        binding.filterButton.setOnClickListener { showFilterDialog() }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
@@ -69,6 +75,20 @@ class ExpenseListFragment : Fragment(R.layout.fragment_generic_list) {
                 }
             }
         }
+    }
+
+    private fun showFilterDialog() {
+        val categories = ExpenseCategory.values()
+        val labels = arrayOf(getString(R.string.timeline_filter_all)) + categories.map { getString(EnumLabels.of(it)) }
+        val checkedIndex = viewModel.uiState.value.filter?.let { categories.indexOf(it) + 1 } ?: 0
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.action_filter)
+            .setSingleChoiceItems(labels, checkedIndex) { dialog, which ->
+                viewModel.setFilter(if (which == 0) null else categories[which - 1])
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.action_cancel, null)
+            .show()
     }
 
     private fun generatePdf() {

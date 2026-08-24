@@ -90,6 +90,9 @@ class MaintenanceFormFragment : Fragment(R.layout.fragment_maintenance_form) {
         setIfChanged(binding.costInput, state.cost)
         setIfChanged(binding.partsInput, state.parts)
         setIfChanged(binding.workshopInput, state.workshop)
+        if (binding.workshopInput.adapter == null && state.workshopSuggestions.isNotEmpty()) {
+            binding.workshopInput.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, state.workshopSuggestions))
+        }
         setIfChanged(binding.technicianInput, state.technician)
         setIfChanged(binding.notesInput, state.notes)
         setIfChanged(binding.nextDueMileageInput, state.nextDueMileage)
@@ -118,7 +121,7 @@ class MaintenanceFormFragment : Fragment(R.layout.fragment_maintenance_form) {
 
     private var boundOnce = false
 
-    private fun wire(input: com.google.android.material.textfield.TextInputEditText, onChanged: (String) -> Unit) {
+    private fun wire(input: android.widget.EditText, onChanged: (String) -> Unit) {
         input.addTextChangedListener(object : android.text.TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -128,7 +131,7 @@ class MaintenanceFormFragment : Fragment(R.layout.fragment_maintenance_form) {
         })
     }
 
-    private fun setIfChanged(input: com.google.android.material.textfield.TextInputEditText, value: String) {
+    private fun setIfChanged(input: android.widget.EditText, value: String) {
         if (input.text?.toString() != value) input.setText(value)
     }
 

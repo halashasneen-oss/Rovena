@@ -22,10 +22,13 @@
 
             <!-- Vehicle header -->
             <LinearLayout
+                android:id="@+id/vehicleSwitcherRow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@string/dashboard_switch_vehicle_title"
                 android:paddingBottom="16dp">
 
                 <com.google.android.material.imageview.ShapeableImageView
@@ -62,6 +65,16 @@
                         android:layout_height="wrap_content"
                         tools:text="142,850 KM" />
                 </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/vehicleSwitcherIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:rotation="90"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="?attr/colorOnSurfaceVariant"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <!-- Health score card -->

@@ -10,6 +10,8 @@ class VehicleNoteRepository(private val vehicleNoteDao: VehicleNoteDao) {
 
     fun observeCount(vehicleId: Long): Flow<Int> = vehicleNoteDao.observeCount(vehicleId)
 
+    fun searchAcrossGarage(query: String): Flow<List<VehicleNoteEntity>> = vehicleNoteDao.searchAcrossGarage(query)
+
     suspend fun addOrUpdate(note: VehicleNoteEntity): Long =
         if (note.id == 0L) {
             vehicleNoteDao.insert(note)

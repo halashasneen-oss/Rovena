@@ -12,11 +12,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rovena.garage.R
 import com.rovena.garage.databinding.FragmentGenericListBinding
+import com.rovena.garage.domain.model.DocumentType
 import com.rovena.garage.presentation.common.appContainer
 import com.rovena.garage.presentation.common.resolveVehicleId
 import com.rovena.garage.presentation.common.viewModelFactory
+import com.rovena.garage.utils.EnumLabels
 import kotlinx.coroutines.launch
 
 class DocumentListFragment : Fragment(R.layout.fragment_generic_list) {
@@ -47,6 +50,9 @@ class DocumentListFragment : Fragment(R.layout.fragment_generic_list) {
         binding.emptyState.emptyTitle.text = getString(R.string.document_empty_title)
         binding.emptyState.emptyMessage.text = getString(R.string.document_empty_message)
 
+        binding.filterButton.visibility = View.VISIBLE
+        binding.filterButton.setOnClickListener { showFilterDialog() }
+
         binding.fabAdd.setOnClickListener {
             val vehicleId = viewModel.uiState.value.vehicleId ?: return@setOnClickListener
             findNavController().navigate(R.id.documentFormFragment, bundleOf("vehicleId" to vehicleId, "recordId" to 0L))
@@ -62,6 +68,20 @@ class DocumentListFragment : Fragment(R.layout.fragment_generic_list) {
                 }
             }
         }
+    }
+
+    private fun showFilterDialog() {
+        val types = DocumentType.values()
+        val labels = arrayOf(getString(R.string.timeline_filter_all)) + types.map { getString(EnumLabels.of(it)) }
+        val checkedIndex = viewModel.uiState.value.filter?.let { types.indexOf(it) + 1 } ?: 0
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.action_filter)
+            .setSingleChoiceItems(labels, checkedIndex) { dialog, which ->
+                viewModel.setFilter(if (which == 0) null else types[which - 1])
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.action_cancel, null)
+            .show()
     }
 
     override fun onDestroyView() {

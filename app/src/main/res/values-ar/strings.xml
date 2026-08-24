@@ -317,6 +317,8 @@
     <string name="inspection_notes_dialog_title">ملاحظات</string>
     <string name="inspection_field_estimated_cost">تكلفة الإصلاح التقديرية</string>
     <string name="action_generate_pdf">إنشاء تقرير PDF</string>
+    <string name="action_filter">تصفية</string>
+    <string name="dashboard_switch_vehicle_title">تبديل المركبة</string>
     <string name="pdf_inspection_report_title">تقرير فحص السيارة</string>
     <string name="pdf_generated_on">تم الإنشاء في %1$s</string>
     <string name="pdf_vehicle">السيارة</string>

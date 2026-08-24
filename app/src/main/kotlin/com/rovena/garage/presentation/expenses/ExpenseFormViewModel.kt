@@ -50,8 +50,10 @@ class ExpenseFormViewModel(private val container: AppContainer, private val vehi
             }
         } else {
             viewModelScope.launch {
+                val vehicle = container.vehicleRepository.getById(vehicleId)
                 val settings = container.settingsRepository.getOrDefault()
                 _state.value = _state.value.copy(
+                    mileage = vehicle?.currentMileageKm?.toString().orEmpty(),
                     currencyCode = EnumLabels.effectiveCurrencyCode(settings.currency, settings.customCurrencyCode),
                     isLoading = false
                 )

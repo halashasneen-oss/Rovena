@@ -33,6 +33,8 @@ class GlobalSearchAdapter(private val onClick: (GlobalSearchResult) -> Unit) :
             SearchResultType.FUEL -> R.string.hub_section_fuel
             SearchResultType.EXPENSE -> R.string.hub_section_expenses
             SearchResultType.DOCUMENT -> R.string.hub_section_documents
+            SearchResultType.PART -> R.string.hub_section_parts
+            SearchResultType.NOTE -> R.string.hub_section_notes
         }
     }
 
