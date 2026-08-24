@@ -3,10 +3,12 @@
     <string name="app_name">Rovena</string>
     <string name="app_tagline">Tu garaje digital</string>
 
-    <string name="notification_channel_reminders">Recordatorios</string>
-    <string name="notification_channel_reminders_desc">Mantenimiento, kilometraje y recordatorios personalizados</string>
-    <string name="notification_channel_documents">Documentos</string>
-    <string name="notification_channel_documents_desc">Alertas de vencimiento de documentos (matrícula, seguro, inspección)</string>
+    <string name="notification_channel_critical">Recordatorios críticos</string>
+    <string name="notification_channel_critical_desc">Mantenimiento atrasado, kilometraje y documentos vencidos</string>
+    <string name="notification_channel_important">Recordatorios importantes</string>
+    <string name="notification_channel_important_desc">Mantenimiento, kilometraje y documentos próximos a vencer</string>
+    <string name="notification_channel_upcoming">Recordatorios próximos</string>
+    <string name="notification_channel_upcoming_desc">Aviso anticipado de mantenimiento, kilometraje y documentos que vencen más adelante</string>
 
     <string name="fuel_type_petrol">Gasolina</string>
     <string name="fuel_type_diesel">Diésel</string>

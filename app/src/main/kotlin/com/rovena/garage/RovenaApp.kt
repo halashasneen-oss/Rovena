@@ -48,24 +48,42 @@ class RovenaApp : Application() {
         })
     }
 
+    /**
+     * One channel per [com.rovena.garage.domain.model.NotificationSeverity] tier, not one
+     * per record category - on API 26+ (virtually every real device, and always true at this
+     * app's targetSdk) a notification's actual importance (sound, heads-up, badge) is decided
+     * solely by its channel's importance; `NotificationCompat.Builder.setPriority()` is a
+     * silent no-op there. A single shared channel would make the tiered-severity feature
+     * (spec: Critical/Important/Upcoming) cosmetically present but functionally inert on every
+     * modern device. Channel importance can't be changed in place once created (only the user
+     * can, in system settings), so these use their own ids rather than reusing the old
+     * `rovena_reminders`/`rovena_documents` ones - those are simply abandoned, not migrated.
+     */
     private fun createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-            val reminders = NotificationChannel(
-                CHANNEL_REMINDERS,
-                getString(R.string.notification_channel_reminders),
-                NotificationManager.IMPORTANCE_DEFAULT
-            ).apply { description = getString(R.string.notification_channel_reminders_desc) }
+            val critical = NotificationChannel(
+                CHANNEL_CRITICAL,
+                getString(R.string.notification_channel_critical),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply { description = getString(R.string.notification_channel_critical_desc) }
 
-            val documents = NotificationChannel(
-                CHANNEL_DOCUMENTS,
-                getString(R.string.notification_channel_documents),
+            val important = NotificationChannel(
+                CHANNEL_IMPORTANT,
+                getString(R.string.notification_channel_important),
                 NotificationManager.IMPORTANCE_DEFAULT
-            ).apply { description = getString(R.string.notification_channel_documents_desc) }
+            ).apply { description = getString(R.string.notification_channel_important_desc) }
 
-            manager.createNotificationChannel(reminders)
-            manager.createNotificationChannel(documents)
+            val upcoming = NotificationChannel(
+                CHANNEL_UPCOMING,
+                getString(R.string.notification_channel_upcoming),
+                NotificationManager.IMPORTANCE_LOW
+            ).apply { description = getString(R.string.notification_channel_upcoming_desc) }
+
+            manager.createNotificationChannel(critical)
+            manager.createNotificationChannel(important)
+            manager.createNotificationChannel(upcoming)
         }
     }
 
@@ -82,7 +100,8 @@ class RovenaApp : Application() {
     }
 
     companion object {
-        const val CHANNEL_REMINDERS = "rovena_reminders"
-        const val CHANNEL_DOCUMENTS = "rovena_documents"
+        const val CHANNEL_CRITICAL = "rovena_reminders_critical"
+        const val CHANNEL_IMPORTANT = "rovena_reminders_important"
+        const val CHANNEL_UPCOMING = "rovena_reminders_upcoming"
     }
 }

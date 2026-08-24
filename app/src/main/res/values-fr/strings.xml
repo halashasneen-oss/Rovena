@@ -3,10 +3,12 @@
     <string name="app_name">Rovena</string>
     <string name="app_tagline">Votre garage numérique</string>
 
-    <string name="notification_channel_reminders">Rappels</string>
-    <string name="notification_channel_reminders_desc">Entretien, kilométrage et rappels personnalisés</string>
-    <string name="notification_channel_documents">Documents</string>
-    <string name="notification_channel_documents_desc">Alertes d\'expiration de documents (immatriculation, assurance, contrôle technique)</string>
+    <string name="notification_channel_critical">Rappels critiques</string>
+    <string name="notification_channel_critical_desc">Entretien en retard, kilométrage et documents expirés</string>
+    <string name="notification_channel_important">Rappels importants</string>
+    <string name="notification_channel_important_desc">Entretien, kilométrage et documents bientôt dus</string>
+    <string name="notification_channel_upcoming">Rappels à venir</string>
+    <string name="notification_channel_upcoming_desc">Avis anticipé pour l\'entretien, le kilométrage et les documents dus plus tard</string>
 
     <string name="fuel_type_petrol">Essence</string>
     <string name="fuel_type_diesel">Diesel</string>

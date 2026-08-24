@@ -4,10 +4,12 @@
     <string name="app_tagline">Your Digital Garage</string>
 
     <!-- Notification channels -->
-    <string name="notification_channel_reminders">Reminders</string>
-    <string name="notification_channel_reminders_desc">Maintenance, mileage, and custom reminders</string>
-    <string name="notification_channel_documents">Documents</string>
-    <string name="notification_channel_documents_desc">Document expiry alerts (registration, insurance, inspection)</string>
+    <string name="notification_channel_critical">Critical reminders</string>
+    <string name="notification_channel_critical_desc">Overdue maintenance, mileage, and expired documents</string>
+    <string name="notification_channel_important">Important reminders</string>
+    <string name="notification_channel_important_desc">Due-soon maintenance, mileage, and documents</string>
+    <string name="notification_channel_upcoming">Upcoming reminders</string>
+    <string name="notification_channel_upcoming_desc">Early heads-up for maintenance, mileage, and documents due later</string>
 
     <!-- Fuel types -->
     <string name="fuel_type_petrol">Petrol</string>

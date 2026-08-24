@@ -3,10 +3,12 @@
     <string name="app_name">روفينا</string>
     <string name="app_tagline">مرآبك الرقمي</string>
 
-    <string name="notification_channel_reminders">التذكيرات</string>
-    <string name="notification_channel_reminders_desc">تذكيرات الصيانة والمسافة المقطوعة والتذكيرات المخصصة</string>
-    <string name="notification_channel_documents">المستندات</string>
-    <string name="notification_channel_documents_desc">تنبيهات انتهاء صلاحية المستندات (الترخيص، التأمين، الفحص)</string>
+    <string name="notification_channel_critical">تذكيرات عاجلة</string>
+    <string name="notification_channel_critical_desc">صيانة متأخرة، مسافة مقطوعة، ومستندات منتهية الصلاحية</string>
+    <string name="notification_channel_important">تذكيرات مهمة</string>
+    <string name="notification_channel_important_desc">صيانة ومسافة مقطوعة ومستندات قريبة الاستحقاق</string>
+    <string name="notification_channel_upcoming">تذكيرات قادمة</string>
+    <string name="notification_channel_upcoming_desc">تنبيه مبكر للصيانة والمسافة المقطوعة والمستندات المستحقة لاحقًا</string>
 
     <string name="fuel_type_petrol">بنزين</string>
     <string name="fuel_type_diesel">ديزل</string>

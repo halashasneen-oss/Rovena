@@ -39,7 +39,14 @@ object NotificationHelper {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val notification = NotificationCompat.Builder(context, RovenaApp.CHANNEL_REMINDERS)
+        // The channel (not setPriority(), a no-op on API 26+) is what actually controls
+        // sound/heads-up/badge behavior on modern Android - see createNotificationChannels().
+        val channelId = when (severity) {
+            NotificationSeverity.CRITICAL -> RovenaApp.CHANNEL_CRITICAL
+            NotificationSeverity.IMPORTANT -> RovenaApp.CHANNEL_IMPORTANT
+            NotificationSeverity.UPCOMING -> RovenaApp.CHANNEL_UPCOMING
+        }
+        val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_reminder)
             .setContentTitle(title)
             .setContentText(body)
