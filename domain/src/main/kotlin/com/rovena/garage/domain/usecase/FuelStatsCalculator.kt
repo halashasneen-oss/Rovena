@@ -20,7 +20,8 @@ object FuelStatsCalculator {
         val odometerKm: Int,
         val liters: Double,
         val totalCost: Double,
-        val isFullTank: Boolean
+        val isFullTank: Boolean,
+        val currencyCode: String
     )
 
     data class IntervalConsumption(
@@ -36,9 +37,13 @@ object FuelStatsCalculator {
         val bestLitersPer100Km: Double?,
         val worstLitersPer100Km: Double?,
         val averageKmPerLiter: Double?,
+        /** Every field below is restricted to [costCurrencyCode] (the single most-common currency among the entries) - never a blind sum across currencies. */
         val costPerKm: Double?,
         val monthlyCost: Map<YearMonth, Double>,
         val yearlyCost: Map<Int, Double>,
+        val costCurrencyCode: String?,
+        /** True when the entries span more than one currency - some fill-ups were excluded from the cost fields above rather than silently combined. */
+        val hasMixedCostCurrencies: Boolean,
         val totalDistanceKm: Int?,
         val intervals: List<IntervalConsumption>,
         val hasEnoughDataForConsumption: Boolean
@@ -47,9 +52,17 @@ object FuelStatsCalculator {
     fun compute(entries: List<FuelEntry>): FuelStats {
         val sorted = entries.sortedBy { it.odometerKm }
 
-        val monthlyCost = sorted.groupBy { YearMonth.from(it.date) }
+        // Consumption/distance are currency-agnostic and use every entry regardless of
+        // currency; the cost fields below (spec: never sum across currencies) are
+        // restricted to the single most-common currency among the entries instead.
+        val currencyCounts = sorted.groupingBy { it.currencyCode }.eachCount()
+        val costCurrency = currencyCounts.entries.maxByOrNull { it.value }?.key
+        val hasMixedCostCurrencies = currencyCounts.size > 1
+        val costEntries = sorted.filter { it.currencyCode == costCurrency }
+
+        val monthlyCost = costEntries.groupBy { YearMonth.from(it.date) }
             .mapValues { (_, list) -> list.sumOf { it.totalCost } }
-        val yearlyCost = sorted.groupBy { it.date.year }
+        val yearlyCost = costEntries.groupBy { it.date.year }
             .mapValues { (_, list) -> list.sumOf { it.totalCost } }
 
         val fullTankIndices = sorted.withIndex().filter { it.value.isFullTank }.map { it.index }
@@ -80,8 +93,11 @@ object FuelStatsCalculator {
         val avgKmPerL = avg?.let { if (it > 0) 100.0 / it else null }
 
         val totalDistance = if (sorted.size >= 2) sorted.last().odometerKm - sorted.first().odometerKm else null
-        val totalCost = sorted.sumOf { it.totalCost }
-        val costPerKm = if (totalDistance != null && totalDistance > 0) totalCost / totalDistance else null
+        // costEntries is a subset of sorted, already sorted by odometer - use its own span
+        // so cost-per-km never divides one currency's spend by another currency's distance.
+        val costDistance = if (costEntries.size >= 2) costEntries.last().odometerKm - costEntries.first().odometerKm else null
+        val totalCost = costEntries.sumOf { it.totalCost }
+        val costPerKm = if (costDistance != null && costDistance > 0) totalCost / costDistance else null
 
         return FuelStats(
             averageLitersPer100Km = avg,
@@ -91,6 +107,8 @@ object FuelStatsCalculator {
             costPerKm = costPerKm,
             monthlyCost = monthlyCost,
             yearlyCost = yearlyCost,
+            costCurrencyCode = costCurrency,
+            hasMixedCostCurrencies = hasMixedCostCurrencies,
             totalDistanceKm = totalDistance,
             intervals = intervals,
             hasEnoughDataForConsumption = hasEnough

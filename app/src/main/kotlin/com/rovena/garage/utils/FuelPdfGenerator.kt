@@ -19,7 +19,8 @@ object FuelPdfGenerator {
         val entries = records.sortedBy { it.mileageKm }.map {
             FuelStatsCalculator.FuelEntry(
                 date = Instant.ofEpochMilli(it.dateMillis).atZone(ZoneId.systemDefault()).toLocalDate(),
-                odometerKm = it.mileageKm, liters = it.liters, totalCost = it.totalCost, isFullTank = it.isFullTank
+                odometerKm = it.mileageKm, liters = it.liters, totalCost = it.totalCost, isFullTank = it.isFullTank,
+                currencyCode = it.currencyCode ?: "JOD"
             )
         }
         val stats = FuelStatsCalculator.compute(entries)

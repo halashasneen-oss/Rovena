@@ -30,10 +30,11 @@
                 <include android:id="@+id/statDistance" layout="@layout/item_stat_card" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="6dp" />
                 <include android:id="@+id/statConsumption" layout="@layout/item_stat_card" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="6dp" />
             </LinearLayout>
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="16dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
                 <include android:id="@+id/statCostPerKm" layout="@layout/item_stat_card" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="6dp" />
                 <include android:id="@+id/statAvgMonthly" layout="@layout/item_stat_card" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="6dp" />
             </LinearLayout>
+            <include android:id="@+id/statTotalOwnership" layout="@layout/item_stat_card" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/insightsCard"

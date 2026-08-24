@@ -56,7 +56,8 @@ class FuelRepository(
                 odometerKm = it.mileageKm,
                 liters = it.liters,
                 totalCost = it.totalCost,
-                isFullTank = it.isFullTank
+                isFullTank = it.isFullTank,
+                currencyCode = it.currencyCode ?: "JOD"
             )
         }
         return FuelStatsCalculator.compute(entries)

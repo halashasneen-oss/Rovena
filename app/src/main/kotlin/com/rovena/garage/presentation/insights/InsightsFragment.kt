@@ -74,9 +74,11 @@ class InsightsFragment : Fragment(R.layout.fragment_insights) {
         bindStat(binding.statConsumption, getString(R.string.insights_avg_consumption),
             Formatters.fuelEconomy(requireContext(), state.fuelStats?.averageLitersPer100Km, FuelEconomyUnit.L_100KM))
         bindStat(binding.statCostPerKm, getString(R.string.insights_cost_per_km),
-            state.expenseStats?.costPerKm?.let { Formatters.currency(requireContext(), it, state.displayCurrencyCode) } ?: getString(R.string.not_enough_data))
+            state.ownershipCostPerKm?.let { Formatters.currency(requireContext(), it, state.displayCurrencyCode) } ?: getString(R.string.not_enough_data))
         bindStat(binding.statAvgMonthly, getString(R.string.insights_avg_monthly),
             state.expenseStats?.averageMonthlyCost?.let { Formatters.currency(requireContext(), it, state.displayCurrencyCode) } ?: getString(R.string.not_enough_data))
+        bindStat(binding.statTotalOwnership, getString(R.string.insights_total_ownership_cost),
+            Formatters.currency(requireContext(), state.totalOwnershipCost, state.displayCurrencyCode))
 
         if (state.insights.isEmpty()) {
             binding.insightsCard.visibility = View.GONE

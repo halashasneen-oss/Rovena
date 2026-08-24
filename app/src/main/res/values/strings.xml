@@ -376,6 +376,7 @@
     <string name="insights_avg_consumption">Avg Consumption</string>
     <string name="insights_cost_per_km">Cost / KM</string>
     <string name="insights_avg_monthly">Avg Monthly Cost</string>
+    <string name="insights_total_ownership_cost">Total Ownership Cost (fuel + maintenance + expenses)</string>
     <string name="insights_smart_insights">Insights</string>
     <string name="insight_bullet">•  %1$s</string>
     <string name="insight_fuel_economy_improved">Fuel economy has improved by %1$d%% recently.</string>

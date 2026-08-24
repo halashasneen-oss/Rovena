@@ -33,6 +33,10 @@ data class InsightsUiState(
     val maintenanceMonthlySpend: List<MonthlySpend> = emptyList(),
     val categoryBreakdown: List<CategorySlice> = emptyList(),
     val totalDistanceKm: Int? = null,
+    /** Fuel + maintenance + expenses combined (spec: Ownership Cost Analytics), in [displayCurrencyCode] - never just the standalone Expenses total. */
+    val totalOwnershipCost: Double = 0.0,
+    /** [totalOwnershipCost] divided by [totalDistanceKm] - the vehicle's true cost/km, not just its expense-category cost/km. */
+    val ownershipCostPerKm: Double? = null,
     val maintenanceCount: Int = 0,
     /** Local, rules-based observations from [VehicleInsightGenerator] - e.g. a fuel-economy or maintenance-cost trend worth calling out. */
     val insights: List<VehicleInsightGenerator.Insight> = emptyList(),
@@ -63,7 +67,8 @@ class InsightsViewModel(private val container: AppContainer, vehicleIdFlow: Flow
             val fuelEntries = fuel.sortedBy { it.mileageKm }.map {
                 FuelStatsCalculator.FuelEntry(
                     date = Instant.ofEpochMilli(it.dateMillis).atZone(ZoneId.systemDefault()).toLocalDate(),
-                    odometerKm = it.mileageKm, liters = it.liters, totalCost = it.totalCost, isFullTank = it.isFullTank
+                    odometerKm = it.mileageKm, liters = it.liters, totalCost = it.totalCost, isFullTank = it.isFullTank,
+                    currencyCode = it.currencyCode ?: "JOD"
                 )
             }
             val fuelStats = FuelStatsCalculator.compute(fuelEntries)
@@ -111,6 +116,14 @@ class InsightsViewModel(private val container: AppContainer, vehicleIdFlow: Flow
                 .take(6)
                 .map { CategorySlice(it.key, it.value) }
 
+            // Total ownership cost (spec: Ownership Cost Analytics) - fuel + maintenance +
+            // expenses combined, all already restricted to displayCurrency above, so this
+            // never blindly sums different currencies either.
+            val totalOwnershipCost = fuelInCurrency.sumOf { it.totalCost } +
+                maintenanceInCurrency.sumOf { it.cost ?: 0.0 } +
+                expensesInCurrency.sumOf { it.amount }
+            val ownershipCostPerKm = if (totalDistance != null && totalDistance > 0) totalOwnershipCost / totalDistance else null
+
             val insights = VehicleInsightGenerator.generate(
                 litersPer100KmChronological = fuelStats.intervals.map { it.litersPer100Km },
                 monthlyMaintenanceCostChronological = maintenanceMonthlySpend.map { it.total }
@@ -120,6 +133,7 @@ class InsightsViewModel(private val container: AppContainer, vehicleIdFlow: Flow
                 vehicleId = vehicle.id, hasVehicle = true, fuelStats = fuelStats, expenseStats = expenseStats,
                 monthlySpend = monthlySpend, maintenanceMonthlySpend = maintenanceMonthlySpend,
                 categoryBreakdown = categoryBreakdown, totalDistanceKm = totalDistance,
+                totalOwnershipCost = totalOwnershipCost, ownershipCostPerKm = ownershipCostPerKm,
                 maintenanceCount = maintenance.size, insights = insights,
                 displayCurrencyCode = displayCurrency, hasMixedCurrencies = hasMixedCurrencies, isLoading = false
             )

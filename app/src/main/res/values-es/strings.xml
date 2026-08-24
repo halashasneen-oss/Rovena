@@ -359,6 +359,7 @@
     <string name="insights_avg_consumption">Consumo promedio</string>
     <string name="insights_cost_per_km">Costo / KM</string>
     <string name="insights_avg_monthly">Costo mensual promedio</string>
+    <string name="insights_total_ownership_cost">Costo total de propiedad (combustible + mantenimiento + gastos)</string>
     <string name="insights_smart_insights">Perspectivas</string>
     <string name="insight_bullet">•  %1$s</string>
     <string name="insight_fuel_economy_improved">El consumo de combustible ha mejorado un %1$d%% recientemente.</string>

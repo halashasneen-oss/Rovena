@@ -9,8 +9,8 @@ import java.time.LocalDate
 
 class FuelStatsCalculatorTest {
 
-    private fun entry(day: Int, odo: Int, liters: Double, cost: Double, full: Boolean) =
-        FuelStatsCalculator.FuelEntry(LocalDate.of(2026, 1, day), odo, liters, cost, full)
+    private fun entry(day: Int, odo: Int, liters: Double, cost: Double, full: Boolean, currencyCode: String = "JOD") =
+        FuelStatsCalculator.FuelEntry(LocalDate.of(2026, 1, day), odo, liters, cost, full, currencyCode)
 
     @Test
     fun `not enough data with fewer than two full tanks`() {
@@ -57,5 +57,21 @@ class FuelStatsCalculatorTest {
         val stats = FuelStatsCalculator.compute(entries)
         assertEquals(500, stats.totalDistanceKm)
         assertEquals(60.0 / 500.0, stats.costPerKm!!, 0.0001)
+    }
+
+    @Test
+    fun `cost fields are restricted to the majority currency, never summed across currencies`() {
+        val entries = listOf(
+            entry(1, 0, 40.0, 40.0, true, currencyCode = "JOD"),
+            entry(10, 500, 20.0, 20.0, false, currencyCode = "JOD"),
+            entry(20, 1000, 20.0, 100.0, true, currencyCode = "USD") // a single fill-up abroad, different currency
+        )
+        val stats = FuelStatsCalculator.compute(entries)
+        assertTrue(stats.hasMixedCostCurrencies)
+        assertEquals("JOD", stats.costCurrencyCode)
+        // Only the two JOD fill-ups (0..500km, 40+20 JOD) feed cost fields - the USD one is excluded, not blindly added.
+        assertEquals(60.0 / 500.0, stats.costPerKm!!, 0.0001)
+        // totalDistanceKm (consumption-side, currency-agnostic) still spans the full history including the USD entry.
+        assertEquals(1000, stats.totalDistanceKm)
     }
 }
