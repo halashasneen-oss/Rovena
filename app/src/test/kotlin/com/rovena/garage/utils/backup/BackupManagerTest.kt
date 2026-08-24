@@ -95,7 +95,6 @@ class BackupManagerTest {
         }
 
         val sourceVehicleId: Long
-        val sourceMaintenanceId: Long
         val sourceDb = buildSourceDb()
         try {
             sourceVehicleId = runBlocking {
@@ -103,7 +102,7 @@ class BackupManagerTest {
                     VehicleEntity(make = "Nissan", model = "Altima", year = 2019, fuelType = FuelType.PETROL, transmission = TransmissionType.AUTOMATIC, currentMileageKm = 45_000)
                 )
             }
-            sourceMaintenanceId = runBlocking {
+            runBlocking {
                 sourceDb.maintenanceDao().insert(
                     MaintenanceRecordEntity(vehicleId = sourceVehicleId, dateMillis = 1_000L, mileageKm = 45_000, category = MaintenanceCategory.ENGINE_OIL, description = "Oil change")
                 )
@@ -127,11 +126,16 @@ class BackupManagerTest {
         assertEquals(1, liveVehicles.size)
         val newVehicle = liveVehicles.single()
         assertEquals("Nissan", newVehicle.make)
-        assertNotEquals(sourceVehicleId, newVehicle.id)
 
         val liveMaintenance = container.maintenanceRepository.observeByVehicle(newVehicle.id).first()
         assertEquals(1, liveMaintenance.size)
-        assertNotEquals(sourceMaintenanceId, liveMaintenance.single().id)
+        // The real "fresh id" invariant that matters is this: the imported record is
+        // re-parented to the *new* vehicle, not left pointing at the old vehicle's id.
+        // Asserting sourceId != newVehicle.id itself would be a coincidence-dependent
+        // check, not a real one - the source and live databases are two entirely
+        // separate, independently-autoincrementing SQLite files, both starting fresh
+        // in this test, so their row ids can legitimately collide (both 1) without
+        // that meaning anything went wrong.
         assertEquals(newVehicle.id, liveMaintenance.single().vehicleId)
 
         val livePhotos = container.photoRepository.observeByVehicle(newVehicle.id).first()
