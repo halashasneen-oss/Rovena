@@ -91,6 +91,18 @@ android {
         unitTests {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
+            // Default Gradle console reporting only prints "Class > test FAILED" plus the
+            // exception type and a line number (often just the enclosing suspend function's
+            // signature line for a runTest {} body, not the actual failing assertion) - never
+            // the assertion's own message, so a CI failure alone isn't enough to diagnose.
+            all { test ->
+                test.testLogging {
+                    events("failed")
+                    exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+                    showCauses = true
+                    showStackTraces = true
+                }
+            }
         }
     }
 }
