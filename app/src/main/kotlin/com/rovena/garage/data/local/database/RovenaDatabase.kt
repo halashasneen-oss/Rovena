@@ -54,7 +54,7 @@ import com.rovena.garage.data.local.entities.VehiclePhotoEntity
         PartEntity::class,
         HealthScoreSnapshotEntity::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = true
 )
 @TypeConverters(Converters::class)

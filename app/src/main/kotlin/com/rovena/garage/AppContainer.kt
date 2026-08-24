@@ -82,7 +82,7 @@ class AppContainer(context: Context) {
     }
 
     val partRepository: PartRepository by lazy {
-        PartRepository(database.partDao())
+        PartRepository(database.partDao(), database.reminderDao(), database)
     }
 
     val healthScoreHistoryRepository: HealthScoreHistoryRepository by lazy {

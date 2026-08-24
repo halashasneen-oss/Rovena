@@ -52,7 +52,7 @@ class PartListViewModel(private val container: AppContainer, vehicleIdFlow: Flow
 
     fun save(vehicleId: Long, existing: PartEntity?, part: PartEntity) {
         viewModelScope.launch {
-            container.partRepository.addOrUpdate(part.copy(id = existing?.id ?: 0, vehicleId = vehicleId))
+            container.partRepository.addOrUpdate(part.copy(id = existing?.id ?: 0, vehicleId = vehicleId, reminderId = existing?.reminderId))
         }
     }
 

@@ -33,5 +33,7 @@ data class PartEntity(
     val warrantyExpiryDateMillis: Long? = null,
     val warrantyExpiryMileageKm: Int? = null,
     val notes: String? = null,
+    /** The auto-generated warranty-expiry reminder linked to this part, if it currently tracks a warranty - see PartRepository. */
+    val reminderId: Long? = null,
     val createdAt: Long = System.currentTimeMillis()
 )

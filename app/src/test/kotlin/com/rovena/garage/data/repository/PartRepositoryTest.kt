@@ -12,6 +12,8 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -41,7 +43,7 @@ class PartRepositoryTest {
         db = Room.inMemoryDatabaseBuilder(context, RovenaDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        repository = PartRepository(db.partDao())
+        repository = PartRepository(db.partDao(), db.reminderDao(), db)
         vehicleId = runBlocking {
             db.vehicleDao().insert(
                 VehicleEntity(make = "Mazda", model = "CX-5", year = 2020, fuelType = FuelType.PETROL, transmission = TransmissionType.AUTOMATIC, currentMileageKm = 40_000)
@@ -94,5 +96,80 @@ class PartRepositoryTest {
         db.vehicleDao().delete(vehicle)
 
         assertTrue(repository.observeByVehicle(vehicleId).first().isEmpty())
+    }
+
+    @Test
+    fun `adding a part with a warranty date creates a linked reminder`() = runTest {
+        val id = repository.addOrUpdate(
+            PartEntity(vehicleId = vehicleId, name = "Battery", installedDateMillis = 1000L, warrantyExpiryDateMillis = 2_000_000_000_000L)
+        )
+        val saved = repository.getById(id)!!
+        assertNotNull(saved.reminderId)
+        val reminder = db.reminderDao().getById(saved.reminderId!!)
+        assertNotNull(reminder)
+        assertEquals(2_000_000_000_000L, reminder?.dueDateMillis)
+    }
+
+    @Test
+    fun `a warranty with both date and mileage triggers gets a BOTH-basis reminder`() = runTest {
+        val id = repository.addOrUpdate(
+            PartEntity(
+                vehicleId = vehicleId, name = "Timing belt", installedDateMillis = 1000L,
+                warrantyExpiryDateMillis = 2_000_000_000_000L, warrantyExpiryMileageKm = 100_000
+            )
+        )
+        val saved = repository.getById(id)!!
+        val reminder = db.reminderDao().getById(saved.reminderId!!)!!
+        assertEquals(com.rovena.garage.domain.model.ReminderBasis.BOTH, reminder.basis)
+        assertEquals(100_000, reminder.dueMileageKm)
+    }
+
+    @Test
+    fun `editing the warranty date updates the same reminder`() = runTest {
+        val id = repository.addOrUpdate(
+            PartEntity(vehicleId = vehicleId, name = "Battery", installedDateMillis = 1000L, warrantyExpiryDateMillis = 2_000_000_000_000L)
+        )
+        val saved = repository.getById(id)!!
+        val firstReminderId = saved.reminderId!!
+
+        repository.addOrUpdate(saved.copy(warrantyExpiryDateMillis = 2_100_000_000_000L))
+
+        val updated = repository.getById(id)!!
+        assertEquals(firstReminderId, updated.reminderId)
+        assertEquals(2_100_000_000_000L, db.reminderDao().getById(firstReminderId)?.dueDateMillis)
+    }
+
+    @Test
+    fun `clearing both warranty triggers deletes the reminder`() = runTest {
+        val id = repository.addOrUpdate(
+            PartEntity(vehicleId = vehicleId, name = "Battery", installedDateMillis = 1000L, warrantyExpiryDateMillis = 2_000_000_000_000L)
+        )
+        val saved = repository.getById(id)!!
+        val reminderId = saved.reminderId!!
+
+        repository.addOrUpdate(saved.copy(warrantyExpiryDateMillis = null))
+
+        assertNull(repository.getById(id)?.reminderId)
+        assertNull(db.reminderDao().getById(reminderId))
+    }
+
+    @Test
+    fun `deleting the part deletes its warranty reminder`() = runTest {
+        val id = repository.addOrUpdate(
+            PartEntity(vehicleId = vehicleId, name = "Battery", installedDateMillis = 1000L, warrantyExpiryDateMillis = 2_000_000_000_000L)
+        )
+        val saved = repository.getById(id)!!
+        val reminderId = saved.reminderId!!
+
+        repository.delete(saved)
+
+        assertNull(repository.getById(id))
+        assertNull(db.reminderDao().getById(reminderId))
+    }
+
+    @Test
+    fun `a part without a warranty never creates a reminder`() = runTest {
+        val id = repository.addOrUpdate(PartEntity(vehicleId = vehicleId, name = "Wiper blades", installedDateMillis = 1000L))
+        assertNull(repository.getById(id)?.reminderId)
     }
 }
