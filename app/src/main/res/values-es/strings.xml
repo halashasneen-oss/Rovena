@@ -404,6 +404,11 @@
     <string name="settings_section_security">Seguridad</string>
     <string name="settings_row_app_lock">Bloqueo de la aplicación</string>
     <string name="settings_row_biometric">Desbloqueo biométrico</string>
+    <string name="settings_row_app_lock_timeout">Tiempo de bloqueo</string>
+    <string name="app_lock_timeout_immediately">Inmediatamente</string>
+    <string name="app_lock_timeout_30s">Después de 30 segundos</string>
+    <string name="app_lock_timeout_1m">Después de 1 minuto</string>
+    <string name="app_lock_timeout_5m">Después de 5 minutos</string>
     <string name="settings_row_biometric_subtitle_disabled">Primero configura un PIN</string>
 
     <string name="settings_section_appearance">Apariencia</string>

@@ -404,6 +404,11 @@
     <string name="settings_section_security">Sécurité</string>
     <string name="settings_row_app_lock">Verrouillage de l\'application</string>
     <string name="settings_row_biometric">Déverrouillage biométrique</string>
+    <string name="settings_row_app_lock_timeout">Délai de verrouillage</string>
+    <string name="app_lock_timeout_immediately">Immédiatement</string>
+    <string name="app_lock_timeout_30s">Après 30 secondes</string>
+    <string name="app_lock_timeout_1m">Après 1 minute</string>
+    <string name="app_lock_timeout_5m">Après 5 minutes</string>
     <string name="settings_row_biometric_subtitle_disabled">Définissez d\'abord un code PIN</string>
 
     <string name="settings_section_appearance">Apparence</string>

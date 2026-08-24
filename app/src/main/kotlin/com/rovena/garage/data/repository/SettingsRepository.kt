@@ -55,6 +55,8 @@ class SettingsRepository(private val settingsDao: AppSettingsDao) {
 
     suspend fun setNotifyGeneralCategoryEnabled(enabled: Boolean) = update { it.copy(notifyGeneralCategoryEnabled = enabled) }
 
+    suspend fun setAppLockTimeoutSeconds(seconds: Int) = update { it.copy(appLockTimeoutSeconds = seconds) }
+
     suspend fun setOnboardingCompleted(completed: Boolean) = update { it.copy(onboardingCompleted = completed) }
 
     suspend fun setSampleDataSeeded(seeded: Boolean) = update { it.copy(sampleDataSeeded = seeded) }

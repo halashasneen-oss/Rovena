@@ -24,16 +24,29 @@ class RovenaApp : Application() {
     val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     /**
-     * True whenever the app (any Activity) needs to pass App Lock again
-     * before showing content - starts true so a cold process launch with
-     * App Lock enabled always locks, and is re-armed whenever the whole app
-     * (not just one Activity, e.g. a document picker) leaves the foreground.
+     * True only before the very first successful authentication this process -
+     * guarantees a cold process launch with App Lock enabled always locks,
+     * regardless of the configured timeout. Once cleared by [markAuthenticated],
+     * whether the app re-locks after backgrounding is decided entirely by
+     * comparing [backgroundedAtMillis] against the user's configured
+     * `appLockTimeoutSeconds` (see MainActivity.checkAppLock()), not this flag.
      */
     var requiresReauth: Boolean = true
         private set
 
+    /**
+     * Wall-clock time the whole app (not just one Activity, e.g. a document
+     * picker) last left the foreground, or null while in the foreground / not
+     * yet backgrounded since the last successful unlock. Immediate-timeout
+     * (appLockTimeoutSeconds = 0, the default) still locks every time, since
+     * any elapsed time - even a few milliseconds - already exceeds a 0s grace period.
+     */
+    var backgroundedAtMillis: Long? = null
+        private set
+
     fun markAuthenticated() {
         requiresReauth = false
+        backgroundedAtMillis = null
     }
 
     override fun onCreate() {
@@ -43,7 +56,7 @@ class RovenaApp : Application() {
         ReminderCheckWorker.schedule(this)
         ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onStop(owner: LifecycleOwner) {
-                requiresReauth = true
+                backgroundedAtMillis = System.currentTimeMillis()
             }
         })
     }

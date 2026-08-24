@@ -64,6 +64,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         setupRow(binding.rowRestore, getString(R.string.settings_row_restore), getString(R.string.settings_row_restore_subtitle), showSwitch = false) {
             findNavController().navigate(R.id.backupFragment)
         }
+        setupRow(binding.rowAppLockTimeout, getString(R.string.settings_row_app_lock_timeout), "", showSwitch = false) { showAppLockTimeoutDialog() }
         setupRow(binding.rowTheme, getString(R.string.settings_row_theme), "", showSwitch = false) { showThemeDialog() }
         setupRow(binding.rowDistanceUnit, getString(R.string.settings_row_distance_unit), "", showSwitch = false) { showDistanceUnitDialog() }
         setupRow(binding.rowFuelUnit, getString(R.string.settings_row_fuel_unit), "", showSwitch = false) { showFuelUnitDialog() }
@@ -115,6 +116,10 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         binding.rowBiometric.rowSubtitle.text = if (!settings.appLockEnabled) getString(R.string.settings_row_biometric_subtitle_disabled) else ""
         binding.rowBiometric.rowSwitch.setOnCheckedChangeListener { _, checked -> viewModel.setBiometricEnabled(checked) }
 
+        binding.rowAppLockTimeout.root.isEnabled = settings.appLockEnabled
+        binding.rowAppLockTimeout.rowTitle.alpha = if (settings.appLockEnabled) 1f else 0.5f
+        binding.rowAppLockTimeout.rowSubtitle.text = appLockTimeoutLabel(settings.appLockTimeoutSeconds)
+
         binding.rowTheme.rowSubtitle.text = when (settings.themeMode) {
             AppThemeMode.LIGHT -> getString(R.string.theme_light)
             AppThemeMode.DARK -> getString(R.string.theme_dark)
@@ -124,6 +129,29 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         binding.rowFuelUnit.rowSubtitle.text = if (settings.fuelEconomyUnit == FuelEconomyUnit.L_100KM) getString(R.string.unit_l100km_full) else getString(R.string.unit_mpg_full)
         binding.rowCurrency.rowSubtitle.text = settings.customCurrencyCode?.takeIf { settings.currency == AppCurrency.CUSTOM } ?: settings.currency.code
         binding.rowLanguage.rowSubtitle.text = languageLabel(settings.language)
+    }
+
+    /** Options offered for [AppSettingsEntity.appLockTimeoutSeconds] (spec: immediately/30s/1min/5min). */
+    private val appLockTimeoutOptionsSeconds = intArrayOf(0, 30, 60, 300)
+
+    private fun appLockTimeoutLabel(seconds: Int): String = when (seconds) {
+        0 -> getString(R.string.app_lock_timeout_immediately)
+        30 -> getString(R.string.app_lock_timeout_30s)
+        60 -> getString(R.string.app_lock_timeout_1m)
+        300 -> getString(R.string.app_lock_timeout_5m)
+        else -> getString(R.string.app_lock_timeout_immediately)
+    }
+
+    private fun showAppLockTimeoutDialog() {
+        val options = appLockTimeoutOptionsSeconds.map { appLockTimeoutLabel(it) }.toTypedArray()
+        val current = appLockTimeoutOptionsSeconds.indexOf(viewModel.settings.value.appLockTimeoutSeconds).coerceAtLeast(0)
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.settings_row_app_lock_timeout)
+            .setSingleChoiceItems(options, current) { dialog, which ->
+                viewModel.setAppLockTimeoutSeconds(appLockTimeoutOptionsSeconds[which])
+                dialog.dismiss()
+            }
+            .show()
     }
 
     private fun languageLabel(language: AppLanguage): String = when (language) {

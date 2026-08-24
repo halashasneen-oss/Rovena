@@ -404,6 +404,11 @@
     <string name="settings_section_security">الأمان</string>
     <string name="settings_row_app_lock">قفل التطبيق</string>
     <string name="settings_row_biometric">فتح القفل بالبصمة</string>
+    <string name="settings_row_app_lock_timeout">مهلة القفل</string>
+    <string name="app_lock_timeout_immediately">فورًا</string>
+    <string name="app_lock_timeout_30s">بعد 30 ثانية</string>
+    <string name="app_lock_timeout_1m">بعد دقيقة واحدة</string>
+    <string name="app_lock_timeout_5m">بعد 5 دقائق</string>
     <string name="settings_row_biometric_subtitle_disabled">قم بتعيين رمز PIN أولاً</string>
 
     <string name="settings_section_appearance">المظهر</string>

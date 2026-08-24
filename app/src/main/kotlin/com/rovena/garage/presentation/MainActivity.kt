@@ -87,14 +87,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Re-evaluated on every resume (not gated behind a single boolean flip) because whether
+     * the configured App Lock timeout has elapsed can only be known by checking elapsed time
+     * against Settings each time - see RovenaApp.requiresReauth/backgroundedAtMillis.
+     */
     private fun checkAppLock() {
-        if (!app.requiresReauth) return
         lifecycleScope.launch {
             val settings = appContainer.settingsRepository.getOrDefault()
-            if (settings.appLockEnabled) {
-                lockLauncher.launch(Intent(this@MainActivity, LockActivity::class.java))
-            } else {
+            if (!settings.appLockEnabled) {
                 app.markAuthenticated()
+                return@launch
+            }
+            val backgroundedAt = app.backgroundedAtMillis
+            val timeoutElapsed = backgroundedAt != null &&
+                (System.currentTimeMillis() - backgroundedAt) / 1000 >= settings.appLockTimeoutSeconds
+            if (app.requiresReauth || timeoutElapsed) {
+                lockLauncher.launch(Intent(this@MainActivity, LockActivity::class.java))
             }
         }
     }

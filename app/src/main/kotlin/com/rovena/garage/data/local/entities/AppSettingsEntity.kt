@@ -33,6 +33,8 @@ data class AppSettingsEntity(
     val notifyDocumentCategoryEnabled: Boolean = true,
     val notifyGeneralCategoryEnabled: Boolean = true,
     val appLockEnabled: Boolean = false,
+    /** Grace period (seconds) after the app leaves the foreground before it re-locks; 0 = lock immediately every time. See MainActivity.checkAppLock(). */
+    val appLockTimeoutSeconds: Int = 0,
     val biometricEnabled: Boolean = false,
     val pinHash: String? = null,
     val pinSalt: String? = null,

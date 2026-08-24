@@ -421,6 +421,11 @@
     <string name="settings_section_security">Security</string>
     <string name="settings_row_app_lock">App Lock</string>
     <string name="settings_row_biometric">Biometric Unlock</string>
+    <string name="settings_row_app_lock_timeout">Lock timeout</string>
+    <string name="app_lock_timeout_immediately">Immediately</string>
+    <string name="app_lock_timeout_30s">After 30 seconds</string>
+    <string name="app_lock_timeout_1m">After 1 minute</string>
+    <string name="app_lock_timeout_5m">After 5 minutes</string>
     <string name="settings_row_biometric_subtitle_disabled">Set a PIN first</string>
 
     <string name="settings_section_appearance">Appearance</string>

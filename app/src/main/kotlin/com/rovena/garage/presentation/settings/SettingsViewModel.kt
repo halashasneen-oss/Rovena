@@ -81,6 +81,10 @@ class SettingsViewModel(private val container: AppContainer) : ViewModel() {
         viewModelScope.launch { container.settingsRepository.setBiometricEnabled(enabled) }
     }
 
+    fun setAppLockTimeoutSeconds(seconds: Int) {
+        viewModelScope.launch { container.settingsRepository.setAppLockTimeoutSeconds(seconds) }
+    }
+
     fun generateSampleData() {
         viewModelScope.launch { com.rovena.garage.utils.SampleDataGenerator.generate(container) }
     }
