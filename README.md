@@ -195,14 +195,21 @@ Run with `./gradlew :domain:test`.
 
 ```
 app/src/test/kotlin/.../
-  utils/PinHasherTest                    7 tests   (PBKDF2 PIN hashing - pure JVM, no Robolectric)
-  data/repository/DocumentRepositoryTest 5 tests   (document expiry -> reminder lifecycle, Robolectric + in-memory Room)
-  data/repository/InspectionRepositoryTest 3 tests (item-id stability across saves, inspection-item photo safety, Robolectric + in-memory Room)
-                                         ─────
-                                         15 tests
+  utils/PinHasherTest                        PBKDF2 PIN hashing (pure JVM, no Robolectric)
+  utils/backup/BackupEncryptionTest          AES-256-GCM .rovena.secure round-trip, wrong password, tampered ciphertext
+  utils/backup/BackupManagerTest             restoreAsNewGarage() id-remapping (vehicle/maintenance/photo), adds alongside existing vehicles
+  utils/pdf/PdfBuilderTest                   PDF reports always render Western digits regardless of locale (withWesternNumerals)
+  data/repository/DocumentRepositoryTest     expiry -> reminder lifecycle, delete()/replace() file cleanup on disk
+  data/repository/ExpenseRepositoryTest      delete() receipt-photo file cleanup
+  data/repository/InspectionRepositoryTest   item-id stability across saves, inspection-item photo safety
+  data/repository/MaintenanceRepositoryTest  delete() photo+thumbnail file cleanup, mileage-bump, workshop suggestions
+  data/repository/PartRepositoryTest         warranty -> reminder lifecycle (create/update/delete in lockstep)
+  data/repository/ReminderRepositoryTest     staged-notification schedule persistence across edits/renewals
+  data/repository/TimelineSyncerTest         per-record-type field mapping for all 7 event types, upsert-not-duplicate, removeForSource
+  data/repository/VehicleNoteRepositoryTest, GlobalSearchDaoTest
 ```
 
-These are the first tests in the `app` module (previously untested beyond the domain layer). Espresso/instrumented UI tests (onboarding, add-vehicle, backup/restore flows end-to-end, Arabic RTL) are not yet written - they need a device/emulator, which this sandbox and the current CI workflow don't have; see [Known limitations](#known-limitations--honest-disclosure).
+Robolectric + in-memory (or, for BackupManagerTest, real file-backed) Room throughout - these exercise the actual DAOs, transactions, and file I/O, not mocks. Espresso/instrumented UI tests (onboarding, add-vehicle, backup/restore flows end-to-end, on-device Arabic RTL rendering) are still not written - they need a device/emulator, which this sandbox and the current CI workflow don't have; see [Known limitations](#known-limitations--honest-disclosure).
 
 ```bash
 ./gradlew :app:testDevDebugUnitTest           # domain + app unit tests
