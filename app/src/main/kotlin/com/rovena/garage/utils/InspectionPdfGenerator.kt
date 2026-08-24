@@ -7,12 +7,14 @@ import com.rovena.garage.domain.model.InspectionCategoryGroup
 import com.rovena.garage.domain.model.InspectionItemStatus
 import com.rovena.garage.presentation.inspection.InspectionFormState
 import com.rovena.garage.utils.pdf.PdfBuilder
+import com.rovena.garage.utils.pdf.withWesternNumerals
 import java.io.File
 
 object InspectionPdfGenerator {
 
     fun generate(context: Context, vehicle: VehicleEntity, state: InspectionFormState): File {
-        val pdf = PdfBuilder()
+        val pdf = PdfBuilder(context)
+        val context = context.withWesternNumerals()
         pdf.title(context.getString(R.string.pdf_inspection_report_title))
         pdf.caption(context.getString(R.string.pdf_generated_on, Formatters.date(context, System.currentTimeMillis())))
         pdf.spacer()

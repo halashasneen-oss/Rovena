@@ -6,12 +6,14 @@ import com.rovena.garage.data.local.entities.ExpenseEntity
 import com.rovena.garage.data.local.entities.VehicleEntity
 import com.rovena.garage.domain.usecase.CurrencyAggregator
 import com.rovena.garage.utils.pdf.PdfBuilder
+import com.rovena.garage.utils.pdf.withWesternNumerals
 import java.io.File
 
 object ExpensePdfGenerator {
 
     fun generate(context: Context, vehicle: VehicleEntity, records: List<ExpenseEntity>): File {
-        val pdf = PdfBuilder()
+        val pdf = PdfBuilder(context)
+        val context = context.withWesternNumerals()
         pdf.title(context.getString(R.string.pdf_expense_report_title))
         pdf.caption(context.getString(R.string.pdf_generated_on, Formatters.date(context, System.currentTimeMillis())))
         pdf.spacer()

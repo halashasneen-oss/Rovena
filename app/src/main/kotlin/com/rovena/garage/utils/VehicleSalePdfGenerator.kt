@@ -12,6 +12,7 @@ import com.rovena.garage.data.repository.InspectionConditionScores
 import com.rovena.garage.domain.usecase.FuelStatsCalculator
 import com.rovena.garage.domain.usecase.InspectionScoreCalculator
 import com.rovena.garage.utils.pdf.PdfBuilder
+import com.rovena.garage.utils.pdf.withWesternNumerals
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.io.File
@@ -57,7 +58,8 @@ object VehicleSalePdfGenerator {
         }
         val fuelStats = FuelStatsCalculator.compute(fuelEntries)
 
-        val pdf = PdfBuilder()
+        val pdf = PdfBuilder(context)
+        val context = context.withWesternNumerals()
         pdf.title(context.getString(R.string.pdf_sale_report_title))
         pdf.caption(context.getString(R.string.pdf_generated_on, Formatters.date(context, System.currentTimeMillis())))
         pdf.spacer()

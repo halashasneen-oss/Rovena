@@ -9,6 +9,7 @@ import com.rovena.garage.domain.model.FuelEconomyUnit
 import com.rovena.garage.domain.usecase.CurrencyAggregator
 import com.rovena.garage.domain.usecase.FuelStatsCalculator
 import com.rovena.garage.utils.pdf.PdfBuilder
+import com.rovena.garage.utils.pdf.withWesternNumerals
 import java.io.File
 import java.time.Instant
 import java.time.ZoneId
@@ -25,7 +26,8 @@ object FuelPdfGenerator {
         }
         val stats = FuelStatsCalculator.compute(entries)
 
-        val pdf = PdfBuilder()
+        val pdf = PdfBuilder(context)
+        val context = context.withWesternNumerals()
         pdf.title(context.getString(R.string.pdf_fuel_report_title))
         pdf.caption(context.getString(R.string.pdf_generated_on, Formatters.date(context, System.currentTimeMillis())))
         pdf.spacer()
