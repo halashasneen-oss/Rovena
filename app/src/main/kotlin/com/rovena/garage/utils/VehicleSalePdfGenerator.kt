@@ -32,6 +32,7 @@ object VehicleSalePdfGenerator {
         val maintenance = firstOnce(container.maintenanceRepository.observeByVehicle(vehicle.id)).sortedByDescending { it.dateMillis }
         val fuel = firstOnce(container.fuelRepository.observeByVehicle(vehicle.id))
         val documents = firstOnce(container.documentRepository.observeByVehicle(vehicle.id))
+        val parts = firstOnce(container.partRepository.observeByVehicle(vehicle.id))
         val latestInspection = container.inspectionRepository.getLatest(vehicle.id)
         val latestInspectionItems = latestInspection?.let { container.inspectionRepository.getItemsOnce(it.id) } ?: emptyList()
 
@@ -105,6 +106,28 @@ object VehicleSalePdfGenerator {
         pdf.sectionHeader(context.getString(R.string.hub_section_documents))
         pdf.keyValueRow(context.getString(R.string.hub_records_count, documents.size), "")
         pdf.keyValueRow(context.getString(R.string.pdf_sale_documents_current), if (hasExpiredDocument) context.getString(R.string.pdf_sale_documents_expired) else context.getString(R.string.pdf_sale_documents_ok))
+
+        pdf.sectionHeader(context.getString(R.string.hub_section_parts))
+        if (parts.isEmpty()) {
+            pdf.caption(context.getString(R.string.pdf_sale_no_parts))
+        } else {
+            parts.sortedByDescending { it.installedDateMillis }.forEach { part ->
+                val hasWarranty = part.warrantyExpiryDateMillis != null || part.warrantyExpiryMileageKm != null
+                val warrantyText = if (!hasWarranty) {
+                    context.getString(R.string.pdf_sale_part_no_warranty)
+                } else {
+                    val dateStillValid = part.warrantyExpiryDateMillis?.let { it > System.currentTimeMillis() } ?: true
+                    val mileageStillValid = part.warrantyExpiryMileageKm?.let { vehicle.currentMileageKm < it } ?: true
+                    if (dateStillValid && mileageStillValid) context.getString(R.string.pdf_sale_part_warranty_active) else context.getString(R.string.pdf_sale_part_warranty_expired)
+                }
+                pdf.bodyLine("${part.name} · ${Formatters.date(context, part.installedDateMillis)} · $warrantyText")
+            }
+        }
+
+        pdf.spacer()
+        pdf.divider()
+        pdf.sectionHeader(context.getString(R.string.pdf_sale_disclaimer_title))
+        pdf.caption(context.getString(R.string.pdf_sale_disclaimer_text))
 
         pdf.spacer()
         pdf.caption(context.getString(R.string.pdf_footer_sale_report))

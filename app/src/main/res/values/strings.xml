@@ -347,6 +347,12 @@
     <string name="pdf_sale_documents_current">Documentation status</string>
     <string name="pdf_sale_documents_ok">Up to date</string>
     <string name="pdf_sale_documents_expired">One or more documents have expired</string>
+    <string name="pdf_sale_no_parts">No parts history has been logged for this vehicle.</string>
+    <string name="pdf_sale_part_warranty_active">Under warranty</string>
+    <string name="pdf_sale_part_warranty_expired">Warranty expired</string>
+    <string name="pdf_sale_part_no_warranty">No warranty tracked</string>
+    <string name="pdf_sale_disclaimer_title">Important Notice</string>
+    <string name="pdf_sale_disclaimer_text">This report reflects only the data the vehicle owner has logged in Rovena. It is not an independent inspection, appraisal, or vehicle history report, and Rovena makes no warranty as to its accuracy or completeness. Buyers should arrange their own professional inspection and independently verify the vehicle\'s title and accident history before purchase.</string>
     <string name="pdf_footer_sale_report">Generated locally by Rovena from this vehicle\'s own logged history.</string>
     <string name="timeline_empty_title">Nothing here yet</string>
     <string name="timeline_empty_message">Fuel, maintenance, expenses and more will show up here as you add them.</string>

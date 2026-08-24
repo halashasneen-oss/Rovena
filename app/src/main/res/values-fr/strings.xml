@@ -330,6 +330,12 @@
     <string name="pdf_sale_documents_current">État des documents</string>
     <string name="pdf_sale_documents_ok">À jour</string>
     <string name="pdf_sale_documents_expired">Un ou plusieurs documents ont expiré</string>
+    <string name="pdf_sale_no_parts">Aucun historique de pièces n\'a été enregistré pour ce véhicule.</string>
+    <string name="pdf_sale_part_warranty_active">Sous garantie</string>
+    <string name="pdf_sale_part_warranty_expired">Garantie expirée</string>
+    <string name="pdf_sale_part_no_warranty">Aucune garantie enregistrée</string>
+    <string name="pdf_sale_disclaimer_title">Avis important</string>
+    <string name="pdf_sale_disclaimer_text">Ce rapport reflète uniquement les données que le propriétaire du véhicule a enregistrées dans Rovena. Il ne s\'agit pas d\'une inspection indépendante, d\'une expertise ou d\'un rapport d\'historique du véhicule, et Rovena n\'offre aucune garantie quant à son exactitude ou son exhaustivité. Les acheteurs doivent organiser leur propre inspection professionnelle et vérifier de manière indépendante le titre de propriété et l\'historique des accidents du véhicule avant l\'achat.</string>
     <string name="pdf_footer_sale_report">Généré localement par Rovena à partir de l\'historique enregistré de ce véhicule.</string>
     <string name="timeline_empty_title">Rien ici pour le moment</string>
     <string name="timeline_empty_message">Carburant, entretien, dépenses et plus apparaîtront ici au fur et à mesure.</string>

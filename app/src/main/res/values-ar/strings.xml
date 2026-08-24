@@ -330,6 +330,12 @@
     <string name="pdf_sale_documents_current">حالة المستندات</string>
     <string name="pdf_sale_documents_ok">محدّثة</string>
     <string name="pdf_sale_documents_expired">انتهت صلاحية مستند واحد أو أكثر</string>
+    <string name="pdf_sale_no_parts">لم يتم تسجيل أي سجل قطع غيار لهذه المركبة.</string>
+    <string name="pdf_sale_part_warranty_active">تحت الضمان</string>
+    <string name="pdf_sale_part_warranty_expired">انتهى الضمان</string>
+    <string name="pdf_sale_part_no_warranty">لا يوجد ضمان مسجل</string>
+    <string name="pdf_sale_disclaimer_title">تنويه هام</string>
+    <string name="pdf_sale_disclaimer_text">يعكس هذا التقرير فقط البيانات التي سجلها مالك المركبة في تطبيق روفينا. وهو ليس فحصًا مستقلاً أو تقييمًا أو تقرير تاريخ للمركبة، ولا تقدم روفينا أي ضمان بشأن دقته أو اكتماله. يُنصح المشتري بترتيب فحص فني مستقل والتحقق بشكل مستقل من ملكية المركبة وتاريخ الحوادث قبل الشراء.</string>
     <string name="pdf_footer_sale_report">تم إنشاؤه محليًا بواسطة روفينا من سجل هذه المركبة الخاص.</string>
     <string name="timeline_empty_title">لا يوجد شيء هنا بعد</string>
     <string name="timeline_empty_message">سيظهر هنا الوقود والصيانة والمصاريف والمزيد عند إضافتها.</string>
