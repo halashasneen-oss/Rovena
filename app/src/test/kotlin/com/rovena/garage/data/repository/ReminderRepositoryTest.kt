@@ -42,7 +42,7 @@ class ReminderRepositoryTest {
         db = Room.inMemoryDatabaseBuilder(context, RovenaDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        repository = ReminderRepository(db.reminderDao(), TimelineSyncer(db.timelineDao()))
+        repository = ReminderRepository(db.reminderDao(), TimelineSyncer(db.timelineDao()), db)
         vehicleId = runBlocking {
             db.vehicleDao().insert(
                 VehicleEntity(make = "Nissan", model = "Altima", year = 2018, fuelType = FuelType.PETROL, transmission = TransmissionType.AUTOMATIC, currentMileageKm = 60_000)

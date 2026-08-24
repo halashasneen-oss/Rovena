@@ -38,15 +38,15 @@ class AppContainer(context: Context) {
     }
 
     val maintenanceRepository: MaintenanceRepository by lazy {
-        MaintenanceRepository(database.maintenanceDao(), database.vehicleDao(), timelineSyncer)
+        MaintenanceRepository(database.maintenanceDao(), database.vehicleDao(), timelineSyncer, database)
     }
 
     val fuelRepository: FuelRepository by lazy {
-        FuelRepository(database.fuelDao(), database.vehicleDao(), timelineSyncer)
+        FuelRepository(database.fuelDao(), database.vehicleDao(), timelineSyncer, database)
     }
 
     val expenseRepository: ExpenseRepository by lazy {
-        ExpenseRepository(database.expenseDao(), timelineSyncer)
+        ExpenseRepository(database.expenseDao(), timelineSyncer, database)
     }
 
     val documentRepository: DocumentRepository by lazy {
@@ -58,7 +58,7 @@ class AppContainer(context: Context) {
     }
 
     val reminderRepository: ReminderRepository by lazy {
-        ReminderRepository(database.reminderDao(), timelineSyncer)
+        ReminderRepository(database.reminderDao(), timelineSyncer, database)
     }
 
     val timelineRepository: TimelineRepository by lazy {

@@ -1,7 +1,9 @@
 package com.rovena.garage.data.repository
 
+import androidx.room.withTransaction
 import com.rovena.garage.data.local.dao.ExpenseCategoryTotal
 import com.rovena.garage.data.local.dao.ExpenseDao
+import com.rovena.garage.data.local.database.RovenaDatabase
 import com.rovena.garage.data.local.entities.ExpenseEntity
 import com.rovena.garage.domain.model.ExpenseCategory
 import com.rovena.garage.domain.model.TimelineEventType
@@ -12,7 +14,8 @@ import java.time.ZoneId
 
 class ExpenseRepository(
     private val expenseDao: ExpenseDao,
-    private val timelineSyncer: TimelineSyncer
+    private val timelineSyncer: TimelineSyncer,
+    private val database: RovenaDatabase
 ) {
     fun observeByVehicle(vehicleId: Long): Flow<List<ExpenseEntity>> = expenseDao.observeByVehicle(vehicleId)
 
@@ -33,7 +36,7 @@ class ExpenseRepository(
 
     suspend fun getById(id: Long): ExpenseEntity? = expenseDao.getById(id)
 
-    suspend fun addOrUpdate(expense: ExpenseEntity): Long {
+    suspend fun addOrUpdate(expense: ExpenseEntity): Long = database.withTransaction {
         val id = if (expense.id == 0L) {
             expenseDao.insert(expense)
         } else {
@@ -41,10 +44,10 @@ class ExpenseRepository(
             expense.id
         }
         timelineSyncer.upsertForExpense(expense.copy(id = id))
-        return id
+        id
     }
 
-    suspend fun delete(expense: ExpenseEntity) {
+    suspend fun delete(expense: ExpenseEntity) = database.withTransaction {
         expenseDao.delete(expense)
         timelineSyncer.removeForSource(TimelineEventType.EXPENSE, expense.id)
     }

@@ -1,13 +1,16 @@
 package com.rovena.garage.data.repository
 
+import androidx.room.withTransaction
 import com.rovena.garage.data.local.dao.ReminderDao
+import com.rovena.garage.data.local.database.RovenaDatabase
 import com.rovena.garage.data.local.entities.ReminderEntity
 import com.rovena.garage.domain.model.TimelineEventType
 import kotlinx.coroutines.flow.Flow
 
 class ReminderRepository(
     private val reminderDao: ReminderDao,
-    private val timelineSyncer: TimelineSyncer
+    private val timelineSyncer: TimelineSyncer,
+    private val database: RovenaDatabase
 ) {
     fun observeByVehicle(vehicleId: Long): Flow<List<ReminderEntity>> = reminderDao.observeByVehicle(vehicleId)
 
@@ -21,7 +24,7 @@ class ReminderRepository(
 
     suspend fun getAllActiveOnce(): List<ReminderEntity> = reminderDao.getAllActiveOnce()
 
-    suspend fun addOrUpdate(reminder: ReminderEntity): Long {
+    suspend fun addOrUpdate(reminder: ReminderEntity): Long = database.withTransaction {
         val existing = if (reminder.id != 0L) reminderDao.getById(reminder.id) else null
         val toSave = resetStageIfDateChanged(existing, reminder)
         val id = if (toSave.id == 0L) {
@@ -31,10 +34,10 @@ class ReminderRepository(
             toSave.id
         }
         timelineSyncer.upsertForReminder(toSave.copy(id = id))
-        return id
+        id
     }
 
-    suspend fun markCompleted(reminder: ReminderEntity, completedAt: Long = System.currentTimeMillis()) {
+    suspend fun markCompleted(reminder: ReminderEntity, completedAt: Long = System.currentTimeMillis()) = database.withTransaction {
         if (reminder.isRecurring) {
             val next = reminder.copy(
                 dueMileageKm = reminder.intervalKm?.let { (reminder.dueMileageKm ?: 0) + it },
@@ -61,7 +64,7 @@ class ReminderRepository(
         reminderDao.markNotifiedStage(reminderId, stage, whenMillis)
     }
 
-    suspend fun delete(reminder: ReminderEntity) {
+    suspend fun delete(reminder: ReminderEntity) = database.withTransaction {
         reminderDao.delete(reminder)
         timelineSyncer.removeForSource(TimelineEventType.REMINDER, reminder.id)
     }

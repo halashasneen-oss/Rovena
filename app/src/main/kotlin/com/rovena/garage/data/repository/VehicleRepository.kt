@@ -39,7 +39,7 @@ class VehicleRepository(
         return id
     }
 
-    suspend fun updateVehicle(vehicle: VehicleEntity) {
+    suspend fun updateVehicle(vehicle: VehicleEntity) = database.withTransaction {
         val previous = vehicleDao.getById(vehicle.id)
         val updated = vehicle.copy(updatedAt = System.currentTimeMillis())
         vehicleDao.update(updated)

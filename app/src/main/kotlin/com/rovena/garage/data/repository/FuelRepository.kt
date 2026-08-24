@@ -1,7 +1,9 @@
 package com.rovena.garage.data.repository
 
+import androidx.room.withTransaction
 import com.rovena.garage.data.local.dao.FuelDao
 import com.rovena.garage.data.local.dao.VehicleDao
+import com.rovena.garage.data.local.database.RovenaDatabase
 import com.rovena.garage.data.local.entities.FuelRecordEntity
 import com.rovena.garage.domain.model.TimelineEventType
 import com.rovena.garage.domain.usecase.FuelStatsCalculator
@@ -12,7 +14,8 @@ import java.time.ZoneId
 class FuelRepository(
     private val fuelDao: FuelDao,
     private val vehicleDao: VehicleDao,
-    private val timelineSyncer: TimelineSyncer
+    private val timelineSyncer: TimelineSyncer,
+    private val database: RovenaDatabase
 ) {
     fun observeByVehicle(vehicleId: Long): Flow<List<FuelRecordEntity>> = fuelDao.observeByVehicle(vehicleId)
 
@@ -28,7 +31,7 @@ class FuelRepository(
 
     suspend fun getById(id: Long): FuelRecordEntity? = fuelDao.getById(id)
 
-    suspend fun addOrUpdate(record: FuelRecordEntity): Long {
+    suspend fun addOrUpdate(record: FuelRecordEntity): Long = database.withTransaction {
         val id = if (record.id == 0L) {
             fuelDao.insert(record)
         } else {
@@ -41,10 +44,10 @@ class FuelRepository(
         if (vehicle != null && record.mileageKm > vehicle.currentMileageKm) {
             vehicleDao.updateMileage(record.vehicleId, record.mileageKm)
         }
-        return id
+        id
     }
 
-    suspend fun delete(record: FuelRecordEntity) {
+    suspend fun delete(record: FuelRecordEntity) = database.withTransaction {
         fuelDao.delete(record)
         timelineSyncer.removeForSource(TimelineEventType.FUEL, record.id)
     }

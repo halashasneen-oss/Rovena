@@ -1,7 +1,9 @@
 package com.rovena.garage.data.repository
 
+import androidx.room.withTransaction
 import com.rovena.garage.data.local.dao.MaintenanceCategoryTotal
 import com.rovena.garage.data.local.dao.MaintenanceDao
+import com.rovena.garage.data.local.database.RovenaDatabase
 import com.rovena.garage.data.local.entities.MaintenanceRecordEntity
 import com.rovena.garage.data.local.entities.VehicleEntity
 import com.rovena.garage.data.local.dao.VehicleDao
@@ -12,7 +14,8 @@ import kotlinx.coroutines.flow.Flow
 class MaintenanceRepository(
     private val maintenanceDao: MaintenanceDao,
     private val vehicleDao: VehicleDao,
-    private val timelineSyncer: TimelineSyncer
+    private val timelineSyncer: TimelineSyncer,
+    private val database: RovenaDatabase
 ) {
     fun observeByVehicle(vehicleId: Long): Flow<List<MaintenanceRecordEntity>> = maintenanceDao.observeByVehicle(vehicleId)
 
@@ -36,7 +39,7 @@ class MaintenanceRepository(
 
     suspend fun getById(id: Long): MaintenanceRecordEntity? = maintenanceDao.getById(id)
 
-    suspend fun addOrUpdate(record: MaintenanceRecordEntity): Long {
+    suspend fun addOrUpdate(record: MaintenanceRecordEntity): Long = database.withTransaction {
         val id = if (record.id == 0L) {
             maintenanceDao.insert(record)
         } else {
@@ -46,10 +49,10 @@ class MaintenanceRepository(
         val saved = record.copy(id = id)
         timelineSyncer.upsertForMaintenance(saved)
         bumpVehicleMileageIfHigher(record.vehicleId, record.mileageKm)
-        return id
+        id
     }
 
-    suspend fun delete(record: MaintenanceRecordEntity) {
+    suspend fun delete(record: MaintenanceRecordEntity) = database.withTransaction {
         maintenanceDao.delete(record)
         timelineSyncer.removeForSource(TimelineEventType.MAINTENANCE, record.id)
     }
