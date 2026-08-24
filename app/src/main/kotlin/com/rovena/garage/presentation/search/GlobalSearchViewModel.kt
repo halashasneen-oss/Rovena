@@ -3,6 +3,7 @@ package com.rovena.garage.presentation.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rovena.garage.AppContainer
+import com.rovena.garage.utils.EnumLabels
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +19,9 @@ data class GlobalSearchResult(
     val id: Long,
     val vehicleId: Long,
     val title: String,
-    val subtitle: String
+    val subtitle: String,
+    /** Localized label resource for the record's fixed-vocabulary category/type, appended to [subtitle] at render time - never a raw enum constant name. */
+    val subtitleCategoryRes: Int? = null
 )
 
 data class GlobalSearchUiState(
@@ -69,10 +72,16 @@ class GlobalSearchViewModel(private val container: AppContainer) : ViewModel() {
 
             val results = buildList {
                 p.vehicles.forEach { add(GlobalSearchResult(SearchResultType.VEHICLE, it.id, it.id, "${it.make} ${it.model}", it.year.toString())) }
-                p.maintenance.forEach { add(GlobalSearchResult(SearchResultType.MAINTENANCE, it.id, it.vehicleId, it.description, "${vehicleName(it.vehicleId)} · ${it.category.name}")) }
+                p.maintenance.forEach {
+                    add(GlobalSearchResult(SearchResultType.MAINTENANCE, it.id, it.vehicleId, it.description, vehicleName(it.vehicleId), EnumLabels.of(it.category)))
+                }
                 p.fuel.forEach { add(GlobalSearchResult(SearchResultType.FUEL, it.id, it.vehicleId, it.station ?: "", vehicleName(it.vehicleId))) }
-                p.expenses.forEach { add(GlobalSearchResult(SearchResultType.EXPENSE, it.id, it.vehicleId, it.description ?: it.vendor.orEmpty(), "${vehicleName(it.vehicleId)} · ${it.category.name}")) }
-                documents.forEach { add(GlobalSearchResult(SearchResultType.DOCUMENT, it.id, it.vehicleId, it.name, "${vehicleName(it.vehicleId)} · ${it.type.name}")) }
+                p.expenses.forEach {
+                    add(GlobalSearchResult(SearchResultType.EXPENSE, it.id, it.vehicleId, it.description ?: it.vendor.orEmpty(), vehicleName(it.vehicleId), EnumLabels.of(it.category)))
+                }
+                documents.forEach {
+                    add(GlobalSearchResult(SearchResultType.DOCUMENT, it.id, it.vehicleId, it.name, vehicleName(it.vehicleId), EnumLabels.of(it.type)))
+                }
             }
             GlobalSearchUiState(query, results, false)
         }

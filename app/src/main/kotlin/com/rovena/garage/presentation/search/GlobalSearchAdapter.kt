@@ -22,7 +22,7 @@ class GlobalSearchAdapter(private val onClick: (GlobalSearchResult) -> Unit) :
         fun bind(result: GlobalSearchResult) {
             val context = binding.root.context
             binding.resultTitle.text = result.title
-            binding.resultSubtitle.text = result.subtitle
+            binding.resultSubtitle.text = result.subtitleCategoryRes?.let { "${result.subtitle} · ${context.getString(it)}" } ?: result.subtitle
             binding.resultTypeBadge.text = context.getString(typeLabel(result.type))
             binding.root.setOnClickListener { onClick(result) }
         }
