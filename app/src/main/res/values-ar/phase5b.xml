@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="p5b_home_title">سيارتك بنظرة واحدة</string>
+    <string name="p5b_home_subtitle">ما يحتاج انتباهك، وكم تصرف، وما القادم لسيارتك.</string>
+    <string name="p5b_switch_car">تبديل السيارة الحالية</string>
+    <string name="p5b_this_month">هذا الشهر</string>
+    <string name="p5b_fuel_efficiency">كفاءة الوقود</string>
+    <string name="p5b_cost_100km">تكلفة كل 100 كم</string>
+    <string name="p5b_vs_last_month">مقارنة بالشهر الماضي</string>
+    <string name="p5b_next_for_car">القادم لسيارتك</string>
+    <string name="p5b_next_for_car_subtitle">تعرض Rovena العناصر المتأخرة والقريبة أولًا.</string>
+    <string name="p5b_nothing_scheduled">لا يوجد شيء مجدول بعد</string>
+    <string name="p5b_nothing_scheduled_body">أضف مواعيد الصيانة أو انتهاء الوثائق لبناء قائمة القادم.</string>
+    <string name="p5b_care_score_short">مؤشر العناية</string>
+    <string name="p5b_attention_items">%1$d عنصر يحتاج الانتباه</string>
+    <string name="p5b_no_attention">لا توجد عناصر عاجلة حاليًا</string>
+    <string name="p5b_overdue_by_km">متأخر بمقدار %1$s كم</string>
+    <string name="p5b_overdue_by_days">متأخر بمقدار %1$d يوم</string>
+    <string name="p5b_due_km_days">متبقي %1$s كم أو %2$d يوم</string>
+    <string name="p5b_due_in_km">الموعد بعد %1$s كم</string>
+    <string name="p5b_due_in_days">الموعد بعد %1$d يوم</string>
+    <string name="p5b_scheduled">مجدول</string>
+    <string name="p5b_overdue">متأخر</string>
+    <string name="p5b_due_soon">قريب</string>
+    <string name="p5b_later">لاحقًا</string>
+    <string name="p5b_new_spend">جديد</string>
+    <string name="p5b_stable">مستقر</string>
+    <string name="p5b_costs_title">تكاليف السيارة</string>
+    <string name="p5b_costs_subtitle">صورة أوضح لما تكلفك سيارتك كل شهر.</string>
+    <string name="p5b_previous_month_value">الشهر الماضي: %1$s</string>
+    <string name="p5b_other">أخرى</string>
+    <string name="p5b_distance_basis">بناءً على %1$s كم مسجلة هذا الشهر</string>
+    <string name="p5b_distance_not_enough">نحتاج قراءات عداد إضافية لحساب هذا المؤشر.</string>
+    <string name="p5b_top_categories">أعلى فئات المصاريف الأخرى</string>
+    <string name="p5b_no_categories">لا توجد فئات أخرى بعد</string>
+    <string name="p5b_no_categories_body">الوقود والصيانة محسوبان بشكل مستقل. أضف مصاريف أخرى لرؤية توزيعها هنا.</string>
+    <string name="p5b_no_previous_baseline">لا توجد مقارنة كافية مع الشهر الماضي بعد</string>
+    <string name="p5b_spend_up">المصروف ارتفع %1$s%% عن الشهر الماضي</string>
+    <string name="p5b_spend_down">المصروف انخفض %1$s%% عن الشهر الماضي</string>
+    <string name="p5b_spend_stable">المصروف شبه ثابت مقارنة بالشهر الماضي</string>
+</resources>

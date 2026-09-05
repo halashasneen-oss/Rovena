@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="p5b_home_title">Araban tek bakışta</string>
+    <string name="p5b_home_subtitle">Nelerin dikkat istediği, ne kadar harcadığın ve sırada ne olduğu.</string>
+    <string name="p5b_switch_car">Aktif aracı değiştir</string>
+    <string name="p5b_this_month">Bu ay</string>
+    <string name="p5b_fuel_efficiency">Yakıt verimliliği</string>
+    <string name="p5b_cost_100km">100 km başına maliyet</string>
+    <string name="p5b_vs_last_month">Geçen aya göre</string>
+    <string name="p5b_next_for_car">Araban için sıradaki</string>
+    <string name="p5b_next_for_car_subtitle">Rovena geciken ve yaklaşan öğeleri önce gösterir.</string>
+    <string name="p5b_nothing_scheduled">Henüz planlanmış bir şey yok</string>
+    <string name="p5b_nothing_scheduled_body">Yaklaşanlar listesini oluşturmak için bakım tarihleri veya belge bitişleri ekle.</string>
+    <string name="p5b_care_score_short">Bakım puanı</string>
+    <string name="p5b_attention_items">%1$d öğe dikkat istiyor</string>
+    <string name="p5b_no_attention">Şu anda acil bir öğe yok</string>
+    <string name="p5b_overdue_by_km">%1$s km gecikti</string>
+    <string name="p5b_overdue_by_days">%1$d gün gecikti</string>
+    <string name="p5b_due_km_days">%1$s km veya %2$d gün kaldı</string>
+    <string name="p5b_due_in_km">%1$s km sonra</string>
+    <string name="p5b_due_in_days">%1$d gün sonra</string>
+    <string name="p5b_scheduled">Planlandı</string>
+    <string name="p5b_overdue">Gecikmiş</string>
+    <string name="p5b_due_soon">Yakında</string>
+    <string name="p5b_later">Daha sonra</string>
+    <string name="p5b_new_spend">Yeni</string>
+    <string name="p5b_stable">Sabit</string>
+    <string name="p5b_costs_title">Araç maliyetleri</string>
+    <string name="p5b_costs_subtitle">Arabanın sana her ay ne kadara mal olduğunu daha net gör.</string>
+    <string name="p5b_previous_month_value">Geçen ay: %1$s</string>
+    <string name="p5b_other">Diğer</string>
+    <string name="p5b_distance_basis">Bu ay kaydedilen %1$s km baz alınmıştır</string>
+    <string name="p5b_distance_not_enough">Bu metrik için daha fazla kilometre kaydı gerekiyor.</string>
+    <string name="p5b_top_categories">En yüksek diğer kategoriler</string>
+    <string name="p5b_no_categories">Henüz başka kategori yok</string>
+    <string name="p5b_no_categories_body">Yakıt ve bakım ayrı takip edilir. Dağılımı görmek için diğer giderleri ekle.</string>
+    <string name="p5b_no_previous_baseline">Geçen aya ait yeterli karşılaştırma verisi yok</string>
+    <string name="p5b_spend_up">Harcama geçen aya göre %1$s%% arttı</string>
+    <string name="p5b_spend_down">Harcama geçen aya göre %1$s%% azaldı</string>
+    <string name="p5b_spend_stable">Harcama geçen aya göre neredeyse değişmedi</string>
+</resources>

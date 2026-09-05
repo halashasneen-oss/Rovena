@@ -256,7 +256,8 @@ private fun MainShell(
         }
     ) { padding ->
         when (tab) {
-            MainTab.HOME -> DashboardScreen(
+            MainTab.HOME -> EnhancedDashboardScreen(
+                vehicles = vehicles,
                 vehicle = currentVehicle,
                 maintenance = maintenance,
                 fuel = fuel,
@@ -264,6 +265,7 @@ private fun MainShell(
                 documents = documents,
                 modifier = Modifier.padding(padding),
                 onAddVehicle = { showAddVehicle = true },
+                onSetPrimary = { id -> scope.launch { vehicleRepository.setPrimary(id) } },
                 onAddRecord = ::openRecord
             )
             MainTab.CAR -> GarageScreen(
@@ -282,7 +284,7 @@ private fun MainShell(
                 modifier = Modifier.padding(padding),
                 onAddRecord = ::openRecord
             )
-            MainTab.EXPENSES -> ExpensesScreen(
+            MainTab.EXPENSES -> EnhancedExpensesScreen(
                 vehicle = currentVehicle,
                 maintenance = maintenance,
                 fuel = fuel,

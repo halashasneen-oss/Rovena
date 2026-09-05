@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="p5b_home_title">Tu coche de un vistazo</string>
+    <string name="p5b_home_subtitle">Qué necesita atención, cuánto gastas y qué viene después.</string>
+    <string name="p5b_switch_car">Cambiar coche activo</string>
+    <string name="p5b_this_month">Este mes</string>
+    <string name="p5b_fuel_efficiency">Eficiencia de combustible</string>
+    <string name="p5b_cost_100km">Coste por 100 km</string>
+    <string name="p5b_vs_last_month">Vs. mes anterior</string>
+    <string name="p5b_next_for_car">Lo próximo para tu coche</string>
+    <string name="p5b_next_for_car_subtitle">Rovena prioriza primero lo vencido y lo próximo.</string>
+    <string name="p5b_nothing_scheduled">Nada programado todavía</string>
+    <string name="p5b_nothing_scheduled_body">Añade fechas de mantenimiento o vencimiento de documentos para crear la lista.</string>
+    <string name="p5b_care_score_short">Índice de cuidado</string>
+    <string name="p5b_attention_items">%1$d elemento(s) necesitan atención</string>
+    <string name="p5b_no_attention">No hay elementos urgentes ahora</string>
+    <string name="p5b_overdue_by_km">Vencido por %1$s km</string>
+    <string name="p5b_overdue_by_days">Vencido por %1$d día(s)</string>
+    <string name="p5b_due_km_days">Quedan %1$s km o %2$d día(s)</string>
+    <string name="p5b_due_in_km">Vence en %1$s km</string>
+    <string name="p5b_due_in_days">Vence en %1$d día(s)</string>
+    <string name="p5b_scheduled">Programado</string>
+    <string name="p5b_overdue">Vencido</string>
+    <string name="p5b_due_soon">Próximo</string>
+    <string name="p5b_later">Más tarde</string>
+    <string name="p5b_new_spend">Nuevo</string>
+    <string name="p5b_stable">Estable</string>
+    <string name="p5b_costs_title">Costes del coche</string>
+    <string name="p5b_costs_subtitle">Una vista más clara de cuánto te cuesta el coche cada mes.</string>
+    <string name="p5b_previous_month_value">Mes anterior: %1$s</string>
+    <string name="p5b_other">Otros</string>
+    <string name="p5b_distance_basis">Basado en %1$s km registrados este mes</string>
+    <string name="p5b_distance_not_enough">Se necesitan más lecturas del odómetro para esta métrica.</string>
+    <string name="p5b_top_categories">Principales otras categorías</string>
+    <string name="p5b_no_categories">Todavía no hay otras categorías</string>
+    <string name="p5b_no_categories_body">Combustible y mantenimiento se calculan por separado. Añade otros gastos para ver su desglose.</string>
+    <string name="p5b_no_previous_baseline">Todavía no hay base suficiente del mes anterior</string>
+    <string name="p5b_spend_up">El gasto subió un %1$s%% frente al mes anterior</string>
+    <string name="p5b_spend_down">El gasto bajó un %1$s%% frente al mes anterior</string>
+    <string name="p5b_spend_stable">El gasto casi no cambió frente al mes anterior</string>
+</resources>

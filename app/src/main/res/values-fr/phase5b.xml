@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="p5b_home_title">Votre voiture en un coup d’œil</string>
+    <string name="p5b_home_subtitle">Ce qui demande votre attention, vos dépenses et les prochaines échéances.</string>
+    <string name="p5b_switch_car">Changer de voiture active</string>
+    <string name="p5b_this_month">Ce mois-ci</string>
+    <string name="p5b_fuel_efficiency">Rendement carburant</string>
+    <string name="p5b_cost_100km">Coût pour 100 km</string>
+    <string name="p5b_vs_last_month">Vs. mois dernier</string>
+    <string name="p5b_next_for_car">À venir pour votre voiture</string>
+    <string name="p5b_next_for_car_subtitle">Rovena affiche d’abord les éléments en retard et proches.</string>
+    <string name="p5b_nothing_scheduled">Rien de planifié pour l’instant</string>
+    <string name="p5b_nothing_scheduled_body">Ajoutez des échéances d’entretien ou d’expiration de documents.</string>
+    <string name="p5b_care_score_short">Indice d’entretien</string>
+    <string name="p5b_attention_items">%1$d élément(s) à surveiller</string>
+    <string name="p5b_no_attention">Aucun élément urgent pour le moment</string>
+    <string name="p5b_overdue_by_km">En retard de %1$s km</string>
+    <string name="p5b_overdue_by_days">En retard de %1$d jour(s)</string>
+    <string name="p5b_due_km_days">%1$s km ou %2$d jour(s) restants</string>
+    <string name="p5b_due_in_km">Échéance dans %1$s km</string>
+    <string name="p5b_due_in_days">Échéance dans %1$d jour(s)</string>
+    <string name="p5b_scheduled">Planifié</string>
+    <string name="p5b_overdue">En retard</string>
+    <string name="p5b_due_soon">Bientôt</string>
+    <string name="p5b_later">Plus tard</string>
+    <string name="p5b_new_spend">Nouveau</string>
+    <string name="p5b_stable">Stable</string>
+    <string name="p5b_costs_title">Coûts de la voiture</string>
+    <string name="p5b_costs_subtitle">Une vue plus claire de ce que votre voiture vous coûte chaque mois.</string>
+    <string name="p5b_previous_month_value">Mois précédent : %1$s</string>
+    <string name="p5b_other">Autres</string>
+    <string name="p5b_distance_basis">Basé sur %1$s km enregistrés ce mois-ci</string>
+    <string name="p5b_distance_not_enough">Davantage de relevés kilométriques sont nécessaires.</string>
+    <string name="p5b_top_categories">Principales autres catégories</string>
+    <string name="p5b_no_categories">Aucune autre catégorie</string>
+    <string name="p5b_no_categories_body">Le carburant et l’entretien sont suivis séparément. Ajoutez d’autres dépenses pour voir leur répartition.</string>
+    <string name="p5b_no_previous_baseline">Pas encore de base de comparaison avec le mois précédent</string>
+    <string name="p5b_spend_up">Les dépenses ont augmenté de %1$s%% par rapport au mois dernier</string>
+    <string name="p5b_spend_down">Les dépenses ont baissé de %1$s%% par rapport au mois dernier</string>
+    <string name="p5b_spend_stable">Les dépenses sont presque inchangées par rapport au mois dernier</string>
+</resources>
