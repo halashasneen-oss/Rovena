@@ -13,6 +13,7 @@ class RovenaApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        NotificationScheduler.ensureScheduled(this)
+        // Reminder infrastructure must never prevent the main UI from starting.
+        runCatching { NotificationScheduler.ensureScheduled(this) }
     }
 }
