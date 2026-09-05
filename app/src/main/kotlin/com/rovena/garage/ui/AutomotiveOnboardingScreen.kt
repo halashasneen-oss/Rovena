@@ -77,7 +77,8 @@ internal fun AutomotiveOnboardingScreen(
                     text = stringResource(R.string.onboarding_eyebrow),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -90,13 +91,13 @@ internal fun AutomotiveOnboardingScreen(
             ) {
                 Box(Modifier.fillMaxWidth()) {
                     Image(
-                        painter = painterResource(R.drawable.rovena_app_visual),
+                        painter = painterResource(R.drawable.rovena_auto_visual),
                         contentDescription = stringResource(R.string.onboarding_visual_description),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(230.dp)
                             .clip(RoundedCornerShape(30.dp)),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Fit
                     )
                     Surface(
                         modifier = Modifier.align(Alignment.BottomStart).padding(14.dp),
