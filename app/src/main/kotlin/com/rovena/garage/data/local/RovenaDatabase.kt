@@ -23,6 +23,8 @@ abstract class RovenaDatabase : RoomDatabase() {
     abstract fun recordDao(): RecordDao
 
     companion object {
+        private const val DATABASE_NAME = "rovena_auto_v1.db"
+
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL(
@@ -97,9 +99,10 @@ abstract class RovenaDatabase : RoomDatabase() {
             Room.databaseBuilder(
                 context.applicationContext,
                 RovenaDatabase::class.java,
-                "rovena2.db"
+                DATABASE_NAME
             )
                 .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                .fallbackToDestructiveMigration()
                 .build()
     }
 }
