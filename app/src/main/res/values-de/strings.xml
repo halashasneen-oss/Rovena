@@ -1,6 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Rovena</string><string name="smart_car_companion">Dein smarter Auto-Begleiter</string><string name="choose_language">Sprache auswählen</string><string name="continue_label">Weiter</string><string name="get_started">Mein Auto hinzufügen</string>
-    <string name="onboarding_title_1">Alles über dein Auto an einem Ort</string><string name="onboarding_body_1">Verwalte Auto, Wartung, Kraftstoff, Dokumente und wichtige Termine übersichtlich.</string><string name="onboarding_title_2">Wichtige Fahrzeugpflege nie vergessen</string><string name="onboarding_body_2">Rovena erinnert dich an Wartung, Dokumente und sinnvolle Datenaktualisierungen.</string><string name="onboarding_title_3">Kenne die echten Kosten deines Autos</string><string name="onboarding_body_3">Sieh Kraftstoff, Wartung und weitere Ausgaben zusammen und erkenne deine Monatskosten.</string>
-    <string name="home">Start</string><string name="my_car">Mein Auto</string><string name="history">Verlauf</string><string name="expenses">Kosten</string><string name="more">Mehr</string><string name="dashboard_greeting">Dein Auto. Unter Kontrolle.</string><string name="dashboard_subtitle">Rovena hält das Wichtige im Blick.</string><string name="no_vehicle_title">Starte mit deinem ersten Auto</string><string name="no_vehicle_body">Füge die Grunddaten einmal hinzu. Rovena baut daraus deine digitale Garage.</string><string name="add_vehicle">Fahrzeug hinzufügen</string><string name="quick_actions">Schnellaktionen</string><string name="fuel">Kraftstoff</string><string name="maintenance">Wartung</string><string name="documents">Dokumente</string><string name="coming_next">Die Basis von Rovena 2 ist bereit</string><string name="foundation_message">Als Nächstes verbinden wir Garage, Wartung, Kraftstoff, Kosten und Fahrzeugzustand.</string><string name="notification_channel_engagement">Rovena Erinnerungen</string><string name="engagement_title">Dein Auto wartet auf ein Update 🚗</string><string name="engagement_message_mileage">Dein Kilometerstand wurde länger nicht aktualisiert. Öffne Rovena für genauere Erinnerungen.</string><string name="engagement_message_costs">Willst du wissen, was dein Auto wirklich kostet? Öffne Rovena und ergänze die letzte Aktivität.</string><string name="engagement_message_health">Ein kurzes Update macht deinen Wartungsplan hilfreicher. Öffne Rovena, wenn du eine Minute hast.</string>
+    <string name="app_name">Rovena</string>
+    <string name="smart_car_companion">Dein smarter Auto-Begleiter</string>
+    <string name="choose_language">Sprache auswählen</string>
+    <string name="continue_label">Weiter</string>
+    <string name="get_started">Mein Auto hinzufügen</string>
+    <string name="onboarding_title_1">Alles über dein Auto an einem Ort</string>
+    <string name="onboarding_body_1">Verwalte Auto, Wartung, Kraftstoff, Dokumente und wichtige Termine übersichtlich.</string>
+    <string name="onboarding_title_2">Wichtige Fahrzeugpflege nie vergessen</string>
+    <string name="onboarding_body_2">Rovena erinnert dich an Wartung, Dokumente und sinnvolle Datenaktualisierungen.</string>
+    <string name="onboarding_title_3">Kenne die echten Kosten deines Autos</string>
+    <string name="onboarding_body_3">Sieh Kraftstoff, Wartung und weitere Ausgaben zusammen und erkenne deine Monatskosten.</string>
+
+    <string name="home">Start</string>
+    <string name="my_car">Mein Auto</string>
+    <string name="history">Verlauf</string>
+    <string name="expenses">Kosten</string>
+    <string name="more">Mehr</string>
+    <string name="dashboard_greeting">Dein Auto. Unter Kontrolle.</string>
+    <string name="dashboard_subtitle">Rovena hält das Wichtige im Blick.</string>
+    <string name="no_vehicle_title">Starte mit deinem ersten Auto</string>
+    <string name="no_vehicle_body">Füge die Grunddaten einmal hinzu. Rovena baut daraus deine digitale Garage.</string>
+    <string name="add_vehicle">Fahrzeug hinzufügen</string>
+    <string name="quick_actions">Schnellaktionen</string>
+    <string name="fuel">Kraftstoff</string>
+    <string name="maintenance">Wartung</string>
+    <string name="documents">Dokumente</string>
+
+    <string name="garage_title">Deine Garage</string>
+    <string name="garage_subtitle">Wechsle zwischen Fahrzeugen oder füge ein weiteres hinzu.</string>
+    <string name="current_vehicle">Aktuelles Fahrzeug</string>
+    <string name="set_current">Dieses Auto verwenden</string>
+    <string name="primary_badge">Aktuell</string>
+    <string name="add_vehicle_title">Auto hinzufügen</string>
+    <string name="add_vehicle_subtitle">Beginne mit den wichtigsten Daten. Das Profil kannst du später ergänzen.</string>
+    <string name="vehicle_make">Marke</string>
+    <string name="vehicle_model">Modell</string>
+    <string name="vehicle_year">Baujahr</string>
+    <string name="odometer">Kilometerstand</string>
+    <string name="odometer_format">%1$s km</string>
+    <string name="fuel_type">Kraftstoffart</string>
+    <string name="nickname_optional">Fahrzeugname (optional)</string>
+    <string name="plate_optional">Kennzeichen (optional)</string>
+    <string name="vin_optional">FIN/VIN (optional)</string>
+    <string name="currency">Währung</string>
+    <string name="gasoline">Benzin</string>
+    <string name="diesel">Diesel</string>
+    <string name="hybrid">Hybrid</string>
+    <string name="electric">Elektro</string>
+    <string name="lpg">Autogas (LPG)</string>
+    <string name="other">Andere</string>
+    <string name="save_vehicle">Auto speichern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="error_make_required">Gib die Fahrzeugmarke ein.</string>
+    <string name="error_model_required">Gib das Fahrzeugmodell ein.</string>
+    <string name="error_year_invalid">Gib ein gültiges Baujahr ein.</string>
+    <string name="error_mileage_invalid">Gib einen gültigen Kilometerstand ein.</string>
+
+    <string name="health_title">Fahrzeugzustand</string>
+    <string name="health_not_ready_title">Noch nicht genügend Daten</string>
+    <string name="health_not_ready_body">Füge Wartungs- und Inspektionsdaten hinzu, um eine aussagekräftige Zustandsübersicht zu erhalten.</string>
+    <string name="coming_soon">Als Nächstes</string>
+
+    <string name="delete_vehicle">Fahrzeug löschen</string>
+    <string name="delete_vehicle_title">Fahrzeug entfernen?</string>
+    <string name="delete_vehicle_message">%1$s aus deiner Garage löschen? Zukünftige Einträge dieses Fahrzeugs werden ebenfalls entfernt.</string>
+    <string name="delete">Löschen</string>
+
+    <string name="no_history_title">Dein Verlauf beginnt hier</string>
+    <string name="no_history_body">Wartungs-, Kraftstoff- und Dokumentaktivitäten erscheinen hier, sobald du Einträge hinzufügst.</string>
+    <string name="no_expenses_title">Noch keine Kosten</string>
+    <string name="no_expenses_body">Die Kostenübersicht wird aktiv, sobald du Kraftstoff, Wartung und weitere Ausgaben erfasst.</string>
+    <string name="more_title">Weitere Werkzeuge folgen</string>
+    <string name="more_body">Benachrichtigungen, Sprache, Backup, Warnleuchten und Berichte findest du hier.</string>
+
+    <string name="coming_next">Die Basis von Rovena 2 ist bereit</string>
+    <string name="foundation_message">Als Nächstes verbinden wir Garage, Wartung, Kraftstoff, Kosten und Fahrzeugzustand.</string>
+    <string name="notification_channel_engagement">Rovena Erinnerungen</string>
+    <string name="engagement_title">Dein Auto wartet auf ein Update 🚗</string>
+    <string name="engagement_message_mileage">Dein Kilometerstand wurde länger nicht aktualisiert. Öffne Rovena für genauere Erinnerungen.</string>
+    <string name="engagement_message_costs">Willst du wissen, was dein Auto wirklich kostet? Öffne Rovena und ergänze die letzte Aktivität.</string>
+    <string name="engagement_message_health">Ein kurzes Update macht deinen Wartungsplan hilfreicher. Öffne Rovena, wenn du eine Minute hast.</string>
 </resources>

@@ -1,6 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Rovena</string><string name="smart_car_companion">Akıllı araç yardımcınız</string><string name="choose_language">Dilinizi seçin</string><string name="continue_label">Devam</string><string name="get_started">Aracımı ekle</string>
-    <string name="onboarding_title_1">Aracınızla ilgili her şey tek yerde</string><string name="onboarding_body_1">Aracınızı, bakımı, yakıtı, belgeleri ve önemli tarihleri kolayca takip edin.</string><string name="onboarding_title_2">Önemli araç bakımını unutmayın</string><string name="onboarding_body_2">Rovena bakım, belgeler ve faydalı veri güncellemeleri için sizi hatırlatır.</string><string name="onboarding_title_3">Aracınızın gerçek maliyetini bilin</string><string name="onboarding_body_3">Yakıt, bakım ve diğer giderleri birlikte görün ve gerçek aylık maliyeti anlayın.</string>
-    <string name="home">Ana Sayfa</string><string name="my_car">Aracım</string><string name="history">Geçmiş</string><string name="expenses">Giderler</string><string name="more">Daha Fazla</string><string name="dashboard_greeting">Aracınız kontrol altında.</string><string name="dashboard_subtitle">Rovena önemli olanı görünür tutar.</string><string name="no_vehicle_title">İlk aracınızla başlayın</string><string name="no_vehicle_body">Temel araç bilgilerini bir kez ekleyin. Rovena dijital garajınızı oluştursun.</string><string name="add_vehicle">Araç ekle</string><string name="quick_actions">Hızlı işlemler</string><string name="fuel">Yakıt</string><string name="maintenance">Bakım</string><string name="documents">Belgeler</string><string name="coming_next">Rovena 2 temeli hazır</string><string name="foundation_message">Sırada garaj, bakım, yakıt, maliyet ve araç sağlık sistemini bu yeni deneyime bağlamak var.</string><string name="notification_channel_engagement">Rovena hatırlatıcıları</string><string name="engagement_title">Aracınız bir güncelleme bekliyor 🚗</string><string name="engagement_message_mileage">Kilometrenizi güncellemeyeli bir süre oldu. Daha doğru hatırlatmalar için Rovena’yı açın.</string><string name="engagement_message_costs">Aracınızın size ne kadara mal olduğunu bilmek ister misiniz? Rovena’yı açıp son hareketinizi ekleyin.</string><string name="engagement_message_health">Kısa bir araç güncellemesi bakım planınızı daha kullanışlı yapar. Bir dakikanız olduğunda Rovena’yı açın.</string>
+    <string name="app_name">Rovena</string>
+    <string name="smart_car_companion">Akıllı araç yardımcınız</string>
+    <string name="choose_language">Dilinizi seçin</string>
+    <string name="continue_label">Devam</string>
+    <string name="get_started">Aracımı ekle</string>
+    <string name="onboarding_title_1">Aracınızla ilgili her şey tek yerde</string>
+    <string name="onboarding_body_1">Aracınızı, bakımı, yakıtı, belgeleri ve önemli tarihleri kolayca takip edin.</string>
+    <string name="onboarding_title_2">Önemli araç bakımını unutmayın</string>
+    <string name="onboarding_body_2">Rovena bakım, belgeler ve faydalı veri güncellemeleri için sizi hatırlatır.</string>
+    <string name="onboarding_title_3">Aracınızın gerçek maliyetini bilin</string>
+    <string name="onboarding_body_3">Yakıt, bakım ve diğer giderleri birlikte görün ve gerçek aylık maliyeti anlayın.</string>
+
+    <string name="home">Ana Sayfa</string>
+    <string name="my_car">Aracım</string>
+    <string name="history">Geçmiş</string>
+    <string name="expenses">Giderler</string>
+    <string name="more">Daha Fazla</string>
+    <string name="dashboard_greeting">Aracınız kontrol altında.</string>
+    <string name="dashboard_subtitle">Rovena önemli olanı görünür tutar.</string>
+    <string name="no_vehicle_title">İlk aracınızla başlayın</string>
+    <string name="no_vehicle_body">Temel araç bilgilerini bir kez ekleyin. Rovena dijital garajınızı oluştursun.</string>
+    <string name="add_vehicle">Araç ekle</string>
+    <string name="quick_actions">Hızlı işlemler</string>
+    <string name="fuel">Yakıt</string>
+    <string name="maintenance">Bakım</string>
+    <string name="documents">Belgeler</string>
+
+    <string name="garage_title">Garajınız</string>
+    <string name="garage_subtitle">Araçlar arasında geçiş yapın veya yeni bir araç ekleyin.</string>
+    <string name="current_vehicle">Mevcut araç</string>
+    <string name="set_current">Bu aracı kullan</string>
+    <string name="primary_badge">Mevcut</string>
+    <string name="add_vehicle_title">Aracınızı ekleyin</string>
+    <string name="add_vehicle_subtitle">Temel bilgilerle başlayın. Profili daha sonra tamamlayabilirsiniz.</string>
+    <string name="vehicle_make">Marka</string>
+    <string name="vehicle_model">Model</string>
+    <string name="vehicle_year">Yıl</string>
+    <string name="odometer">Kilometre</string>
+    <string name="odometer_format">%1$s km</string>
+    <string name="fuel_type">Yakıt türü</string>
+    <string name="nickname_optional">Araç adı (isteğe bağlı)</string>
+    <string name="plate_optional">Plaka (isteğe bağlı)</string>
+    <string name="vin_optional">VIN (isteğe bağlı)</string>
+    <string name="currency">Para birimi</string>
+    <string name="gasoline">Benzin</string>
+    <string name="diesel">Dizel</string>
+    <string name="hybrid">Hibrit</string>
+    <string name="electric">Elektrik</string>
+    <string name="lpg">LPG</string>
+    <string name="other">Diğer</string>
+    <string name="save_vehicle">Aracı kaydet</string>
+    <string name="cancel">İptal</string>
+    <string name="error_make_required">Araç markasını girin.</string>
+    <string name="error_model_required">Araç modelini girin.</string>
+    <string name="error_year_invalid">Geçerli bir model yılı girin.</string>
+    <string name="error_mileage_invalid">Geçerli bir kilometre değeri girin.</string>
+
+    <string name="health_title">Araç sağlığı</string>
+    <string name="health_not_ready_title">Henüz yeterli veri yok</string>
+    <string name="health_not_ready_body">Anlamlı bir sağlık özeti için bakım ve inceleme kayıtları ekleyin.</string>
+    <string name="coming_soon">Yakında</string>
+
+    <string name="delete_vehicle">Aracı sil</string>
+    <string name="delete_vehicle_title">Araç kaldırılsın mı?</string>
+    <string name="delete_vehicle_message">%1$s garajınızdan silinsin mi? Gelecekteki kayıtları da kaldırılacaktır.</string>
+    <string name="delete">Sil</string>
+
+    <string name="no_history_title">Geçmişiniz burada başlar</string>
+    <string name="no_history_body">Bakım, yakıt ve belge etkinlikleri kayıt ekledikçe burada görünecek.</string>
+    <string name="no_expenses_title">Henüz gider yok</string>
+    <string name="no_expenses_body">Yakıt, bakım ve diğer maliyetleri kaydetmeye başladığınızda gider paneli etkinleşecek.</string>
+    <string name="more_title">Daha fazla araç yolda</string>
+    <string name="more_body">Bildirimler, dil, yedekleme, gösterge uyarıları ve raporlar burada olacak.</string>
+
+    <string name="coming_next">Rovena 2 temeli hazır</string>
+    <string name="foundation_message">Sırada garaj, bakım, yakıt, maliyet ve araç sağlık sistemini bu yeni deneyime bağlamak var.</string>
+    <string name="notification_channel_engagement">Rovena hatırlatıcıları</string>
+    <string name="engagement_title">Aracınız bir güncelleme bekliyor 🚗</string>
+    <string name="engagement_message_mileage">Kilometrenizi güncellemeyeli bir süre oldu. Daha doğru hatırlatmalar için Rovena’yı açın.</string>
+    <string name="engagement_message_costs">Aracınızın size ne kadara mal olduğunu bilmek ister misiniz? Rovena’yı açıp son hareketinizi ekleyin.</string>
+    <string name="engagement_message_health">Kısa bir araç güncellemesi bakım planınızı daha kullanışlı yapar. Bir dakikanız olduğunda Rovena’yı açın.</string>
 </resources>

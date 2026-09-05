@@ -11,6 +11,7 @@
     <string name="onboarding_body_2">روفينا يذكرك بالصيانة والوثائق ومتى يكون من المفيد تحديث بيانات سيارتك.</string>
     <string name="onboarding_title_3">اعرف كم تكلفك سيارتك فعلًا</string>
     <string name="onboarding_body_3">اجمع الوقود والصيانة والمصاريف الأخرى واعرف التكلفة الشهرية الحقيقية.</string>
+
     <string name="home">الرئيسية</string>
     <string name="my_car">سيارتي</string>
     <string name="history">السجل</string>
@@ -25,6 +26,54 @@
     <string name="fuel">الوقود</string>
     <string name="maintenance">الصيانة</string>
     <string name="documents">الوثائق</string>
+
+    <string name="garage_title">مرآبك</string>
+    <string name="garage_subtitle">بدّل بين سياراتك أو أضف سيارة أخرى.</string>
+    <string name="current_vehicle">السيارة الحالية</string>
+    <string name="set_current">استخدم هذه السيارة</string>
+    <string name="primary_badge">الحالية</string>
+    <string name="add_vehicle_title">أضف سيارتك</string>
+    <string name="add_vehicle_subtitle">ابدأ بالبيانات الأساسية، ويمكنك إكمال الملف لاحقًا.</string>
+    <string name="vehicle_make">الشركة المصنعة</string>
+    <string name="vehicle_model">الموديل</string>
+    <string name="vehicle_year">سنة الصنع</string>
+    <string name="odometer">قراءة العداد</string>
+    <string name="odometer_format">%1$s كم</string>
+    <string name="fuel_type">نوع الوقود</string>
+    <string name="nickname_optional">اسم مميز للسيارة (اختياري)</string>
+    <string name="plate_optional">رقم اللوحة (اختياري)</string>
+    <string name="vin_optional">رقم الهيكل VIN (اختياري)</string>
+    <string name="currency">العملة</string>
+    <string name="gasoline">بنزين</string>
+    <string name="diesel">ديزل</string>
+    <string name="hybrid">هايبرد</string>
+    <string name="electric">كهرباء</string>
+    <string name="lpg">غاز LPG</string>
+    <string name="other">أخرى</string>
+    <string name="save_vehicle">حفظ السيارة</string>
+    <string name="cancel">إلغاء</string>
+    <string name="error_make_required">أدخل اسم الشركة المصنعة.</string>
+    <string name="error_model_required">أدخل موديل السيارة.</string>
+    <string name="error_year_invalid">أدخل سنة صنع صحيحة.</string>
+    <string name="error_mileage_invalid">أدخل قراءة عداد صحيحة.</string>
+
+    <string name="health_title">صحة السيارة</string>
+    <string name="health_not_ready_title">لا توجد بيانات كافية بعد</string>
+    <string name="health_not_ready_body">أضف سجلات الصيانة والفحص ليظهر تقييم مفيد ومبني على بيانات سيارتك.</string>
+    <string name="coming_soon">قريبًا</string>
+
+    <string name="delete_vehicle">حذف السيارة</string>
+    <string name="delete_vehicle_title">إزالة السيارة؟</string>
+    <string name="delete_vehicle_message">هل تريد حذف %1$s من مرآبك؟ سيتم حذف سجلاتها المستقبلية أيضًا.</string>
+    <string name="delete">حذف</string>
+
+    <string name="no_history_title">سجل سيارتك يبدأ من هنا</string>
+    <string name="no_history_body">ستظهر الصيانة والوقود والوثائق هنا عند إضافة السجلات.</string>
+    <string name="no_expenses_title">لا توجد مصاريف بعد</string>
+    <string name="no_expenses_body">ستعمل لوحة المصاريف عند بدء تسجيل الوقود والصيانة والتكاليف الأخرى.</string>
+    <string name="more_title">مزايا إضافية قادمة</string>
+    <string name="more_body">الإشعارات واللغة والنسخ الاحتياطي ورموز الطبلون والتقارير ستكون هنا.</string>
+
     <string name="coming_next">تم تجهيز أساس Rovena 2</string>
     <string name="foundation_message">الخطوة القادمة هي ربط المرآب والصيانة والوقود والمصاريف وصحة السيارة بهذه التجربة الجديدة.</string>
     <string name="notification_channel_engagement">تذكيرات Rovena</string>

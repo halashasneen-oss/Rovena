@@ -1,6 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Rovena</string><string name="smart_car_companion">Tu asistente inteligente para el coche</string><string name="choose_language">Elige tu idioma</string><string name="continue_label">Continuar</string><string name="get_started">Añadir mi coche</string>
-    <string name="onboarding_title_1">Todo sobre tu coche en un solo lugar</string><string name="onboarding_body_1">Controla coche, mantenimiento, combustible, documentos y fechas importantes.</string><string name="onboarding_title_2">No olvides el cuidado importante</string><string name="onboarding_body_2">Rovena te recuerda mantenimiento, documentos y cuándo conviene actualizar los datos.</string><string name="onboarding_title_3">Conoce el coste real de tu coche</string><string name="onboarding_body_3">Reúne combustible, mantenimiento y otros gastos para ver el coste mensual real.</string>
-    <string name="home">Inicio</string><string name="my_car">Mi coche</string><string name="history">Historial</string><string name="expenses">Gastos</string><string name="more">Más</string><string name="dashboard_greeting">Tu coche. Bajo control.</string><string name="dashboard_subtitle">Rovena mantiene lo importante a la vista.</string><string name="no_vehicle_title">Empieza con tu primer coche</string><string name="no_vehicle_body">Añade los datos básicos una vez y Rovena construirá tu garaje digital.</string><string name="add_vehicle">Añadir vehículo</string><string name="quick_actions">Acciones rápidas</string><string name="fuel">Combustible</string><string name="maintenance">Mantenimiento</string><string name="documents">Documentos</string><string name="coming_next">La base de Rovena 2 está lista</string><string name="foundation_message">A continuación conectaremos garaje, mantenimiento, combustible, costes y salud del vehículo.</string><string name="notification_channel_engagement">Recordatorios de Rovena</string><string name="engagement_title">Tu coche necesita una actualización 🚗</string><string name="engagement_message_mileage">Hace tiempo que no actualizas el kilometraje. Abre Rovena para obtener recordatorios más precisos.</string><string name="engagement_message_costs">¿Quieres saber cuánto te cuesta tu coche? Abre Rovena y actualiza tu última actividad.</string><string name="engagement_message_health">Una actualización rápida hace más útil tu historial de mantenimiento. Abre Rovena cuando tengas un minuto.</string>
+    <string name="app_name">Rovena</string>
+    <string name="smart_car_companion">Tu asistente inteligente para el coche</string>
+    <string name="choose_language">Elige tu idioma</string>
+    <string name="continue_label">Continuar</string>
+    <string name="get_started">Añadir mi coche</string>
+    <string name="onboarding_title_1">Todo sobre tu coche en un solo lugar</string>
+    <string name="onboarding_body_1">Controla coche, mantenimiento, combustible, documentos y fechas importantes.</string>
+    <string name="onboarding_title_2">No olvides el cuidado importante</string>
+    <string name="onboarding_body_2">Rovena te recuerda mantenimiento, documentos y cuándo conviene actualizar los datos.</string>
+    <string name="onboarding_title_3">Conoce el coste real de tu coche</string>
+    <string name="onboarding_body_3">Reúne combustible, mantenimiento y otros gastos para ver el coste mensual real.</string>
+
+    <string name="home">Inicio</string>
+    <string name="my_car">Mi coche</string>
+    <string name="history">Historial</string>
+    <string name="expenses">Gastos</string>
+    <string name="more">Más</string>
+    <string name="dashboard_greeting">Tu coche. Bajo control.</string>
+    <string name="dashboard_subtitle">Rovena mantiene lo importante a la vista.</string>
+    <string name="no_vehicle_title">Empieza con tu primer coche</string>
+    <string name="no_vehicle_body">Añade los datos básicos una vez y Rovena construirá tu garaje digital.</string>
+    <string name="add_vehicle">Añadir vehículo</string>
+    <string name="quick_actions">Acciones rápidas</string>
+    <string name="fuel">Combustible</string>
+    <string name="maintenance">Mantenimiento</string>
+    <string name="documents">Documentos</string>
+
+    <string name="garage_title">Tu garaje</string>
+    <string name="garage_subtitle">Cambia de vehículo o añade otro.</string>
+    <string name="current_vehicle">Vehículo actual</string>
+    <string name="set_current">Usar este coche</string>
+    <string name="primary_badge">Actual</string>
+    <string name="add_vehicle_title">Añade tu coche</string>
+    <string name="add_vehicle_subtitle">Empieza por lo esencial. Podrás completar el perfil más adelante.</string>
+    <string name="vehicle_make">Marca</string>
+    <string name="vehicle_model">Modelo</string>
+    <string name="vehicle_year">Año</string>
+    <string name="odometer">Kilometraje</string>
+    <string name="odometer_format">%1$s km</string>
+    <string name="fuel_type">Tipo de combustible</string>
+    <string name="nickname_optional">Apodo del coche (opcional)</string>
+    <string name="plate_optional">Matrícula (opcional)</string>
+    <string name="vin_optional">VIN (opcional)</string>
+    <string name="currency">Moneda</string>
+    <string name="gasoline">Gasolina</string>
+    <string name="diesel">Diésel</string>
+    <string name="hybrid">Híbrido</string>
+    <string name="electric">Eléctrico</string>
+    <string name="lpg">GLP</string>
+    <string name="other">Otro</string>
+    <string name="save_vehicle">Guardar coche</string>
+    <string name="cancel">Cancelar</string>
+    <string name="error_make_required">Introduce la marca del coche.</string>
+    <string name="error_model_required">Introduce el modelo del coche.</string>
+    <string name="error_year_invalid">Introduce un año válido.</string>
+    <string name="error_mileage_invalid">Introduce un kilometraje válido.</string>
+
+    <string name="health_title">Salud del vehículo</string>
+    <string name="health_not_ready_title">Aún no hay datos suficientes</string>
+    <string name="health_not_ready_body">Añade registros de mantenimiento e inspección para obtener un resumen útil del estado del vehículo.</string>
+    <string name="coming_soon">Próximamente</string>
+
+    <string name="delete_vehicle">Eliminar vehículo</string>
+    <string name="delete_vehicle_title">¿Eliminar vehículo?</string>
+    <string name="delete_vehicle_message">¿Eliminar %1$s de tu garaje? Sus futuros registros también se eliminarán.</string>
+    <string name="delete">Eliminar</string>
+
+    <string name="no_history_title">Tu historial empieza aquí</string>
+    <string name="no_history_body">La actividad de mantenimiento, combustible y documentos aparecerá aquí cuando añadas registros.</string>
+    <string name="no_expenses_title">Aún no hay gastos</string>
+    <string name="no_expenses_body">El panel de gastos se activará cuando empieces a registrar combustible, mantenimiento y otros costes.</string>
+    <string name="more_title">Llegan más herramientas</string>
+    <string name="more_body">Notificaciones, idioma, copias de seguridad, testigos del tablero e informes estarán aquí.</string>
+
+    <string name="coming_next">La base de Rovena 2 está lista</string>
+    <string name="foundation_message">A continuación conectaremos garaje, mantenimiento, combustible, costes y salud del vehículo.</string>
+    <string name="notification_channel_engagement">Recordatorios de Rovena</string>
+    <string name="engagement_title">Tu coche necesita una actualización 🚗</string>
+    <string name="engagement_message_mileage">Hace tiempo que no actualizas el kilometraje. Abre Rovena para obtener recordatorios más precisos.</string>
+    <string name="engagement_message_costs">¿Quieres saber cuánto te cuesta tu coche? Abre Rovena y actualiza tu última actividad.</string>
+    <string name="engagement_message_health">Una actualización rápida hace más útil tu historial de mantenimiento. Abre Rovena cuando tengas un minuto.</string>
 </resources>

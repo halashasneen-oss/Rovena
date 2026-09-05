@@ -1,6 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Rovena</string><string name="smart_car_companion">Votre assistant automobile intelligent</string><string name="choose_language">Choisissez votre langue</string><string name="continue_label">Continuer</string><string name="get_started">Ajouter ma voiture</string>
-    <string name="onboarding_title_1">Tout sur votre voiture, au même endroit</string><string name="onboarding_body_1">Suivez votre voiture, son entretien, le carburant, les documents et les dates importantes.</string><string name="onboarding_title_2">N’oubliez plus l’entretien important</string><string name="onboarding_body_2">Rovena vous rappelle l’entretien, les documents et les mises à jour utiles.</string><string name="onboarding_title_3">Connaissez le vrai coût de votre voiture</string><string name="onboarding_body_3">Regroupez carburant, entretien et autres dépenses pour voir le coût mensuel réel.</string>
-    <string name="home">Accueil</string><string name="my_car">Ma voiture</string><string name="history">Historique</string><string name="expenses">Dépenses</string><string name="more">Plus</string><string name="dashboard_greeting">Votre voiture. Sous contrôle.</string><string name="dashboard_subtitle">Rovena garde l’essentiel visible.</string><string name="no_vehicle_title">Commencez avec votre première voiture</string><string name="no_vehicle_body">Ajoutez une fois les informations de base et Rovena construit votre garage numérique.</string><string name="add_vehicle">Ajouter un véhicule</string><string name="quick_actions">Actions rapides</string><string name="fuel">Carburant</string><string name="maintenance">Entretien</string><string name="documents">Documents</string><string name="coming_next">La base de Rovena 2 est prête</string><string name="foundation_message">Ensuite, nous connecterons le garage, l’entretien, le carburant, les coûts et la santé du véhicule.</string><string name="notification_channel_engagement">Rappels Rovena</string><string name="engagement_title">Votre voiture attend une mise à jour 🚗</string><string name="engagement_message_mileage">Votre kilométrage n’a pas été mis à jour depuis un moment. Ouvrez Rovena pour des rappels plus précis.</string><string name="engagement_message_costs">Vous voulez connaître le coût réel de votre voiture ? Ouvrez Rovena et ajoutez votre dernière activité.</string><string name="engagement_message_health">Une mise à jour rapide rend votre suivi d’entretien plus utile. Ouvrez Rovena quand vous avez une minute.</string>
+    <string name="app_name">Rovena</string>
+    <string name="smart_car_companion">Votre assistant automobile intelligent</string>
+    <string name="choose_language">Choisissez votre langue</string>
+    <string name="continue_label">Continuer</string>
+    <string name="get_started">Ajouter ma voiture</string>
+    <string name="onboarding_title_1">Tout sur votre voiture, au même endroit</string>
+    <string name="onboarding_body_1">Suivez votre voiture, son entretien, le carburant, les documents et les dates importantes.</string>
+    <string name="onboarding_title_2">N’oubliez plus l’entretien important</string>
+    <string name="onboarding_body_2">Rovena vous rappelle l’entretien, les documents et les mises à jour utiles.</string>
+    <string name="onboarding_title_3">Connaissez le vrai coût de votre voiture</string>
+    <string name="onboarding_body_3">Regroupez carburant, entretien et autres dépenses pour voir le coût mensuel réel.</string>
+
+    <string name="home">Accueil</string>
+    <string name="my_car">Ma voiture</string>
+    <string name="history">Historique</string>
+    <string name="expenses">Dépenses</string>
+    <string name="more">Plus</string>
+    <string name="dashboard_greeting">Votre voiture. Sous contrôle.</string>
+    <string name="dashboard_subtitle">Rovena garde l’essentiel visible.</string>
+    <string name="no_vehicle_title">Commencez avec votre première voiture</string>
+    <string name="no_vehicle_body">Ajoutez une fois les informations de base et Rovena construit votre garage numérique.</string>
+    <string name="add_vehicle">Ajouter un véhicule</string>
+    <string name="quick_actions">Actions rapides</string>
+    <string name="fuel">Carburant</string>
+    <string name="maintenance">Entretien</string>
+    <string name="documents">Documents</string>
+
+    <string name="garage_title">Votre garage</string>
+    <string name="garage_subtitle">Passez d’un véhicule à l’autre ou ajoutez-en un nouveau.</string>
+    <string name="current_vehicle">Véhicule actuel</string>
+    <string name="set_current">Utiliser cette voiture</string>
+    <string name="primary_badge">Actuelle</string>
+    <string name="add_vehicle_title">Ajoutez votre voiture</string>
+    <string name="add_vehicle_subtitle">Commencez par l’essentiel. Vous pourrez compléter le profil plus tard.</string>
+    <string name="vehicle_make">Marque</string>
+    <string name="vehicle_model">Modèle</string>
+    <string name="vehicle_year">Année</string>
+    <string name="odometer">Kilométrage</string>
+    <string name="odometer_format">%1$s km</string>
+    <string name="fuel_type">Carburant</string>
+    <string name="nickname_optional">Surnom de la voiture (facultatif)</string>
+    <string name="plate_optional">Immatriculation (facultatif)</string>
+    <string name="vin_optional">VIN (facultatif)</string>
+    <string name="currency">Devise</string>
+    <string name="gasoline">Essence</string>
+    <string name="diesel">Diesel</string>
+    <string name="hybrid">Hybride</string>
+    <string name="electric">Électrique</string>
+    <string name="lpg">GPL</string>
+    <string name="other">Autre</string>
+    <string name="save_vehicle">Enregistrer</string>
+    <string name="cancel">Annuler</string>
+    <string name="error_make_required">Indiquez la marque.</string>
+    <string name="error_model_required">Indiquez le modèle.</string>
+    <string name="error_year_invalid">Indiquez une année valide.</string>
+    <string name="error_mileage_invalid">Indiquez un kilométrage valide.</string>
+
+    <string name="health_title">Santé du véhicule</string>
+    <string name="health_not_ready_title">Pas encore assez de données</string>
+    <string name="health_not_ready_body">Ajoutez des entretiens et inspections pour obtenir un aperçu utile de l’état du véhicule.</string>
+    <string name="coming_soon">Bientôt</string>
+
+    <string name="delete_vehicle">Supprimer le véhicule</string>
+    <string name="delete_vehicle_title">Retirer le véhicule ?</string>
+    <string name="delete_vehicle_message">Supprimer %1$s de votre garage ? Ses futurs enregistrements seront également supprimés.</string>
+    <string name="delete">Supprimer</string>
+
+    <string name="no_history_title">Votre historique commence ici</string>
+    <string name="no_history_body">Les activités d’entretien, de carburant et de documents apparaîtront ici.</string>
+    <string name="no_expenses_title">Aucune dépense pour le moment</string>
+    <string name="no_expenses_body">Le tableau des dépenses s’activera dès que vous enregistrerez du carburant, de l’entretien ou d’autres coûts.</string>
+    <string name="more_title">D’autres outils arrivent</string>
+    <string name="more_body">Notifications, langue, sauvegarde, voyants du tableau de bord et rapports seront disponibles ici.</string>
+
+    <string name="coming_next">La base de Rovena 2 est prête</string>
+    <string name="foundation_message">Ensuite, nous connecterons le garage, l’entretien, le carburant, les coûts et la santé du véhicule.</string>
+    <string name="notification_channel_engagement">Rappels Rovena</string>
+    <string name="engagement_title">Votre voiture attend une mise à jour 🚗</string>
+    <string name="engagement_message_mileage">Votre kilométrage n’a pas été mis à jour depuis un moment. Ouvrez Rovena pour des rappels plus précis.</string>
+    <string name="engagement_message_costs">Vous voulez connaître le coût réel de votre voiture ? Ouvrez Rovena et ajoutez votre dernière activité.</string>
+    <string name="engagement_message_health">Une mise à jour rapide rend votre suivi d’entretien plus utile. Ouvrez Rovena quand vous avez une minute.</string>
 </resources>

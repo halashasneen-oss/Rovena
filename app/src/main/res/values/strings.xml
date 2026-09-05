@@ -11,6 +11,7 @@
     <string name="onboarding_body_2">Rovena will remind you about maintenance, documents and when it is useful to update your car data.</string>
     <string name="onboarding_title_3">Know what your car really costs</string>
     <string name="onboarding_body_3">See fuel, maintenance and other expenses together and understand your true monthly cost.</string>
+
     <string name="home">Home</string>
     <string name="my_car">My Car</string>
     <string name="history">History</string>
@@ -25,6 +26,54 @@
     <string name="fuel">Fuel</string>
     <string name="maintenance">Maintenance</string>
     <string name="documents">Documents</string>
+
+    <string name="garage_title">Your garage</string>
+    <string name="garage_subtitle">Switch between vehicles or add another one.</string>
+    <string name="current_vehicle">Current vehicle</string>
+    <string name="set_current">Use this car</string>
+    <string name="primary_badge">Current</string>
+    <string name="add_vehicle_title">Add your car</string>
+    <string name="add_vehicle_subtitle">Start with the essentials. You can enrich the profile later.</string>
+    <string name="vehicle_make">Make</string>
+    <string name="vehicle_model">Model</string>
+    <string name="vehicle_year">Year</string>
+    <string name="odometer">Odometer</string>
+    <string name="odometer_format">%1$s km</string>
+    <string name="fuel_type">Fuel type</string>
+    <string name="nickname_optional">Car nickname (optional)</string>
+    <string name="plate_optional">Plate number (optional)</string>
+    <string name="vin_optional">VIN (optional)</string>
+    <string name="currency">Currency</string>
+    <string name="gasoline">Gasoline</string>
+    <string name="diesel">Diesel</string>
+    <string name="hybrid">Hybrid</string>
+    <string name="electric">Electric</string>
+    <string name="lpg">LPG</string>
+    <string name="other">Other</string>
+    <string name="save_vehicle">Save car</string>
+    <string name="cancel">Cancel</string>
+    <string name="error_make_required">Enter the car make.</string>
+    <string name="error_model_required">Enter the car model.</string>
+    <string name="error_year_invalid">Enter a valid model year.</string>
+    <string name="error_mileage_invalid">Enter a valid odometer value.</string>
+
+    <string name="health_title">Vehicle health</string>
+    <string name="health_not_ready_title">Not enough data yet</string>
+    <string name="health_not_ready_body">Add maintenance and inspection records to unlock a meaningful health overview.</string>
+    <string name="coming_soon">Coming next</string>
+
+    <string name="delete_vehicle">Delete vehicle</string>
+    <string name="delete_vehicle_title">Remove vehicle?</string>
+    <string name="delete_vehicle_message">Delete %1$s from your garage? Its future records will also be removed.</string>
+    <string name="delete">Delete</string>
+
+    <string name="no_history_title">Your timeline starts here</string>
+    <string name="no_history_body">Maintenance, fuel and document activity will appear here as you add records.</string>
+    <string name="no_expenses_title">No expenses yet</string>
+    <string name="no_expenses_body">The expense dashboard will activate when you start recording fuel, maintenance and other costs.</string>
+    <string name="more_title">More tools are on the way</string>
+    <string name="more_body">Notifications, language, backup, warning lights and reports will live here.</string>
+
     <string name="coming_next">Rovena 2 foundation is ready</string>
     <string name="foundation_message">Next we will connect the garage, maintenance, fuel, costs and health system to this new experience.</string>
     <string name="notification_channel_engagement">Rovena reminders</string>
