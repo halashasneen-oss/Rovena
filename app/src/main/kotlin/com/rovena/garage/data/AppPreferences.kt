@@ -1,0 +1,41 @@
+package com.rovena.garage.data
+
+import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
+private val Context.dataStore by preferencesDataStore(name = "rovena_preferences")
+
+class AppPreferences(private val context: Context) {
+    private object Keys {
+        val onboardingCompleted = booleanPreferencesKey("onboarding_completed")
+        val languageTag = stringPreferencesKey("language_tag")
+        val lastOpenedAt = longPreferencesKey("last_opened_at")
+        val notificationPermissionAsked = booleanPreferencesKey("notification_permission_asked")
+        val engagementEnabled = booleanPreferencesKey("engagement_enabled")
+        val engagementFrequencyDays = intPreferencesKey("engagement_frequency_days")
+        val lastEngagementNotificationAt = longPreferencesKey("last_engagement_notification_at")
+    }
+
+    val onboardingCompleted: Flow<Boolean> = context.dataStore.data.map { it[Keys.onboardingCompleted] ?: false }
+    val languageTag: Flow<String> = context.dataStore.data.map { it[Keys.languageTag] ?: "" }
+    val lastOpenedAt: Flow<Long> = context.dataStore.data.map { it[Keys.lastOpenedAt] ?: 0L }
+    val notificationPermissionAsked: Flow<Boolean> = context.dataStore.data.map { it[Keys.notificationPermissionAsked] ?: false }
+    val engagementEnabled: Flow<Boolean> = context.dataStore.data.map { it[Keys.engagementEnabled] ?: true }
+    val engagementFrequencyDays: Flow<Int> = context.dataStore.data.map { it[Keys.engagementFrequencyDays] ?: 7 }
+    val lastEngagementNotificationAt: Flow<Long> = context.dataStore.data.map { it[Keys.lastEngagementNotificationAt] ?: 0L }
+
+    suspend fun completeOnboarding() = context.dataStore.edit { it[Keys.onboardingCompleted] = true }
+    suspend fun setLanguage(tag: String) = context.dataStore.edit { it[Keys.languageTag] = tag }
+    suspend fun markOpened() = context.dataStore.edit { it[Keys.lastOpenedAt] = System.currentTimeMillis() }
+    suspend fun markNotificationPermissionAsked() = context.dataStore.edit { it[Keys.notificationPermissionAsked] = true }
+    suspend fun setEngagementEnabled(enabled: Boolean) = context.dataStore.edit { it[Keys.engagementEnabled] = enabled }
+    suspend fun setEngagementFrequencyDays(days: Int) = context.dataStore.edit { it[Keys.engagementFrequencyDays] = days.coerceIn(1, 30) }
+    suspend fun markEngagementNotificationSent(time: Long) = context.dataStore.edit { it[Keys.lastEngagementNotificationAt] = time }
+}

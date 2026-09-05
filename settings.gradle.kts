@@ -15,6 +15,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Rovena"
-
 include(":app")
-include(":domain")

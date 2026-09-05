@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <files-path name="documents" path="documents/" />
-    <files-path name="photos" path="photos/" />
-    <cache-path name="reports" path="reports/" />
-    <cache-path name="captures" path="captures/" />
-    <external-files-path name="backups" path="backups/" />
-</paths>

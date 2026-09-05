@@ -1,1 +1,0 @@
-This file is a temporary staging marker for the clean Rovena rebuild and will be removed in the reset commit.
