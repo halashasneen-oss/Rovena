@@ -6,6 +6,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.rovena.garage.data.AppPreferences
 
 private val DarkColors = darkColorScheme(
     primary = Color(0xFF6EE7B7),
@@ -25,9 +26,17 @@ private val LightColors = lightColorScheme(
 )
 
 @Composable
-fun RovenaTheme(content: @Composable () -> Unit) {
+fun RovenaTheme(
+    themeMode: String = AppPreferences.THEME_SYSTEM,
+    content: @Composable () -> Unit
+) {
+    val dark = when (themeMode) {
+        AppPreferences.THEME_LIGHT -> false
+        AppPreferences.THEME_DARK -> true
+        else -> isSystemInDarkTheme()
+    }
     MaterialTheme(
-        colorScheme = if (isSystemInDarkTheme()) DarkColors else LightColors,
+        colorScheme = if (dark) DarkColors else LightColors,
         content = content
     )
 }

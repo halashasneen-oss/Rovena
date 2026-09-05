@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="smart_tab_settings">Ayarlar</string>
+    <string name="settings_title">Ayarlar</string>
+    <string name="settings_subtitle">Rovena’yı kişiselleştirin ve verilerinizi yönetin.</string>
+    <string name="appearance_title">Görünüm</string>
+    <string name="appearance_subtitle">Rovena’nın nasıl görüneceğini seçin.</string>
+    <string name="theme_system">Sistem</string>
+    <string name="theme_light">Açık</string>
+    <string name="theme_dark">Koyu</string>
+    <string name="language_title">Dil</string>
+    <string name="language_subtitle">Uygulama dilini istediğiniz zaman değiştirin.</string>
+    <string name="notifications_settings_title">Bildirimler</string>
+    <string name="notifications_settings_subtitle">Araç ve uygulamaya dönüş hatırlatmalarını yönetin.</string>
+    <string name="vehicle_reminders_setting">Bakım ve araç hatırlatmaları</string>
+    <string name="engagement_reminders_setting">Uygulamaya dönüş hatırlatmaları</string>
+    <string name="reminder_frequency">Hatırlatma sıklığı</string>
+    <string name="days_format">%1$d gün</string>
+    <string name="data_tools_title">Veriler ve raporlar</string>
+    <string name="data_tools_subtitle">Araç geçmişinizi dışa aktarın, geri yükleyin veya paylaşın.</string>
+    <string name="share_vehicle_report">Araç PDF raporunu paylaş</string>
+    <string name="export_backup">Yedeği dışa aktar</string>
+    <string name="import_backup">Yedeği içe aktar</string>
+    <string name="backup_attachment_note">Yedek, garaj verilerini ve ek dosya referanslarını saklar. Orijinal dosyalar cihazınızda veya belge sağlayıcınızda kalır.</string>
+    <string name="backup_export_success">Yedek başarıyla dışa aktarıldı.</string>
+    <string name="backup_export_failed">Yedek dışa aktarılamadı.</string>
+    <string name="backup_import_success">Yedek başarıyla geri yüklendi.</string>
+    <string name="backup_import_failed">Bu yedek geri yüklenemedi. Mevcut veriler değiştirilmeden korundu.</string>
+    <string name="report_title">Rovena Araç Raporu</string>
+    <string name="report_odometer">Kilometre</string>
+    <string name="report_plate">Plaka</string>
+    <string name="report_total_spend">Kaydedilen toplam harcama</string>
+    <string name="report_avg_efficiency">Ortalama yakıt verimliliği</string>
+    <string name="report_no_records">Kayıt bulunmuyor.</string>
+    <string name="report_attachment_present">Bu kayıtla birlikte bir ek dosya saklandı.</string>
+    <string name="report_note_title">Bu rapor hakkında</string>
+    <string name="report_note_body">Bu rapor Rovena kullanıcısının girdiği verilerden oluşturulur. Kayıt özetidir; mekanik inceleme veya araç durumuna ilişkin garanti değildir.</string>
+    <string name="report_share_title">Rovena raporunu paylaş</string>
+    <string name="report_failed">PDF raporu oluşturulamadı.</string>
+    <string name="add_attachment">Fotoğraf veya PDF ekle</string>
+    <string name="attachment_selected">Ek dosya seçildi</string>
+    <string name="attachments_title">Kayıtlı ekler</string>
+    <string name="attachments_subtitle">Mevcut araca bağlı %1$d dosya</string>
+    <string name="open_attachment">Eki aç</string>
+</resources>

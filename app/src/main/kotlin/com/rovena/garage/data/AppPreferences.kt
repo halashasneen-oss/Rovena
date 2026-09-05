@@ -16,6 +16,7 @@ class AppPreferences(private val context: Context) {
     private object Keys {
         val onboardingCompleted = booleanPreferencesKey("onboarding_completed")
         val languageTag = stringPreferencesKey("language_tag")
+        val themeMode = stringPreferencesKey("theme_mode")
         val lastOpenedAt = longPreferencesKey("last_opened_at")
         val notificationPermissionAsked = booleanPreferencesKey("notification_permission_asked")
         val engagementEnabled = booleanPreferencesKey("engagement_enabled")
@@ -29,6 +30,7 @@ class AppPreferences(private val context: Context) {
 
     val onboardingCompleted: Flow<Boolean> = context.dataStore.data.map { it[Keys.onboardingCompleted] ?: false }
     val languageTag: Flow<String> = context.dataStore.data.map { it[Keys.languageTag] ?: "" }
+    val themeMode: Flow<String> = context.dataStore.data.map { it[Keys.themeMode] ?: THEME_SYSTEM }
     val lastOpenedAt: Flow<Long> = context.dataStore.data.map { it[Keys.lastOpenedAt] ?: 0L }
     val notificationPermissionAsked: Flow<Boolean> = context.dataStore.data.map { it[Keys.notificationPermissionAsked] ?: false }
     val engagementEnabled: Flow<Boolean> = context.dataStore.data.map { it[Keys.engagementEnabled] ?: true }
@@ -41,6 +43,9 @@ class AppPreferences(private val context: Context) {
 
     suspend fun completeOnboarding() = context.dataStore.edit { it[Keys.onboardingCompleted] = true }
     suspend fun setLanguage(tag: String) = context.dataStore.edit { it[Keys.languageTag] = tag }
+    suspend fun setThemeMode(mode: String) = context.dataStore.edit {
+        it[Keys.themeMode] = if (mode in SUPPORTED_THEME_MODES) mode else THEME_SYSTEM
+    }
     suspend fun markOpened() = context.dataStore.edit { it[Keys.lastOpenedAt] = System.currentTimeMillis() }
     suspend fun markNotificationPermissionAsked() = context.dataStore.edit { it[Keys.notificationPermissionAsked] = true }
     suspend fun setEngagementEnabled(enabled: Boolean) = context.dataStore.edit { it[Keys.engagementEnabled] = enabled }
@@ -52,5 +57,12 @@ class AppPreferences(private val context: Context) {
         it[Keys.lastSmartReminderKey] = key
         it[Keys.lastSmartReminderAt] = time
         it[Keys.lastVehicleReminderAt] = time
+    }
+
+    companion object {
+        const val THEME_SYSTEM = "system"
+        const val THEME_LIGHT = "light"
+        const val THEME_DARK = "dark"
+        val SUPPORTED_THEME_MODES = setOf(THEME_SYSTEM, THEME_LIGHT, THEME_DARK)
     }
 }

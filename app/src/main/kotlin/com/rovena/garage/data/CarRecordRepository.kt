@@ -32,7 +32,8 @@ class CarRecordRepository(
                     cost = draft.cost,
                     notes = draft.notes.trim(),
                     nextDueMileage = draft.nextDueMileage,
-                    nextDueAt = draft.nextDueAt
+                    nextDueAt = draft.nextDueAt,
+                    attachmentUri = draft.attachmentUri
                 )
             )
             vehicleDao.updateMileageIfHigher(vehicleId, draft.mileage, now)
@@ -52,7 +53,8 @@ class CarRecordRepository(
                     mileage = draft.mileage,
                     liters = draft.liters,
                     totalCost = draft.totalCost,
-                    notes = draft.notes.trim()
+                    notes = draft.notes.trim(),
+                    attachmentUri = draft.attachmentUri
                 )
             )
             vehicleDao.updateMileageIfHigher(vehicleId, draft.mileage, now)
@@ -70,7 +72,8 @@ class CarRecordRepository(
                     spentAt = System.currentTimeMillis(),
                     category = draft.category.trim(),
                     amount = draft.amount,
-                    notes = draft.notes.trim()
+                    notes = draft.notes.trim(),
+                    attachmentUri = draft.attachmentUri
                 )
             )
         }

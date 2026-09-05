@@ -6,20 +6,23 @@ data class MaintenanceDraft(
     val cost: Double,
     val notes: String = "",
     val nextDueMileage: Long? = null,
-    val nextDueAt: Long? = null
+    val nextDueAt: Long? = null,
+    val attachmentUri: String? = null
 )
 
 data class FuelDraft(
     val mileage: Long,
     val liters: Double,
     val totalCost: Double,
-    val notes: String = ""
+    val notes: String = "",
+    val attachmentUri: String? = null
 )
 
 data class ExpenseDraft(
     val category: String,
     val amount: Double,
-    val notes: String = ""
+    val notes: String = "",
+    val attachmentUri: String? = null
 )
 
 data class DocumentDraft(

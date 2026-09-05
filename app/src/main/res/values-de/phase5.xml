@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="smart_tab_settings">Einstellungen</string>
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_subtitle">Passe Rovena an und verwalte deine Daten.</string>
+    <string name="appearance_title">Darstellung</string>
+    <string name="appearance_subtitle">Wähle das Erscheinungsbild von Rovena.</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Hell</string>
+    <string name="theme_dark">Dunkel</string>
+    <string name="language_title">Sprache</string>
+    <string name="language_subtitle">Ändere die App-Sprache jederzeit.</string>
+    <string name="notifications_settings_title">Benachrichtigungen</string>
+    <string name="notifications_settings_subtitle">Steuere Fahrzeug- und Rückkehrerinnerungen.</string>
+    <string name="vehicle_reminders_setting">Wartungs- und Fahrzeugerinnerungen</string>
+    <string name="engagement_reminders_setting">Erinnerungen zur App-Rückkehr</string>
+    <string name="reminder_frequency">Erinnerungsintervall</string>
+    <string name="days_format">%1$d Tage</string>
+    <string name="data_tools_title">Daten und Berichte</string>
+    <string name="data_tools_subtitle">Exportiere, stelle wieder her oder teile deine Fahrzeughistorie.</string>
+    <string name="share_vehicle_report">Fahrzeugbericht als PDF teilen</string>
+    <string name="export_backup">Sicherung exportieren</string>
+    <string name="import_backup">Sicherung importieren</string>
+    <string name="backup_attachment_note">Die Sicherung enthält Garagendaten und Verweise auf Anhänge. Die Originaldateien bleiben auf deinem Gerät oder beim Dokumentanbieter.</string>
+    <string name="backup_export_success">Sicherung erfolgreich exportiert.</string>
+    <string name="backup_export_failed">Sicherung konnte nicht exportiert werden.</string>
+    <string name="backup_import_success">Sicherung erfolgreich wiederhergestellt.</string>
+    <string name="backup_import_failed">Diese Sicherung konnte nicht wiederhergestellt werden. Die aktuellen Daten blieben unverändert.</string>
+    <string name="report_title">Rovena Fahrzeugbericht</string>
+    <string name="report_odometer">Kilometerstand</string>
+    <string name="report_plate">Kennzeichen</string>
+    <string name="report_total_spend">Erfasste Gesamtausgaben</string>
+    <string name="report_avg_efficiency">Durchschnittliche Kraftstoffeffizienz</string>
+    <string name="report_no_records">Keine Einträge vorhanden.</string>
+    <string name="report_attachment_present">Zu diesem Eintrag ist ein Anhang gespeichert.</string>
+    <string name="report_note_title">Über diesen Bericht</string>
+    <string name="report_note_body">Dieser Bericht wird aus den vom Rovena-Nutzer eingegebenen Daten erstellt. Er ist eine Zusammenfassung der Einträge und keine mechanische Prüfung oder Garantie des Fahrzeugzustands.</string>
+    <string name="report_share_title">Rovena-Bericht teilen</string>
+    <string name="report_failed">PDF-Bericht konnte nicht erstellt werden.</string>
+    <string name="add_attachment">Foto oder PDF anhängen</string>
+    <string name="attachment_selected">Anhang ausgewählt</string>
+    <string name="attachments_title">Gespeicherte Anhänge</string>
+    <string name="attachments_subtitle">%1$d Dateien mit dem aktuellen Fahrzeug verknüpft</string>
+    <string name="open_attachment">Anhang öffnen</string>
+</resources>

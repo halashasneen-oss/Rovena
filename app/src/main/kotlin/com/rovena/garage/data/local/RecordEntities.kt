@@ -27,7 +27,8 @@ data class MaintenanceEntity(
     val cost: Double,
     val notes: String = "",
     val nextDueMileage: Long? = null,
-    val nextDueAt: Long? = null
+    val nextDueAt: Long? = null,
+    val attachmentUri: String? = null
 )
 
 @Entity(
@@ -50,7 +51,8 @@ data class FuelEntryEntity(
     val mileage: Long,
     val liters: Double,
     val totalCost: Double,
-    val notes: String = ""
+    val notes: String = "",
+    val attachmentUri: String? = null
 )
 
 @Entity(
@@ -72,7 +74,8 @@ data class ExpenseEntity(
     val spentAt: Long,
     val category: String,
     val amount: Double,
-    val notes: String = ""
+    val notes: String = "",
+    val attachmentUri: String? = null
 )
 
 @Entity(

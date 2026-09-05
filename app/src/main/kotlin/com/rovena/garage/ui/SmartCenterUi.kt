@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -37,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.rovena.garage.R
+import com.rovena.garage.data.AppPreferences
 import com.rovena.garage.data.CarSymptom
 import com.rovena.garage.data.MaintenancePlanEngine
 import com.rovena.garage.data.MaintenancePlanItem
@@ -48,6 +50,7 @@ import com.rovena.garage.data.WarningLightCatalog
 import com.rovena.garage.data.WarningLightType
 import com.rovena.garage.data.WarningSeverity
 import com.rovena.garage.data.local.DocumentEntity
+import com.rovena.garage.data.local.ExpenseEntity
 import com.rovena.garage.data.local.FuelEntryEntity
 import com.rovena.garage.data.local.MaintenanceEntity
 import com.rovena.garage.data.local.VehicleEntity
@@ -58,30 +61,49 @@ internal fun SmartCenterScreen(
     vehicle: VehicleEntity?,
     maintenance: List<MaintenanceEntity>,
     fuel: List<FuelEntryEntity>,
+    expenses: List<ExpenseEntity>,
     documents: List<DocumentEntity>,
+    preferences: AppPreferences,
+    selectedLanguage: String,
     modifier: Modifier = Modifier,
-    onAddDocument: () -> Unit
+    onAddDocument: () -> Unit,
+    onLanguageSelected: (String) -> Unit,
+    onExportBackup: () -> Unit,
+    onImportBackup: () -> Unit,
+    onShareReport: () -> Unit
 ) {
     var page by rememberSaveable { mutableIntStateOf(0) }
     Column(modifier = modifier.fillMaxSize()) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp),
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            FilterChip(
-                selected = page == 0,
-                onClick = { page = 0 },
-                label = { Text(stringResource(R.string.smart_tab_overview)) }
-            )
-            FilterChip(
-                selected = page == 1,
-                onClick = { page = 1 },
-                label = { Text(stringResource(R.string.smart_tab_tools)) }
-            )
+            item {
+                FilterChip(
+                    selected = page == 0,
+                    onClick = { page = 0 },
+                    label = { Text(stringResource(R.string.smart_tab_overview)) }
+                )
+            }
+            item {
+                FilterChip(
+                    selected = page == 1,
+                    onClick = { page = 1 },
+                    label = { Text(stringResource(R.string.smart_tab_tools)) }
+                )
+            }
+            item {
+                FilterChip(
+                    selected = page == 2,
+                    onClick = { page = 2 },
+                    label = { Text(stringResource(R.string.smart_tab_settings)) }
+                )
+            }
         }
         Box(Modifier.weight(1f)) {
-            if (page == 0) {
-                SmartHubScreen(
+            when (page) {
+                0 -> SmartHubScreen(
                     vehicle = vehicle,
                     maintenance = maintenance,
                     fuel = fuel,
@@ -89,15 +111,27 @@ internal fun SmartCenterScreen(
                     modifier = Modifier.fillMaxSize(),
                     onAddDocument = onAddDocument
                 )
-            } else {
-                VehicleToolsScreen(
+                1 -> VehicleToolsScreen(
                     vehicle = vehicle,
                     maintenance = maintenance,
                     modifier = Modifier.fillMaxSize()
                 )
+                else -> SettingsScreen(
+                    preferences = preferences,
+                    selectedLanguage = selectedLanguage,
+                    reportEnabled = vehicle != null,
+                    modifier = Modifier.fillMaxSize(),
+                    onLanguageSelected = onLanguageSelected,
+                    onExportBackup = onExportBackup,
+                    onImportBackup = onImportBackup,
+                    onShareReport = onShareReport
+                )
             }
         }
     }
+
+    @Suppress("UNUSED_VARIABLE")
+    val phaseFiveExpenseCount = expenses.size
 }
 
 @Composable

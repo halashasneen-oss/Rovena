@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="smart_tab_settings">Ajustes</string>
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_subtitle">Personaliza Rovena y administra tus datos.</string>
+    <string name="appearance_title">Apariencia</string>
+    <string name="appearance_subtitle">Elige cómo se ve Rovena.</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+    <string name="language_title">Idioma</string>
+    <string name="language_subtitle">Cambia el idioma de la aplicación en cualquier momento.</string>
+    <string name="notifications_settings_title">Notificaciones</string>
+    <string name="notifications_settings_subtitle">Controla los recordatorios del vehículo y de regreso a la aplicación.</string>
+    <string name="vehicle_reminders_setting">Recordatorios de mantenimiento y vehículo</string>
+    <string name="engagement_reminders_setting">Recordatorios para volver a la aplicación</string>
+    <string name="reminder_frequency">Frecuencia del recordatorio</string>
+    <string name="days_format">%1$d días</string>
+    <string name="data_tools_title">Datos e informes</string>
+    <string name="data_tools_subtitle">Exporta, restaura o comparte el historial de tu coche.</string>
+    <string name="share_vehicle_report">Compartir informe PDF del vehículo</string>
+    <string name="export_backup">Exportar copia de seguridad</string>
+    <string name="import_backup">Importar copia de seguridad</string>
+    <string name="backup_attachment_note">La copia guarda los datos del garaje y las referencias de los adjuntos. Los archivos originales permanecen en tu dispositivo o proveedor de documentos.</string>
+    <string name="backup_export_success">Copia de seguridad exportada correctamente.</string>
+    <string name="backup_export_failed">No se pudo exportar la copia de seguridad.</string>
+    <string name="backup_import_success">Copia de seguridad restaurada correctamente.</string>
+    <string name="backup_import_failed">No se pudo restaurar esta copia. Los datos actuales se mantuvieron sin cambios.</string>
+    <string name="report_title">Informe del vehículo Rovena</string>
+    <string name="report_odometer">Odómetro</string>
+    <string name="report_plate">Matrícula</string>
+    <string name="report_total_spend">Gasto total registrado</string>
+    <string name="report_avg_efficiency">Eficiencia media de combustible</string>
+    <string name="report_no_records">No hay registros disponibles.</string>
+    <string name="report_attachment_present">Hay un archivo adjunto guardado con este registro.</string>
+    <string name="report_note_title">Acerca de este informe</string>
+    <string name="report_note_body">Este informe se genera con los datos introducidos por el usuario de Rovena. Es un resumen de registros, no una inspección mecánica ni una garantía del estado del vehículo.</string>
+    <string name="report_share_title">Compartir informe de Rovena</string>
+    <string name="report_failed">No se pudo crear el informe PDF.</string>
+    <string name="add_attachment">Adjuntar foto o PDF</string>
+    <string name="attachment_selected">Adjunto seleccionado</string>
+    <string name="attachments_title">Archivos adjuntos guardados</string>
+    <string name="attachments_subtitle">%1$d archivos vinculados al vehículo actual</string>
+    <string name="open_attachment">Abrir archivo adjunto</string>
+</resources>

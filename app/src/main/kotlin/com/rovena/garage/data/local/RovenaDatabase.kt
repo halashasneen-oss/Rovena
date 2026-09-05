@@ -15,7 +15,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         ExpenseEntity::class,
         DocumentEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class RovenaDatabase : RoomDatabase() {
@@ -85,13 +85,21 @@ abstract class RovenaDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `maintenance_records` ADD COLUMN `attachmentUri` TEXT")
+                db.execSQL("ALTER TABLE `fuel_entries` ADD COLUMN `attachmentUri` TEXT")
+                db.execSQL("ALTER TABLE `expense_entries` ADD COLUMN `attachmentUri` TEXT")
+            }
+        }
+
         fun create(context: Context): RovenaDatabase =
             Room.databaseBuilder(
                 context.applicationContext,
                 RovenaDatabase::class.java,
                 "rovena2.db"
             )
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 .build()
     }
 }

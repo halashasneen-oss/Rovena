@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="smart_tab_settings">الإعدادات</string>
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_subtitle">خصّص Rovena وتحكم ببياناتك.</string>
+    <string name="appearance_title">المظهر</string>
+    <string name="appearance_subtitle">اختر مظهر Rovena المناسب لك.</string>
+    <string name="theme_system">حسب النظام</string>
+    <string name="theme_light">فاتح</string>
+    <string name="theme_dark">داكن</string>
+    <string name="language_title">اللغة</string>
+    <string name="language_subtitle">يمكنك تغيير لغة التطبيق في أي وقت.</string>
+    <string name="notifications_settings_title">الإشعارات</string>
+    <string name="notifications_settings_subtitle">تحكم بتنبيهات السيارة وتذكيرات العودة للتطبيق.</string>
+    <string name="vehicle_reminders_setting">تنبيهات الصيانة والسيارة</string>
+    <string name="engagement_reminders_setting">تذكيرات العودة للتطبيق</string>
+    <string name="reminder_frequency">تكرار التذكير</string>
+    <string name="days_format">%1$d أيام</string>
+    <string name="data_tools_title">البيانات والتقارير</string>
+    <string name="data_tools_subtitle">صدّر بياناتك أو استعدها أو شارك تقرير سيارتك.</string>
+    <string name="share_vehicle_report">مشاركة تقرير السيارة PDF</string>
+    <string name="export_backup">تصدير نسخة احتياطية</string>
+    <string name="import_backup">استيراد نسخة احتياطية</string>
+    <string name="backup_attachment_note">تحفظ النسخة الاحتياطية بيانات المرآب ومراجع المرفقات. تبقى الملفات الأصلية على جهازك أو لدى مزود المستندات.</string>
+    <string name="backup_export_success">تم تصدير النسخة الاحتياطية بنجاح.</string>
+    <string name="backup_export_failed">تعذر تصدير النسخة الاحتياطية.</string>
+    <string name="backup_import_success">تمت استعادة النسخة الاحتياطية بنجاح.</string>
+    <string name="backup_import_failed">تعذر استعادة هذه النسخة. تم الاحتفاظ ببياناتك الحالية دون تغيير.</string>
+    <string name="report_title">تقرير السيارة من Rovena</string>
+    <string name="report_odometer">عداد المسافة</string>
+    <string name="report_plate">رقم اللوحة</string>
+    <string name="report_total_spend">إجمالي المصاريف المسجلة</string>
+    <string name="report_avg_efficiency">متوسط كفاءة الوقود</string>
+    <string name="report_no_records">لا توجد سجلات.</string>
+    <string name="report_attachment_present">يوجد مرفق محفوظ مع هذا السجل.</string>
+    <string name="report_note_title">حول هذا التقرير</string>
+    <string name="report_note_body">تم إنشاء هذا التقرير من البيانات التي أدخلها مستخدم Rovena. هو ملخص للسجلات وليس فحصًا ميكانيكيًا أو ضمانًا لحالة السيارة.</string>
+    <string name="report_share_title">مشاركة تقرير Rovena</string>
+    <string name="report_failed">تعذر إنشاء تقرير PDF.</string>
+    <string name="add_attachment">إرفاق صورة أو PDF</string>
+    <string name="attachment_selected">تم اختيار المرفق</string>
+    <string name="attachments_title">المرفقات المحفوظة</string>
+    <string name="attachments_subtitle">%1$d ملفات مرتبطة بالسيارة الحالية</string>
+    <string name="open_attachment">فتح المرفق</string>
+</resources>

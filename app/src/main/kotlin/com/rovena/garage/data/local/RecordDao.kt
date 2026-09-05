@@ -25,6 +25,9 @@ interface RecordDao {
     @Query("SELECT * FROM fuel_entries WHERE vehicleId = :vehicleId ORDER BY filledAt DESC, id DESC")
     suspend fun getFuelOnce(vehicleId: Long): List<FuelEntryEntity>
 
+    @Query("SELECT * FROM expense_entries WHERE vehicleId = :vehicleId ORDER BY spentAt DESC, id DESC")
+    suspend fun getExpensesOnce(vehicleId: Long): List<ExpenseEntity>
+
     @Query("SELECT * FROM vehicle_documents WHERE vehicleId = :vehicleId ORDER BY createdAt DESC, id DESC")
     suspend fun getDocumentsOnce(vehicleId: Long): List<DocumentEntity>
 
@@ -51,4 +54,16 @@ interface RecordDao {
 
     @Query("DELETE FROM vehicle_documents WHERE id = :id")
     suspend fun deleteDocument(id: Long)
+
+    @Query("DELETE FROM vehicle_documents")
+    suspend fun deleteAllDocuments()
+
+    @Query("DELETE FROM expense_entries")
+    suspend fun deleteAllExpenses()
+
+    @Query("DELETE FROM fuel_entries")
+    suspend fun deleteAllFuel()
+
+    @Query("DELETE FROM maintenance_records")
+    suspend fun deleteAllMaintenance()
 }

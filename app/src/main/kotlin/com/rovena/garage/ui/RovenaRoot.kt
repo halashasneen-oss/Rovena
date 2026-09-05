@@ -1,5 +1,6 @@
 package com.rovena.garage.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +30,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -40,13 +42,16 @@ import com.rovena.garage.data.DocumentDraft
 import com.rovena.garage.data.ExpenseDraft
 import com.rovena.garage.data.FuelDraft
 import com.rovena.garage.data.MaintenanceDraft
+import com.rovena.garage.data.VehicleReportGenerator
 import com.rovena.garage.data.VehicleRepository
 import com.rovena.garage.data.local.DocumentEntity
 import com.rovena.garage.data.local.ExpenseEntity
 import com.rovena.garage.data.local.FuelEntryEntity
 import com.rovena.garage.data.local.MaintenanceEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun RovenaRoot(
@@ -54,7 +59,9 @@ fun RovenaRoot(
     vehicleRepository: VehicleRepository,
     recordRepository: CarRecordRepository,
     onLanguageSelected: (String) -> Unit,
-    onRequestNotifications: () -> Unit
+    onRequestNotifications: () -> Unit,
+    onExportBackup: () -> Unit,
+    onImportBackup: () -> Unit
 ) {
     val onboardingDone by preferences.onboardingCompleted.collectAsStateWithLifecycle(initialValue = false)
     val languageTag by preferences.languageTag.collectAsStateWithLifecycle(initialValue = "")
@@ -71,7 +78,15 @@ fun RovenaRoot(
             }
         )
     } else {
-        MainShell(vehicleRepository, recordRepository)
+        MainShell(
+            preferences = preferences,
+            selectedLanguage = languageTag,
+            vehicleRepository = vehicleRepository,
+            recordRepository = recordRepository,
+            onLanguageSelected = onLanguageSelected,
+            onExportBackup = onExportBackup,
+            onImportBackup = onImportBackup
+        )
     }
 }
 
@@ -140,8 +155,13 @@ private enum class MainTab { HOME, CAR, HISTORY, EXPENSES, MORE }
 
 @Composable
 private fun MainShell(
+    preferences: AppPreferences,
+    selectedLanguage: String,
     vehicleRepository: VehicleRepository,
-    recordRepository: CarRecordRepository
+    recordRepository: CarRecordRepository,
+    onLanguageSelected: (String) -> Unit,
+    onExportBackup: () -> Unit,
+    onImportBackup: () -> Unit
 ) {
     var tabIndex by rememberSaveable { mutableIntStateOf(0) }
     var showAddVehicle by rememberSaveable { mutableStateOf(false) }
@@ -170,10 +190,33 @@ private fun MainShell(
     val expenses by expenseFlow.collectAsStateWithLifecycle(initialValue = emptyList())
     val documents by documentFlow.collectAsStateWithLifecycle(initialValue = emptyList())
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val tab = MainTab.entries[tabIndex]
 
     fun openRecord(action: RecordAction) {
         if (currentVehicle == null) showAddVehicle = true else recordAction = action
+    }
+
+    fun shareReport() {
+        val vehicle = currentVehicle ?: return
+        scope.launch {
+            val result = runCatching {
+                withContext(Dispatchers.IO) {
+                    VehicleReportGenerator.createPdf(
+                        context = context,
+                        vehicle = vehicle,
+                        maintenance = maintenance,
+                        fuel = fuel,
+                        expenses = expenses,
+                        documents = documents
+                    )
+                }
+            }
+            result.onSuccess { file -> VehicleReportGenerator.sharePdf(context, file) }
+                .onFailure {
+                    Toast.makeText(context, R.string.report_failed, Toast.LENGTH_LONG).show()
+                }
+        }
     }
 
     Scaffold(
@@ -251,9 +294,16 @@ private fun MainShell(
                 vehicle = currentVehicle,
                 maintenance = maintenance,
                 fuel = fuel,
+                expenses = expenses,
                 documents = documents,
+                preferences = preferences,
+                selectedLanguage = selectedLanguage,
                 modifier = Modifier.padding(padding),
-                onAddDocument = { openRecord(RecordAction.DOCUMENT) }
+                onAddDocument = { openRecord(RecordAction.DOCUMENT) },
+                onLanguageSelected = onLanguageSelected,
+                onExportBackup = onExportBackup,
+                onImportBackup = onImportBackup,
+                onShareReport = ::shareReport
             )
         }
     }
@@ -285,7 +335,7 @@ private fun MainShell(
 
     val activeVehicleId = currentVehicle?.id
     if (recordAction != null && activeVehicleId != null) {
-        RecordEntrySheet(
+        Phase5RecordEntrySheet(
             action = recordAction!!,
             currentMileage = currentVehicle.mileage,
             currencyCode = currentVehicle.currencyCode,
