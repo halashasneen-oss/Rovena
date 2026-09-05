@@ -4,6 +4,7 @@ import com.rovena.garage.data.local.DocumentEntity
 import com.rovena.garage.data.local.FuelEntryEntity
 import com.rovena.garage.data.local.MaintenanceEntity
 import com.rovena.garage.data.local.VehicleEntity
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
@@ -128,16 +129,19 @@ object VehicleHealthEngine {
         fuel: List<FuelEntryEntity>,
         now: Long = System.currentTimeMillis()
     ): VehicleHealthSummary {
-        val overdue = maintenance.count { isMaintenanceOverdue(it, vehicle.mileage, now) }
-        val dueSoon = maintenance.count {
+        val activeMaintenance = latestMaintenanceSchedules(maintenance)
+        val activeDocuments = latestDocuments(documents)
+
+        val overdue = activeMaintenance.count { isMaintenanceOverdue(it, vehicle.mileage, now) }
+        val dueSoon = activeMaintenance.count {
             !isMaintenanceOverdue(it, vehicle.mileage, now) && isMaintenanceDueSoon(it, vehicle.mileage, now)
         }
-        val expired = documents.count { isDocumentExpired(it, now) }
-        val expiring = documents.count { !isDocumentExpired(it, now) && isDocumentExpiringSoon(it, now) }
+        val expired = activeDocuments.count { isDocumentExpired(it, now) }
+        val expiring = activeDocuments.count { !isDocumentExpired(it, now) && isDocumentExpiringSoon(it, now) }
         val fuelInsights = FuelAnalytics.analyze(fuel)
 
-        val evidenceCount = maintenance.count { it.nextDueMileage != null || it.nextDueAt != null } +
-            documents.count { it.expiryAt != null } +
+        val evidenceCount = activeMaintenance.count { it.nextDueMileage != null || it.nextDueAt != null } +
+            activeDocuments.count { it.expiryAt != null } +
             fuelInsights.intervalCount
 
         val score = if (evidenceCount == 0) {
@@ -180,6 +184,21 @@ object VehicleHealthEngine {
             evidenceCount = evidenceCount
         )
     }
+
+    fun latestMaintenanceSchedules(records: List<MaintenanceEntity>): List<MaintenanceEntity> =
+        records
+            .groupBy { it.serviceType.trim().lowercase(Locale.ROOT) }
+            .values
+            .mapNotNull { group -> group.maxWithOrNull(compareBy<MaintenanceEntity> { it.performedAt }.thenBy { it.id }) }
+
+    fun latestDocuments(records: List<DocumentEntity>): List<DocumentEntity> =
+        records
+            .groupBy {
+                val key = it.category.trim().ifBlank { it.title.trim() }
+                key.lowercase(Locale.ROOT)
+            }
+            .values
+            .mapNotNull { group -> group.maxWithOrNull(compareBy<DocumentEntity> { it.createdAt }.thenBy { it.id }) }
 
     fun isMaintenanceOverdue(record: MaintenanceEntity, mileage: Long, now: Long): Boolean =
         (record.nextDueMileage != null && record.nextDueMileage <= mileage) ||
