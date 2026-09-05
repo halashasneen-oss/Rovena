@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="health_data_summary">Basado en %1$d registros de mantenimiento y %2$d documentos.</string>
+    <string name="nothing_due_now">No hay nada pendiente ahora mismo.</string>
+    <string name="items_need_attention">%1$d elemento(s) necesitan atención.</string>
+    <string name="costs_this_month">Coste del coche este mes</string>
+    <string name="tap_to_add">Toca para añadir</string>
+    <string name="history_subtitle">Una sola línea de tiempo para todo lo que ocurre con tu coche.</string>
+    <string name="expenses_subtitle">Combustible, mantenimiento y gastos cotidianos juntos.</string>
+    <string name="monthly_spend">Este mes</string>
+    <string name="all_time_spend">Total</string>
+    <string name="recent_costs">Gastos recientes</string>
+    <string name="documents_subtitle">Guarda las fechas importantes de los documentos del vehículo en un solo lugar.</string>
+    <string name="no_documents_title">Aún no hay documentos</string>
+    <string name="no_documents_body">Añade matrícula, seguro, inspección o garantía para mantener visibles las fechas.</string>
+    <string name="expires_on">Caduca el %1$s</string>
+    <string name="no_expiry">Sin fecha de caducidad</string>
+    <string name="add_maintenance">Añadir mantenimiento</string>
+    <string name="add_fuel">Añadir combustible</string>
+    <string name="add_expense">Añadir gasto</string>
+    <string name="add_document">Añadir documento</string>
+    <string name="record_for_current_vehicle">Este registro se guardará en el vehículo actual.</string>
+    <string name="service_type">Servicio o reparación</string>
+    <string name="cost_with_currency">Coste (%1$s)</string>
+    <string name="next_due_km_optional">Próximo kilometraje (opcional)</string>
+    <string name="next_due_date_optional">Próxima fecha (opcional)</string>
+    <string name="liters">Litros</string>
+    <string name="total_cost_with_currency">Coste total (%1$s)</string>
+    <string name="expense_category">Categoría del gasto</string>
+    <string name="amount_with_currency">Importe (%1$s)</string>
+    <string name="document_title">Nombre del documento</string>
+    <string name="document_category">Categoría del documento</string>
+    <string name="expiry_date_optional">Fecha de caducidad (opcional)</string>
+    <string name="notes_optional">Notas (opcional)</string>
+    <string name="error_record_fields">Revisa los campos obligatorios y los valores numéricos.</string>
+    <string name="save_record">Guardar registro</string>
+</resources>

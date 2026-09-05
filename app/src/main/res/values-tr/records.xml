@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="health_data_summary">%1$d bakım kaydı ve %2$d belgeye dayanır.</string>
+    <string name="nothing_due_now">Şu anda vadesi gelen bir şey yok.</string>
+    <string name="items_need_attention">%1$d öğe ilgi gerektiriyor.</string>
+    <string name="costs_this_month">Bu ay araç maliyeti</string>
+    <string name="tap_to_add">Eklemek için dokunun</string>
+    <string name="history_subtitle">Aracınızla ilgili her şey için tek zaman çizelgesi.</string>
+    <string name="expenses_subtitle">Yakıt, bakım ve günlük giderler birlikte.</string>
+    <string name="monthly_spend">Bu ay</string>
+    <string name="all_time_spend">Toplam</string>
+    <string name="recent_costs">Son giderler</string>
+    <string name="documents_subtitle">Önemli araç belgesi tarihlerini tek yerde tutun.</string>
+    <string name="no_documents_title">Henüz belge yok</string>
+    <string name="no_documents_body">Ruhsat, sigorta, muayene veya garanti ekleyin; Rovena tarihleri görünür tutsun.</string>
+    <string name="expires_on">Bitiş: %1$s</string>
+    <string name="no_expiry">Bitiş tarihi yok</string>
+    <string name="add_maintenance">Bakım ekle</string>
+    <string name="add_fuel">Yakıt ekle</string>
+    <string name="add_expense">Gider ekle</string>
+    <string name="add_document">Belge ekle</string>
+    <string name="record_for_current_vehicle">Bu kayıt mevcut araca kaydedilecektir.</string>
+    <string name="service_type">Bakım veya onarım</string>
+    <string name="cost_with_currency">Maliyet (%1$s)</string>
+    <string name="next_due_km_optional">Sonraki kilometre (isteğe bağlı)</string>
+    <string name="next_due_date_optional">Sonraki tarih (isteğe bağlı)</string>
+    <string name="liters">Litre</string>
+    <string name="total_cost_with_currency">Toplam maliyet (%1$s)</string>
+    <string name="expense_category">Gider kategorisi</string>
+    <string name="amount_with_currency">Tutar (%1$s)</string>
+    <string name="document_title">Belge adı</string>
+    <string name="document_category">Belge kategorisi</string>
+    <string name="expiry_date_optional">Bitiş tarihi (isteğe bağlı)</string>
+    <string name="notes_optional">Notlar (isteğe bağlı)</string>
+    <string name="error_record_fields">Gerekli alanları ve sayısal değerleri kontrol edin.</string>
+    <string name="save_record">Kaydı kaydet</string>
+</resources>

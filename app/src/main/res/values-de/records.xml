@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="health_data_summary">Basierend auf %1$d Wartungseinträgen und %2$d Dokumenten.</string>
+    <string name="nothing_due_now">Aktuell ist nichts fällig.</string>
+    <string name="items_need_attention">%1$d Element(e) benötigen Aufmerksamkeit.</string>
+    <string name="costs_this_month">Fahrzeugkosten in diesem Monat</string>
+    <string name="tap_to_add">Zum Hinzufügen tippen</string>
+    <string name="history_subtitle">Eine Zeitleiste für alles, was mit deinem Auto passiert.</string>
+    <string name="expenses_subtitle">Kraftstoff, Wartung und Alltagskosten zusammen.</string>
+    <string name="monthly_spend">Dieser Monat</string>
+    <string name="all_time_spend">Gesamt</string>
+    <string name="recent_costs">Letzte Kosten</string>
+    <string name="documents_subtitle">Wichtige Fahrzeugdokumente und Fristen an einem Ort.</string>
+    <string name="no_documents_title">Noch keine Dokumente</string>
+    <string name="no_documents_body">Füge Zulassung, Versicherung, Prüfung oder Garantie hinzu, damit Fristen sichtbar bleiben.</string>
+    <string name="expires_on">Läuft am %1$s ab</string>
+    <string name="no_expiry">Kein Ablaufdatum</string>
+    <string name="add_maintenance">Wartung hinzufügen</string>
+    <string name="add_fuel">Tankvorgang hinzufügen</string>
+    <string name="add_expense">Ausgabe hinzufügen</string>
+    <string name="add_document">Dokument hinzufügen</string>
+    <string name="record_for_current_vehicle">Dieser Eintrag wird dem aktuellen Fahrzeug zugeordnet.</string>
+    <string name="service_type">Wartung oder Reparatur</string>
+    <string name="cost_with_currency">Kosten (%1$s)</string>
+    <string name="next_due_km_optional">Nächster Kilometerstand (optional)</string>
+    <string name="next_due_date_optional">Nächster Termin (optional)</string>
+    <string name="liters">Liter</string>
+    <string name="total_cost_with_currency">Gesamtkosten (%1$s)</string>
+    <string name="expense_category">Ausgabenkategorie</string>
+    <string name="amount_with_currency">Betrag (%1$s)</string>
+    <string name="document_title">Dokumentname</string>
+    <string name="document_category">Dokumentkategorie</string>
+    <string name="expiry_date_optional">Ablaufdatum (optional)</string>
+    <string name="notes_optional">Notizen (optional)</string>
+    <string name="error_record_fields">Prüfe die Pflichtfelder und Zahlenwerte.</string>
+    <string name="save_record">Eintrag speichern</string>
+</resources>

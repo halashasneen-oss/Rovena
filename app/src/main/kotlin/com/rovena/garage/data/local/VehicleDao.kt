@@ -30,4 +30,7 @@ interface VehicleDao {
 
     @Query("UPDATE vehicles SET isPrimary = 1, updatedAt = :updatedAt WHERE id = :id")
     suspend fun markPrimary(id: Long, updatedAt: Long)
+
+    @Query("UPDATE vehicles SET mileage = :mileage, updatedAt = :updatedAt WHERE id = :id AND mileage < :mileage")
+    suspend fun updateMileageIfHigher(id: Long, mileage: Long, updatedAt: Long)
 }

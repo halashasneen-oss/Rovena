@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="health_data_summary">Basé sur %1$d entretiens et %2$d documents.</string>
+    <string name="nothing_due_now">Rien n’est à échéance pour le moment.</string>
+    <string name="items_need_attention">%1$d élément(s) demandent votre attention.</string>
+    <string name="costs_this_month">Coût de la voiture ce mois-ci</string>
+    <string name="tap_to_add">Touchez pour ajouter</string>
+    <string name="history_subtitle">Une seule chronologie pour tout ce qui concerne votre voiture.</string>
+    <string name="expenses_subtitle">Carburant, entretien et dépenses courantes réunis.</string>
+    <string name="monthly_spend">Ce mois-ci</string>
+    <string name="all_time_spend">Total</string>
+    <string name="recent_costs">Dépenses récentes</string>
+    <string name="documents_subtitle">Gardez les dates importantes des documents du véhicule au même endroit.</string>
+    <string name="no_documents_title">Aucun document pour le moment</string>
+    <string name="no_documents_body">Ajoutez immatriculation, assurance, contrôle ou garantie pour garder les échéances visibles.</string>
+    <string name="expires_on">Expire le %1$s</string>
+    <string name="no_expiry">Aucune date d’expiration</string>
+    <string name="add_maintenance">Ajouter un entretien</string>
+    <string name="add_fuel">Ajouter du carburant</string>
+    <string name="add_expense">Ajouter une dépense</string>
+    <string name="add_document">Ajouter un document</string>
+    <string name="record_for_current_vehicle">Cet enregistrement sera associé au véhicule actuel.</string>
+    <string name="service_type">Entretien ou réparation</string>
+    <string name="cost_with_currency">Coût (%1$s)</string>
+    <string name="next_due_km_optional">Prochain kilométrage (facultatif)</string>
+    <string name="next_due_date_optional">Prochaine échéance (facultatif)</string>
+    <string name="liters">Litres</string>
+    <string name="total_cost_with_currency">Coût total (%1$s)</string>
+    <string name="expense_category">Catégorie de dépense</string>
+    <string name="amount_with_currency">Montant (%1$s)</string>
+    <string name="document_title">Nom du document</string>
+    <string name="document_category">Catégorie du document</string>
+    <string name="expiry_date_optional">Date d’expiration (facultatif)</string>
+    <string name="notes_optional">Notes (facultatif)</string>
+    <string name="error_record_fields">Vérifiez les champs requis et les valeurs numériques.</string>
+    <string name="save_record">Enregistrer</string>
+</resources>

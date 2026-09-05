@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
     private val prefs by lazy { AppPreferences(this) }
     private val vehicleRepository by lazy { (application as RovenaApp).vehicleRepository }
+    private val recordRepository by lazy { (application as RovenaApp).recordRepository }
 
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -43,6 +44,7 @@ class MainActivity : AppCompatActivity() {
                 RovenaRoot(
                     preferences = prefs,
                     vehicleRepository = vehicleRepository,
+                    recordRepository = recordRepository,
                     onLanguageSelected = ::changeLanguage,
                     onRequestNotifications = ::requestNotificationPermissionIfNeeded
                 )

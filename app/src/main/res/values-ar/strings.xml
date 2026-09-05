@@ -59,23 +59,59 @@
 
     <string name="health_title">صحة السيارة</string>
     <string name="health_not_ready_title">لا توجد بيانات كافية بعد</string>
-    <string name="health_not_ready_body">أضف سجلات الصيانة والفحص ليظهر تقييم مفيد ومبني على بيانات سيارتك.</string>
-    <string name="coming_soon">قريبًا</string>
+    <string name="health_not_ready_body">أضف سجلات الصيانة والوثائق ليظهر ملخص مفيد مبني على بيانات سيارتك.</string>
+    <string name="health_data_summary">مبني على %1$d سجل صيانة و%2$d وثيقة.</string>
+    <string name="nothing_due_now">لا يوجد شيء مستحق الآن.</string>
+    <string name="items_need_attention">هناك %1$d عنصر يحتاج انتباهك.</string>
+    <string name="costs_this_month">تكلفة السيارة هذا الشهر</string>
+    <string name="tap_to_add">اضغط للإضافة</string>
 
     <string name="delete_vehicle">حذف السيارة</string>
     <string name="delete_vehicle_title">إزالة السيارة؟</string>
-    <string name="delete_vehicle_message">هل تريد حذف %1$s من مرآبك؟ سيتم حذف سجلاتها المستقبلية أيضًا.</string>
+    <string name="delete_vehicle_message">هل تريد حذف %1$s من مرآبك؟ سيتم حذف سجلاتها أيضًا.</string>
     <string name="delete">حذف</string>
 
     <string name="no_history_title">سجل سيارتك يبدأ من هنا</string>
-    <string name="no_history_body">ستظهر الصيانة والوقود والوثائق هنا عند إضافة السجلات.</string>
+    <string name="no_history_body">ستظهر الصيانة والوقود والمصاريف والوثائق هنا عند إضافة السجلات.</string>
+    <string name="history_subtitle">خط زمني واحد لكل ما يحدث لسيارتك.</string>
     <string name="no_expenses_title">لا توجد مصاريف بعد</string>
-    <string name="no_expenses_body">ستعمل لوحة المصاريف عند بدء تسجيل الوقود والصيانة والتكاليف الأخرى.</string>
-    <string name="more_title">مزايا إضافية قادمة</string>
-    <string name="more_body">الإشعارات واللغة والنسخ الاحتياطي ورموز الطبلون والتقارير ستكون هنا.</string>
+    <string name="no_expenses_body">ابدأ بتسجيل الوقود والصيانة والتكاليف الأخرى لتعرف كم تكلفك سيارتك فعلًا.</string>
+    <string name="expenses_subtitle">الوقود والصيانة والمصاريف اليومية في مكان واحد.</string>
+    <string name="monthly_spend">هذا الشهر</string>
+    <string name="all_time_spend">الإجمالي</string>
+    <string name="recent_costs">أحدث المصاريف</string>
+    <string name="documents_subtitle">احتفظ بمواعيد وثائق سيارتك المهمة في مكان واحد.</string>
+    <string name="no_documents_title">لا توجد وثائق بعد</string>
+    <string name="no_documents_body">أضف الترخيص أو التأمين أو الفحص أو الضمان ليبقي Rovena المواعيد أمامك.</string>
+    <string name="expires_on">تنتهي في %1$s</string>
+    <string name="no_expiry">بدون تاريخ انتهاء</string>
 
+    <string name="add_maintenance">إضافة صيانة</string>
+    <string name="add_fuel">إضافة تعبئة وقود</string>
+    <string name="add_expense">إضافة مصروف</string>
+    <string name="add_document">إضافة وثيقة</string>
+    <string name="record_for_current_vehicle">سيتم حفظ هذا السجل للسيارة الحالية.</string>
+    <string name="service_type">نوع الصيانة أو الإصلاح</string>
+    <string name="cost_with_currency">التكلفة (%1$s)</string>
+    <string name="next_due_km_optional">العداد القادم للصيانة (اختياري)</string>
+    <string name="next_due_date_optional">موعد الصيانة القادم (اختياري)</string>
+    <string name="liters">اللترات</string>
+    <string name="total_cost_with_currency">التكلفة الإجمالية (%1$s)</string>
+    <string name="expense_category">فئة المصروف</string>
+    <string name="amount_with_currency">المبلغ (%1$s)</string>
+    <string name="document_title">اسم الوثيقة</string>
+    <string name="document_category">نوع الوثيقة</string>
+    <string name="expiry_date_optional">تاريخ الانتهاء (اختياري)</string>
+    <string name="notes_optional">ملاحظات (اختياري)</string>
+    <string name="error_record_fields">تحقق من الحقول المطلوبة والقيم الرقمية.</string>
+    <string name="save_record">حفظ السجل</string>
+
+    <string name="more_title">مزايا إضافية قادمة</string>
+    <string name="more_body">إعدادات الإشعارات واللغة والنسخ الاحتياطي ورموز الطبلون والتقارير ستكون هنا.</string>
+    <string name="coming_soon">قريبًا</string>
     <string name="coming_next">تم تجهيز أساس Rovena 2</string>
-    <string name="foundation_message">الخطوة القادمة هي ربط المرآب والصيانة والوقود والمصاريف وصحة السيارة بهذه التجربة الجديدة.</string>
+    <string name="foundation_message">أصبح المرآب والصيانة والوقود والمصاريف والوثائق ضمن ملف دائم واحد لكل سيارة.</string>
+
     <string name="notification_channel_engagement">تذكيرات Rovena</string>
     <string name="engagement_title">سيارتك تحتاج تحديثًا 🚗</string>
     <string name="engagement_message_mileage">مر وقت منذ آخر تحديث لعداد سيارتك. افتح Rovena لتحصل على تذكيرات أدق.</string>

@@ -59,23 +59,59 @@
 
     <string name="health_title">Vehicle health</string>
     <string name="health_not_ready_title">Not enough data yet</string>
-    <string name="health_not_ready_body">Add maintenance and inspection records to unlock a meaningful health overview.</string>
-    <string name="coming_soon">Coming next</string>
+    <string name="health_not_ready_body">Add maintenance and document records to unlock a useful data-based overview.</string>
+    <string name="health_data_summary">Based on %1$d maintenance records and %2$d documents.</string>
+    <string name="nothing_due_now">Nothing is due right now.</string>
+    <string name="items_need_attention">%1$d item(s) need attention.</string>
+    <string name="costs_this_month">Car costs this month</string>
+    <string name="tap_to_add">Tap to add</string>
 
     <string name="delete_vehicle">Delete vehicle</string>
     <string name="delete_vehicle_title">Remove vehicle?</string>
-    <string name="delete_vehicle_message">Delete %1$s from your garage? Its future records will also be removed.</string>
+    <string name="delete_vehicle_message">Delete %1$s from your garage? Its records will also be removed.</string>
     <string name="delete">Delete</string>
 
     <string name="no_history_title">Your timeline starts here</string>
-    <string name="no_history_body">Maintenance, fuel and document activity will appear here as you add records.</string>
+    <string name="no_history_body">Maintenance, fuel, expense and document activity will appear here as you add records.</string>
+    <string name="history_subtitle">A single timeline for everything that happens to your car.</string>
     <string name="no_expenses_title">No expenses yet</string>
-    <string name="no_expenses_body">The expense dashboard will activate when you start recording fuel, maintenance and other costs.</string>
-    <string name="more_title">More tools are on the way</string>
-    <string name="more_body">Notifications, language, backup, warning lights and reports will live here.</string>
+    <string name="no_expenses_body">Start recording fuel, maintenance and other costs to understand what your car really costs.</string>
+    <string name="expenses_subtitle">Fuel, maintenance and everyday costs together.</string>
+    <string name="monthly_spend">This month</string>
+    <string name="all_time_spend">All time</string>
+    <string name="recent_costs">Recent costs</string>
+    <string name="documents_subtitle">Keep important vehicle document dates in one place.</string>
+    <string name="no_documents_title">No documents yet</string>
+    <string name="no_documents_body">Add registration, insurance, inspection or warranty details and Rovena will keep the dates visible.</string>
+    <string name="expires_on">Expires %1$s</string>
+    <string name="no_expiry">No expiry date</string>
 
+    <string name="add_maintenance">Add maintenance</string>
+    <string name="add_fuel">Add fuel</string>
+    <string name="add_expense">Add expense</string>
+    <string name="add_document">Add document</string>
+    <string name="record_for_current_vehicle">This record will be saved to your current vehicle.</string>
+    <string name="service_type">Service or repair</string>
+    <string name="cost_with_currency">Cost (%1$s)</string>
+    <string name="next_due_km_optional">Next due odometer (optional)</string>
+    <string name="next_due_date_optional">Next due date (optional)</string>
+    <string name="liters">Liters</string>
+    <string name="total_cost_with_currency">Total cost (%1$s)</string>
+    <string name="expense_category">Expense category</string>
+    <string name="amount_with_currency">Amount (%1$s)</string>
+    <string name="document_title">Document title</string>
+    <string name="document_category">Document category</string>
+    <string name="expiry_date_optional">Expiry date (optional)</string>
+    <string name="notes_optional">Notes (optional)</string>
+    <string name="error_record_fields">Check the required fields and numeric values.</string>
+    <string name="save_record">Save record</string>
+
+    <string name="more_title">More tools are on the way</string>
+    <string name="more_body">Notification controls, language, backup, warning lights and reports will live here.</string>
+    <string name="coming_soon">Coming next</string>
     <string name="coming_next">Rovena 2 foundation is ready</string>
-    <string name="foundation_message">Next we will connect the garage, maintenance, fuel, costs and health system to this new experience.</string>
+    <string name="foundation_message">The garage, maintenance, fuel, costs and documents now share one persistent vehicle profile.</string>
+
     <string name="notification_channel_engagement">Rovena reminders</string>
     <string name="engagement_title">Your car misses an update 🚗</string>
     <string name="engagement_message_mileage">It has been a while since you updated your mileage. Open Rovena for more accurate reminders.</string>
