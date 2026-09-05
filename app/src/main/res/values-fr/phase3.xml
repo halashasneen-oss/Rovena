@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="insights">Analyses</string>
+    <string name="insights_title">Analyses intelligentes</string>
+    <string name="insights_subtitle">Entretien basé sur vos données, tendances de carburant et éléments à surveiller.</string>
+    <string name="care_score">Indice d’entretien Rovena</string>
+    <string name="care_score_unavailable">Ajoutez des échéances d’entretien, des dates d’expiration ou davantage de pleins pour construire un indice utile.</string>
+    <string name="care_status_excellent">Entretien excellent</string>
+    <string name="care_status_good">Entretien satisfaisant</string>
+    <string name="care_status_attention">Attention recommandée</string>
+    <string name="care_status_urgent">Action recommandée</string>
+    <string name="care_status_unknown">Données insuffisantes</string>
+    <string name="data_confidence">Fiabilité des données : %1$s</string>
+    <string name="confidence_low">Faible</string>
+    <string name="confidence_medium">Moyenne</string>
+    <string name="confidence_high">Élevée</string>
+    <string name="health_no_attention">Aucun entretien planifié ni document ne demande votre attention actuellement.</string>
+    <string name="health_attention_counts">%1$d entretien en retard · %2$d bientôt dû · %3$d document expiré · %4$d bientôt expiré</string>
+    <string name="health_disclaimer_title">Ce que signifie cet indice</string>
+    <string name="health_disclaimer">L’indice est calculé uniquement à partir des données saisies dans Rovena. Il ne constitue pas un diagnostic mécanique et ne remplace pas une inspection du véhicule.</string>
+
+    <string name="fuel_insights_title">Analyse du carburant</string>
+    <string name="fuel_insights_subtitle">Suivez l’efficacité, le coût au kilomètre et la tendance récente.</string>
+    <string name="fuel_not_enough_data">Ajoutez au moins deux pleins consécutifs avec le kilométrage pour commencer l’estimation.</string>
+    <string name="fuel_efficiency">Efficacité</string>
+    <string name="fuel_l_per_100">Consommation</string>
+    <string name="fuel_cost_per_km">Coût carburant / km</string>
+    <string name="fuel_price_per_liter">Prix moyen / L</string>
+    <string name="fuel_trend_improving">Efficacité en hausse</string>
+    <string name="fuel_trend_stable">Efficacité stable</string>
+    <string name="fuel_trend_worsening">Efficacité en baisse</string>
+    <string name="fuel_trend_unknown">Plus de pleins nécessaires pour une tendance</string>
+    <string name="fuel_trend_change">%1$s · variation de %2$d%%</string>
+    <string name="fuel_method_note">La consommation est une estimation basée sur des pleins consécutifs. Pour une meilleure précision, saisissez le kilométrage et faites le plein de manière régulière.</string>
+    <string name="smart_documents_subtitle">Les dates d’expiration alimentent l’indice d’entretien et les rappels intelligents.</string>
+
+    <string name="notification_channel_smart_care">Entretien intelligent du véhicule</string>
+    <string name="smart_reminder_title">Rovena a une mise à jour pour votre voiture</string>
+    <string name="smart_reminder_title_urgent">Votre voiture demande votre attention</string>
+    <string name="smart_reminder_maintenance_overdue">%1$s : %2$s est maintenant dû. Ouvrez Rovena pour vérifier l’entretien.</string>
+    <string name="smart_reminder_maintenance_soon">%1$s : %2$s sera bientôt dû. Ouvrez Rovena avant l’échéance.</string>
+    <string name="smart_reminder_document_expired">%2$s de %1$s a expiré. Ouvrez Rovena pour vérifier le document.</string>
+    <string name="smart_reminder_document_soon">%2$s de %1$s expire bientôt. Ouvrez Rovena pour vérifier la date.</string>
+    <string name="smart_reminder_fuel_drop">L’efficacité carburant de %1$s est environ %2$d%% inférieure à sa référence récente. Vérifiez vos derniers pleins dans Rovena.</string>
+</resources>

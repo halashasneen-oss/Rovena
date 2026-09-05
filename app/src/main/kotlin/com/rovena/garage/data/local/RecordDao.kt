@@ -22,6 +22,9 @@ interface RecordDao {
     @Query("SELECT * FROM maintenance_records WHERE vehicleId = :vehicleId ORDER BY performedAt DESC, id DESC")
     suspend fun getMaintenanceOnce(vehicleId: Long): List<MaintenanceEntity>
 
+    @Query("SELECT * FROM fuel_entries WHERE vehicleId = :vehicleId ORDER BY filledAt DESC, id DESC")
+    suspend fun getFuelOnce(vehicleId: Long): List<FuelEntryEntity>
+
     @Query("SELECT * FROM vehicle_documents WHERE vehicleId = :vehicleId ORDER BY createdAt DESC, id DESC")
     suspend fun getDocumentsOnce(vehicleId: Long): List<DocumentEntity>
 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="insights">Insights</string>
+    <string name="insights_title">Smart insights</string>
+    <string name="insights_subtitle">Data-based care, fuel trends and the things that need your attention.</string>
+    <string name="care_score">Rovena care score</string>
+    <string name="care_score_unavailable">Add scheduled maintenance, document expiry dates or more fuel records to build a meaningful score.</string>
+    <string name="care_status_excellent">Excellent care status</string>
+    <string name="care_status_good">Good care status</string>
+    <string name="care_status_attention">Attention recommended</string>
+    <string name="care_status_urgent">Action recommended</string>
+    <string name="care_status_unknown">Not enough data yet</string>
+    <string name="data_confidence">Data confidence: %1$s</string>
+    <string name="confidence_low">Low</string>
+    <string name="confidence_medium">Medium</string>
+    <string name="confidence_high">High</string>
+    <string name="health_no_attention">No scheduled maintenance or document item needs attention right now.</string>
+    <string name="health_attention_counts">%1$d overdue service · %2$d due soon · %3$d expired document · %4$d expiring soon</string>
+    <string name="health_disclaimer_title">What this score means</string>
+    <string name="health_disclaimer">The care score is calculated only from the records you enter in Rovena. It is not a mechanical diagnosis or a substitute for a vehicle inspection.</string>
+
+    <string name="fuel_insights_title">Fuel insights</string>
+    <string name="fuel_insights_subtitle">See efficiency, running fuel cost and recent direction.</string>
+    <string name="fuel_not_enough_data">Add at least two consecutive fill-ups with odometer readings to start estimating consumption.</string>
+    <string name="fuel_efficiency">Efficiency</string>
+    <string name="fuel_l_per_100">Consumption</string>
+    <string name="fuel_cost_per_km">Fuel cost / km</string>
+    <string name="fuel_price_per_liter">Average price / L</string>
+    <string name="fuel_trend_improving">Efficiency improving</string>
+    <string name="fuel_trend_stable">Efficiency stable</string>
+    <string name="fuel_trend_worsening">Efficiency worsening</string>
+    <string name="fuel_trend_unknown">More fill-ups needed for a trend</string>
+    <string name="fuel_trend_change">%1$s · %2$d%% change</string>
+    <string name="fuel_method_note">Consumption is an estimate from consecutive fill-ups. For the most accurate result, record the odometer and fill the tank consistently.</string>
+    <string name="smart_documents_subtitle">Expiry dates are included in your care score and smart reminders.</string>
+
+    <string name="notification_channel_smart_care">Smart vehicle care</string>
+    <string name="smart_reminder_title">Rovena has a car update</string>
+    <string name="smart_reminder_title_urgent">Your car needs attention</string>
+    <string name="smart_reminder_maintenance_overdue">%1$s: %2$s is due now. Open Rovena to review the maintenance record.</string>
+    <string name="smart_reminder_maintenance_soon">%1$s: %2$s is due soon. Open Rovena before it becomes overdue.</string>
+    <string name="smart_reminder_document_expired">%2$s for %1$s has expired. Open Rovena to review the document.</string>
+    <string name="smart_reminder_document_soon">%2$s for %1$s expires soon. Open Rovena to check the date.</string>
+    <string name="smart_reminder_fuel_drop">%1$s fuel efficiency is about %2$d%% worse than its recent baseline. Check your latest fill-ups in Rovena.</string>
+</resources>

@@ -207,7 +207,7 @@ private fun MainShell(
                     selected = tab == MainTab.MORE,
                     onClick = { tabIndex = MainTab.MORE.ordinal },
                     icon = { Icon(Icons.Rounded.MoreHoriz, null) },
-                    label = { Text(stringResource(R.string.more)) }
+                    label = { Text(stringResource(R.string.insights)) }
                 )
             }
         }
@@ -247,8 +247,10 @@ private fun MainShell(
                 modifier = Modifier.padding(padding),
                 onAddExpense = { openRecord(RecordAction.EXPENSE) }
             )
-            MainTab.MORE -> MoreScreen(
+            MainTab.MORE -> SmartHubScreen(
                 vehicle = currentVehicle,
+                maintenance = maintenance,
+                fuel = fuel,
                 documents = documents,
                 modifier = Modifier.padding(padding),
                 onAddDocument = { openRecord(RecordAction.DOCUMENT) }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="insights">Analizler</string>
+    <string name="insights_title">Akıllı analizler</string>
+    <string name="insights_subtitle">Veriye dayalı bakım, yakıt trendleri ve dikkat gerektiren noktalar.</string>
+    <string name="care_score">Rovena bakım puanı</string>
+    <string name="care_score_unavailable">Anlamlı bir puan oluşturmak için planlı bakım, belge bitiş tarihleri veya daha fazla yakıt kaydı ekleyin.</string>
+    <string name="care_status_excellent">Bakım durumu mükemmel</string>
+    <string name="care_status_good">Bakım durumu iyi</string>
+    <string name="care_status_attention">Dikkat önerilir</string>
+    <string name="care_status_urgent">İşlem önerilir</string>
+    <string name="care_status_unknown">Henüz yeterli veri yok</string>
+    <string name="data_confidence">Veri güveni: %1$s</string>
+    <string name="confidence_low">Düşük</string>
+    <string name="confidence_medium">Orta</string>
+    <string name="confidence_high">Yüksek</string>
+    <string name="health_no_attention">Şu anda dikkat gerektiren planlı bakım veya belge yok.</string>
+    <string name="health_attention_counts">%1$d gecikmiş bakım · %2$d yakında · %3$d süresi dolmuş belge · %4$d yakında dolacak</string>
+    <string name="health_disclaimer_title">Bu puan ne anlama geliyor?</string>
+    <string name="health_disclaimer">Bakım puanı yalnızca Rovena’ya girdiğiniz verilerden hesaplanır. Mekanik teşhis değildir ve araç muayenesinin yerini tutmaz.</string>
+
+    <string name="fuel_insights_title">Yakıt analizi</string>
+    <string name="fuel_insights_subtitle">Verimliliği, kilometre başına yakıt maliyetini ve son trendi görün.</string>
+    <string name="fuel_not_enough_data">Tüketimi tahmin etmeye başlamak için kilometre bilgili en az iki ardışık yakıt kaydı ekleyin.</string>
+    <string name="fuel_efficiency">Verimlilik</string>
+    <string name="fuel_l_per_100">Tüketim</string>
+    <string name="fuel_cost_per_km">Yakıt maliyeti / km</string>
+    <string name="fuel_price_per_liter">Ortalama fiyat / L</string>
+    <string name="fuel_trend_improving">Verimlilik iyileşiyor</string>
+    <string name="fuel_trend_stable">Verimlilik stabil</string>
+    <string name="fuel_trend_worsening">Verimlilik kötüleşiyor</string>
+    <string name="fuel_trend_unknown">Trend için daha fazla yakıt kaydı gerekli</string>
+    <string name="fuel_trend_change">%1$s · %2$d%% değişim</string>
+    <string name="fuel_method_note">Tüketim, ardışık yakıt kayıtlarından tahmin edilir. En doğru sonuç için kilometreyi kaydedin ve depoyu benzer şekilde doldurun.</string>
+    <string name="smart_documents_subtitle">Son kullanma tarihleri bakım puanına ve akıllı hatırlatıcılara dahil edilir.</string>
+
+    <string name="notification_channel_smart_care">Akıllı araç bakımı</string>
+    <string name="smart_reminder_title">Rovena aracınız için bir güncelleme buldu</string>
+    <string name="smart_reminder_title_urgent">Aracınız ilgi gerektiriyor</string>
+    <string name="smart_reminder_maintenance_overdue">%1$s: %2$s zamanı geldi. Bakım kaydını incelemek için Rovena’yı açın.</string>
+    <string name="smart_reminder_maintenance_soon">%1$s: %2$s yakında gelecek. Gecikmeden önce Rovena’yı açın.</string>
+    <string name="smart_reminder_document_expired">%1$s için %2$s süresi doldu. Belgeyi incelemek için Rovena’yı açın.</string>
+    <string name="smart_reminder_document_soon">%1$s için %2$s yakında sona erecek. Tarihi kontrol etmek için Rovena’yı açın.</string>
+    <string name="smart_reminder_fuel_drop">%1$s yakıt verimliliği son referansına göre yaklaşık %2$d%% daha kötü. Son yakıt kayıtlarınızı Rovena’da kontrol edin.</string>
+</resources>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="insights">Análisis</string>
+    <string name="insights_title">Análisis inteligentes</string>
+    <string name="insights_subtitle">Cuidado basado en datos, tendencias de combustible y elementos que necesitan atención.</string>
+    <string name="care_score">Índice de cuidado Rovena</string>
+    <string name="care_score_unavailable">Añade mantenimientos programados, fechas de caducidad o más registros de combustible para crear un índice útil.</string>
+    <string name="care_status_excellent">Estado de cuidado excelente</string>
+    <string name="care_status_good">Buen estado de cuidado</string>
+    <string name="care_status_attention">Se recomienda atención</string>
+    <string name="care_status_urgent">Se recomienda actuar</string>
+    <string name="care_status_unknown">Aún no hay datos suficientes</string>
+    <string name="data_confidence">Confianza de los datos: %1$s</string>
+    <string name="confidence_low">Baja</string>
+    <string name="confidence_medium">Media</string>
+    <string name="confidence_high">Alta</string>
+    <string name="health_no_attention">No hay mantenimiento programado ni documentos que necesiten atención ahora.</string>
+    <string name="health_attention_counts">%1$d mantenimiento vencido · %2$d próximo · %3$d documento caducado · %4$d próximo a caducar</string>
+    <string name="health_disclaimer_title">Qué significa este índice</string>
+    <string name="health_disclaimer">El índice se calcula solo con los datos que introduces en Rovena. No es un diagnóstico mecánico ni sustituye una inspección del vehículo.</string>
+
+    <string name="fuel_insights_title">Análisis de combustible</string>
+    <string name="fuel_insights_subtitle">Consulta eficiencia, coste por kilómetro y tendencia reciente.</string>
+    <string name="fuel_not_enough_data">Añade al menos dos repostajes consecutivos con kilometraje para empezar a estimar el consumo.</string>
+    <string name="fuel_efficiency">Eficiencia</string>
+    <string name="fuel_l_per_100">Consumo</string>
+    <string name="fuel_cost_per_km">Coste combustible / km</string>
+    <string name="fuel_price_per_liter">Precio medio / L</string>
+    <string name="fuel_trend_improving">La eficiencia mejora</string>
+    <string name="fuel_trend_stable">La eficiencia está estable</string>
+    <string name="fuel_trend_worsening">La eficiencia empeora</string>
+    <string name="fuel_trend_unknown">Se necesitan más repostajes para ver una tendencia</string>
+    <string name="fuel_trend_change">%1$s · cambio del %2$d%%</string>
+    <string name="fuel_method_note">El consumo es una estimación basada en repostajes consecutivos. Para mayor precisión, registra el kilometraje y reposta de forma consistente.</string>
+    <string name="smart_documents_subtitle">Las fechas de caducidad forman parte del índice de cuidado y de los recordatorios inteligentes.</string>
+
+    <string name="notification_channel_smart_care">Cuidado inteligente del vehículo</string>
+    <string name="smart_reminder_title">Rovena tiene una actualización de tu coche</string>
+    <string name="smart_reminder_title_urgent">Tu coche necesita atención</string>
+    <string name="smart_reminder_maintenance_overdue">%1$s: %2$s ya está pendiente. Abre Rovena para revisar el mantenimiento.</string>
+    <string name="smart_reminder_maintenance_soon">%1$s: %2$s vence pronto. Abre Rovena antes de que se retrase.</string>
+    <string name="smart_reminder_document_expired">%2$s de %1$s ha caducado. Abre Rovena para revisar el documento.</string>
+    <string name="smart_reminder_document_soon">%2$s de %1$s caduca pronto. Abre Rovena para comprobar la fecha.</string>
+    <string name="smart_reminder_fuel_drop">La eficiencia de combustible de %1$s es aproximadamente un %2$d%% peor que su referencia reciente. Revisa tus últimos repostajes en Rovena.</string>
+</resources>

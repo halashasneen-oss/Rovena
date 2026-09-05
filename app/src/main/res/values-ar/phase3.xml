@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="insights">التحليلات</string>
+    <string name="insights_title">تحليلات ذكية</string>
+    <string name="insights_subtitle">متابعة مبنية على بيانات سيارتك واستهلاك الوقود والعناصر التي تحتاج انتباهك.</string>
+    <string name="care_score">مؤشر العناية من Rovena</string>
+    <string name="care_score_unavailable">أضف مواعيد الصيانة أو تواريخ انتهاء الوثائق أو المزيد من سجلات الوقود لبناء مؤشر مفيد.</string>
+    <string name="care_status_excellent">حالة العناية ممتازة</string>
+    <string name="care_status_good">حالة العناية جيدة</string>
+    <string name="care_status_attention">يوصى بالانتباه</string>
+    <string name="care_status_urgent">يوصى باتخاذ إجراء</string>
+    <string name="care_status_unknown">البيانات غير كافية بعد</string>
+    <string name="data_confidence">موثوقية البيانات: %1$s</string>
+    <string name="confidence_low">منخفضة</string>
+    <string name="confidence_medium">متوسطة</string>
+    <string name="confidence_high">مرتفعة</string>
+    <string name="health_no_attention">لا توجد صيانة مجدولة أو وثيقة تحتاج انتباهك الآن.</string>
+    <string name="health_attention_counts">%1$d صيانة متأخرة · %2$d قريبة · %3$d وثيقة منتهية · %4$d ستنتهي قريبًا</string>
+    <string name="health_disclaimer_title">ماذا يعني هذا المؤشر؟</string>
+    <string name="health_disclaimer">يُحسب مؤشر العناية فقط من البيانات التي تدخلها في Rovena. وهو ليس تشخيصًا ميكانيكيًا ولا بديلًا عن فحص السيارة.</string>
+
+    <string name="fuel_insights_title">تحليل الوقود</string>
+    <string name="fuel_insights_subtitle">اعرف الكفاءة وتكلفة الوقود واتجاه الاستهلاك مؤخرًا.</string>
+    <string name="fuel_not_enough_data">أضف تعبئتين متتاليتين على الأقل مع قراءة العداد لبدء تقدير الاستهلاك.</string>
+    <string name="fuel_efficiency">الكفاءة</string>
+    <string name="fuel_l_per_100">الاستهلاك</string>
+    <string name="fuel_cost_per_km">تكلفة الوقود / كم</string>
+    <string name="fuel_price_per_liter">متوسط السعر / لتر</string>
+    <string name="fuel_trend_improving">الكفاءة تتحسن</string>
+    <string name="fuel_trend_stable">الكفاءة مستقرة</string>
+    <string name="fuel_trend_worsening">الكفاءة تتراجع</string>
+    <string name="fuel_trend_unknown">نحتاج تعبئات أكثر لمعرفة الاتجاه</string>
+    <string name="fuel_trend_change">%1$s · تغير %2$d%%</string>
+    <string name="fuel_method_note">الاستهلاك تقديري اعتمادًا على التعبئات المتتالية. لأدق نتيجة، سجّل قراءة العداد وعبّئ الخزان بطريقة متقاربة كل مرة.</string>
+    <string name="smart_documents_subtitle">تواريخ الانتهاء تدخل ضمن مؤشر العناية والتنبيهات الذكية.</string>
+
+    <string name="notification_channel_smart_care">تنبيهات العناية الذكية</string>
+    <string name="smart_reminder_title">لدى Rovena تحديث لسيارتك</string>
+    <string name="smart_reminder_title_urgent">سيارتك تحتاج انتباهك</string>
+    <string name="smart_reminder_maintenance_overdue">%1$s: موعد %2$s مستحق الآن. افتح Rovena لمراجعة سجل الصيانة.</string>
+    <string name="smart_reminder_maintenance_soon">%1$s: موعد %2$s قريب. افتح Rovena قبل أن يصبح متأخرًا.</string>
+    <string name="smart_reminder_document_expired">انتهت صلاحية %2$s للسيارة %1$s. افتح Rovena لمراجعة الوثيقة.</string>
+    <string name="smart_reminder_document_soon">ستنتهي %2$s للسيارة %1$s قريبًا. افتح Rovena للتحقق من الموعد.</string>
+    <string name="smart_reminder_fuel_drop">كفاءة الوقود في %1$s أقل بحوالي %2$d%% من مستواها الأخير. راجع آخر تعبئاتك في Rovena.</string>
+</resources>

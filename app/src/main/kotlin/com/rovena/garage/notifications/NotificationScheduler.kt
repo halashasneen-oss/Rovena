@@ -22,8 +22,8 @@ object NotificationScheduler {
             engagementRequest
         )
 
-        val vehicleDueRequest = PeriodicWorkRequestBuilder<DueReminderWorker>(24, TimeUnit.HOURS)
-            .setInitialDelay(6, TimeUnit.HOURS)
+        val vehicleDueRequest = PeriodicWorkRequestBuilder<DueReminderWorker>(12, TimeUnit.HOURS)
+            .setInitialDelay(3, TimeUnit.HOURS)
             .build()
         workManager.enqueueUniquePeriodicWork(
             VEHICLE_DUE_WORK_NAME,
