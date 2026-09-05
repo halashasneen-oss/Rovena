@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -109,6 +108,9 @@ private fun VehicleToolsScreen(
 ) {
     var expandedWarning by rememberSaveable { mutableStateOf<String?>(null) }
     var expandedSymptom by rememberSaveable { mutableStateOf<String?>(null) }
+    val plan = remember(vehicle, maintenance) {
+        vehicle?.let { MaintenancePlanEngine.suggestions(it, maintenance) }.orEmpty()
+    }
 
     LazyColumn(
         modifier = modifier,
@@ -124,20 +126,17 @@ private fun VehicleToolsScreen(
             item {
                 Stage4InfoCard(R.string.no_vehicle_title, R.string.no_vehicle_body)
             }
-            return@LazyColumn
-        }
-
-        val plan = remember(vehicle, maintenance) { MaintenancePlanEngine.suggestions(vehicle, maintenance) }
-
-        item {
-            SectionHeader(
-                icon = { Icon(Icons.Rounded.Build, null) },
-                title = stringResource(R.string.maintenance_plan_title),
-                subtitle = stringResource(R.string.maintenance_plan_subtitle)
-            )
-        }
-        items(plan.take(7), key = { it.task.name }) { item ->
-            MaintenancePlanCard(item)
+        } else {
+            item {
+                SectionHeader(
+                    icon = { Icon(Icons.Rounded.Build, null) },
+                    title = stringResource(R.string.maintenance_plan_title),
+                    subtitle = stringResource(R.string.maintenance_plan_subtitle)
+                )
+            }
+            items(plan.take(7), key = { it.task.name }) { item ->
+                MaintenancePlanCard(item)
+            }
         }
 
         item {
