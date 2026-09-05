@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private val recordRepository by lazy { app.recordRepository }
     private val backupManager by lazy { RovenaBackupManager(app.database) }
     private var pendingBackupText: String? = null
+    private var startupPermissionCheckDone = false
 
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -86,7 +87,8 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             val savedLanguage = prefs.languageTag.first()
-            if (savedLanguage.isNotBlank()) {
+            val currentLanguage = AppCompatDelegate.getApplicationLocales().toLanguageTags()
+            if (savedLanguage.isNotBlank() && currentLanguage != savedLanguage) {
                 AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(savedLanguage))
             }
             prefs.markOpened()
@@ -106,23 +108,29 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
-
-        lifecycleScope.launch {
-            if (prefs.onboardingCompleted.first() && !prefs.notificationPermissionAsked.first()) {
-                requestNotificationPermissionIfNeeded()
-            }
-        }
     }
 
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch { prefs.markOpened() }
+
+        if (!startupPermissionCheckDone) {
+            startupPermissionCheckDone = true
+            lifecycleScope.launch {
+                if (prefs.onboardingCompleted.first() && !prefs.notificationPermissionAsked.first()) {
+                    requestNotificationPermissionIfNeeded()
+                }
+            }
+        }
     }
 
     private fun changeLanguage(tag: String) {
         lifecycleScope.launch {
             prefs.setLanguage(tag)
-            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
+            val current = AppCompatDelegate.getApplicationLocales().toLanguageTags()
+            if (current != tag) {
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
+            }
         }
     }
 
