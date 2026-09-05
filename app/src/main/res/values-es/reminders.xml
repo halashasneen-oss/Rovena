@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_channel_vehicle_due">Alertas de cuidado del vehículo</string>
+    <string name="vehicle_due_title">Tu coche necesita atención</string>
+    <string name="vehicle_due_message">%1$d elemento(s) de %2$s están pendientes o caducan pronto. Abre Rovena para revisarlos.</string>
+</resources>

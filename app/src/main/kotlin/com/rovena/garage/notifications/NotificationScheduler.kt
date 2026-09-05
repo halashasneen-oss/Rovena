@@ -7,16 +7,28 @@ import androidx.work.WorkManager
 import java.util.concurrent.TimeUnit
 
 object NotificationScheduler {
-    private const val WORK_NAME = "rovena_engagement_check"
+    private const val ENGAGEMENT_WORK_NAME = "rovena_engagement_check"
+    private const val VEHICLE_DUE_WORK_NAME = "rovena_vehicle_due_check"
 
     fun ensureScheduled(context: Context) {
-        val request = PeriodicWorkRequestBuilder<EngagementWorker>(24, TimeUnit.HOURS)
+        val workManager = WorkManager.getInstance(context)
+
+        val engagementRequest = PeriodicWorkRequestBuilder<EngagementWorker>(24, TimeUnit.HOURS)
             .setInitialDelay(24, TimeUnit.HOURS)
             .build()
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            WORK_NAME,
+        workManager.enqueueUniquePeriodicWork(
+            ENGAGEMENT_WORK_NAME,
             ExistingPeriodicWorkPolicy.UPDATE,
-            request
+            engagementRequest
+        )
+
+        val vehicleDueRequest = PeriodicWorkRequestBuilder<DueReminderWorker>(24, TimeUnit.HOURS)
+            .setInitialDelay(6, TimeUnit.HOURS)
+            .build()
+        workManager.enqueueUniquePeriodicWork(
+            VEHICLE_DUE_WORK_NAME,
+            ExistingPeriodicWorkPolicy.UPDATE,
+            vehicleDueRequest
         )
     }
 }

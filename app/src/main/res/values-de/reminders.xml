@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_channel_vehicle_due">Fahrzeugpflege-Hinweise</string>
+    <string name="vehicle_due_title">Dein Auto braucht Aufmerksamkeit</string>
+    <string name="vehicle_due_message">%1$d Element(e) für %2$s sind fällig oder laufen bald ab. Öffne Rovena zur Prüfung.</string>
+</resources>

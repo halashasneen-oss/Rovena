@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_channel_vehicle_due">Alertes d’entretien du véhicule</string>
+    <string name="vehicle_due_title">Votre voiture demande votre attention</string>
+    <string name="vehicle_due_message">%1$d élément(s) pour %2$s sont dus ou expirent bientôt. Ouvrez Rovena pour les vérifier.</string>
+</resources>

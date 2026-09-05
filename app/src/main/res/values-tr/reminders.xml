@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_channel_vehicle_due">Araç bakım uyarıları</string>
+    <string name="vehicle_due_title">Aracınız ilgi gerektiriyor</string>
+    <string name="vehicle_due_message">%2$s için %1$d öğenin zamanı geldi veya yakında sona erecek. Kontrol etmek için Rovena’yı açın.</string>
+</resources>

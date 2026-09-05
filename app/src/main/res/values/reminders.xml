@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_channel_vehicle_due">Vehicle care alerts</string>
+    <string name="vehicle_due_title">Your car needs attention</string>
+    <string name="vehicle_due_message">%1$d item(s) for %2$s are due or expiring soon. Open Rovena to review them.</string>
+</resources>

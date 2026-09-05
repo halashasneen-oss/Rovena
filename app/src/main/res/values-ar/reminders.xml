@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_channel_vehicle_due">تنبيهات العناية بالسيارة</string>
+    <string name="vehicle_due_title">سيارتك تحتاج انتباهك</string>
+    <string name="vehicle_due_message">هناك %1$d عنصر للسيارة %2$s مستحق أو سينتهي قريبًا. افتح Rovena لمراجعته.</string>
+</resources>

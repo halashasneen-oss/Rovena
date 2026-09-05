@@ -21,6 +21,8 @@ class AppPreferences(private val context: Context) {
         val engagementEnabled = booleanPreferencesKey("engagement_enabled")
         val engagementFrequencyDays = intPreferencesKey("engagement_frequency_days")
         val lastEngagementNotificationAt = longPreferencesKey("last_engagement_notification_at")
+        val vehicleRemindersEnabled = booleanPreferencesKey("vehicle_reminders_enabled")
+        val lastVehicleReminderAt = longPreferencesKey("last_vehicle_reminder_at")
     }
 
     val onboardingCompleted: Flow<Boolean> = context.dataStore.data.map { it[Keys.onboardingCompleted] ?: false }
@@ -30,6 +32,8 @@ class AppPreferences(private val context: Context) {
     val engagementEnabled: Flow<Boolean> = context.dataStore.data.map { it[Keys.engagementEnabled] ?: true }
     val engagementFrequencyDays: Flow<Int> = context.dataStore.data.map { it[Keys.engagementFrequencyDays] ?: 7 }
     val lastEngagementNotificationAt: Flow<Long> = context.dataStore.data.map { it[Keys.lastEngagementNotificationAt] ?: 0L }
+    val vehicleRemindersEnabled: Flow<Boolean> = context.dataStore.data.map { it[Keys.vehicleRemindersEnabled] ?: true }
+    val lastVehicleReminderAt: Flow<Long> = context.dataStore.data.map { it[Keys.lastVehicleReminderAt] ?: 0L }
 
     suspend fun completeOnboarding() = context.dataStore.edit { it[Keys.onboardingCompleted] = true }
     suspend fun setLanguage(tag: String) = context.dataStore.edit { it[Keys.languageTag] = tag }
@@ -38,4 +42,6 @@ class AppPreferences(private val context: Context) {
     suspend fun setEngagementEnabled(enabled: Boolean) = context.dataStore.edit { it[Keys.engagementEnabled] = enabled }
     suspend fun setEngagementFrequencyDays(days: Int) = context.dataStore.edit { it[Keys.engagementFrequencyDays] = days.coerceIn(1, 30) }
     suspend fun markEngagementNotificationSent(time: Long) = context.dataStore.edit { it[Keys.lastEngagementNotificationAt] = time }
+    suspend fun setVehicleRemindersEnabled(enabled: Boolean) = context.dataStore.edit { it[Keys.vehicleRemindersEnabled] = enabled }
+    suspend fun markVehicleReminderSent(time: Long) = context.dataStore.edit { it[Keys.lastVehicleReminderAt] = time }
 }
