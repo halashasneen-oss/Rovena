@@ -10,7 +10,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-private val Context.dataStore by preferencesDataStore(name = "rovena_preferences")
+private val Context.dataStore by preferencesDataStore(name = "rovena_auto_preferences")
 
 class AppPreferences(private val context: Context) {
     private object Keys {
