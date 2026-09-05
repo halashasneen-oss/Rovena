@@ -48,7 +48,7 @@ class DueReminderWorker(
                 )
             }
 
-            val candidate = reminders.firstOrNull() ?: return Result.success()
+            val candidate = reminders.maxByOrNull { it.priority } ?: return Result.success()
             val lastKey = prefs.lastSmartReminderKey.first()
             if (candidate.key == lastKey && lastAt > 0L && now - lastAt < TimeUnit.DAYS.toMillis(3)) {
                 return Result.success()
