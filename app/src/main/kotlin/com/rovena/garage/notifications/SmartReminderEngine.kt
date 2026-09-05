@@ -36,7 +36,7 @@ object SmartReminderEngine {
         val name = vehicle.nickname.ifBlank { "${vehicle.make} ${vehicle.model}" }
         val reminders = mutableListOf<SmartReminder>()
 
-        maintenance.forEach { record ->
+        VehicleHealthEngine.latestMaintenanceSchedules(maintenance).forEach { record ->
             when {
                 VehicleHealthEngine.isMaintenanceOverdue(record, vehicle.mileage, now) -> {
                     reminders += SmartReminder(
@@ -65,7 +65,7 @@ object SmartReminderEngine {
             }
         }
 
-        documents.forEach { document ->
+        VehicleHealthEngine.latestDocuments(documents).forEach { document ->
             when {
                 VehicleHealthEngine.isDocumentExpired(document, now) -> {
                     reminders += SmartReminder(
