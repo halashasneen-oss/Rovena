@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_eyebrow">Tu garaje digital, siempre contigo</string>
+    <string name="onboarding_badge">Cuidado • combustible • gastos</string>
+    <string name="onboarding_visual_description">Ilustración de vehículo de Rovena Auto</string>
+    <string name="onboarding_language_hint">Elige ahora. Podrás cambiar el idioma más tarde en Ajustes.</string>
+    <string name="notification_fixed_title">Los recordatorios inteligentes están activos</string>
+    <string name="notification_fixed_every_12h">Rovena revisa los recordatorios cada 12 horas</string>
+    <string name="notification_fixed_note">El interruptor de recordatorios dentro de la app queda fijado en activo. El permiso de notificaciones de Android sigue aplicando.</string>
+</resources>

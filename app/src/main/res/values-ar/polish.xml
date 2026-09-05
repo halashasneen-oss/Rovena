@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_eyebrow">مرآبك الرقمي معك دائمًا</string>
+    <string name="onboarding_badge">العناية بالمركبة • الوقود • المصاريف</string>
+    <string name="onboarding_visual_description">رسم لمركبة Rovena Auto</string>
+    <string name="onboarding_language_hint">اختر اللغة الآن، ويمكنك تغييرها لاحقًا من الإعدادات.</string>
+    <string name="notification_fixed_title">التنبيهات الذكية مفعّلة</string>
+    <string name="notification_fixed_every_12h">يقوم Rovena بفحص التنبيهات كل 12 ساعة</string>
+    <string name="notification_fixed_note">مؤشر التنبيهات داخل التطبيق مثبت على التشغيل. يبقى إذن إشعارات أندرويد خاضعًا لإعدادات النظام.</string>
+</resources>

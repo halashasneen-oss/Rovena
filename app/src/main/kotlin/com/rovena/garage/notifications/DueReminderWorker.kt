@@ -29,11 +29,10 @@ class DueReminderWorker(
 
     override suspend fun doWork(): Result {
         val prefs = AppPreferences(applicationContext)
-        if (!prefs.vehicleRemindersEnabled.first()) return Result.success()
-
         val now = System.currentTimeMillis()
+        val reminderWindow = TimeUnit.HOURS.toMillis(NotificationScheduler.REMINDER_INTERVAL_HOURS)
         val lastAt = prefs.lastSmartReminderAt.first()
-        if (lastAt > 0L && now - lastAt < TimeUnit.HOURS.toMillis(24)) return Result.success()
+        if (lastAt > 0L && now - lastAt < reminderWindow) return Result.success()
 
         val database = RovenaDatabase.create(applicationContext)
         return try {
@@ -50,7 +49,7 @@ class DueReminderWorker(
 
             val candidate = reminders.maxByOrNull { it.priority } ?: return Result.success()
             val lastKey = prefs.lastSmartReminderKey.first()
-            if (candidate.key == lastKey && lastAt > 0L && now - lastAt < TimeUnit.DAYS.toMillis(3)) {
+            if (candidate.key == lastKey && lastAt > 0L && now - lastAt < reminderWindow) {
                 return Result.success()
             }
 

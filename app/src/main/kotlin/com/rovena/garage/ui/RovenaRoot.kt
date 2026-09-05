@@ -1,22 +1,13 @@
 package com.rovena.garage.ui
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DirectionsCar
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.MoreHoriz
 import androidx.compose.material.icons.rounded.Payments
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -32,8 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rovena.garage.R
 import com.rovena.garage.data.AppPreferences
@@ -67,7 +56,7 @@ fun RovenaRoot(
     val languageTag by preferences.languageTag.collectAsStateWithLifecycle(initialValue = "")
 
     if (!onboardingDone) {
-        OnboardingScreen(
+        AutomotiveOnboardingScreen(
             selectedLanguage = languageTag,
             onLanguageSelected = onLanguageSelected,
             onFinished = {
@@ -87,67 +76,6 @@ fun RovenaRoot(
             onExportBackup = onExportBackup,
             onImportBackup = onImportBackup
         )
-    }
-}
-
-@Composable
-private fun OnboardingScreen(
-    selectedLanguage: String,
-    onLanguageSelected: (String) -> Unit,
-    onFinished: () -> Unit
-) {
-    var page by rememberSaveable { mutableIntStateOf(0) }
-    val titles = listOf(
-        R.string.onboarding_title_1,
-        R.string.onboarding_title_2,
-        R.string.onboarding_title_3
-    )
-    val bodies = listOf(
-        R.string.onboarding_body_1,
-        R.string.onboarding_body_2,
-        R.string.onboarding_body_3
-    )
-
-    Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp, vertical = 48.dp),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column {
-            Text("ROVENA", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black)
-            Spacer(Modifier.height(10.dp))
-            Text(stringResource(R.string.smart_car_companion), color = MaterialTheme.colorScheme.primary)
-        }
-
-        if (page == 0) {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(stringResource(R.string.choose_language), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-                listOf(
-                    "ar" to "العربية",
-                    "en" to "English",
-                    "fr" to "Français",
-                    "es" to "Español",
-                    "de" to "Deutsch",
-                    "tr" to "Türkçe"
-                ).forEach { (tag, label) ->
-                    Button(onClick = { onLanguageSelected(tag) }, modifier = Modifier.fillMaxWidth()) {
-                        Text(if (selectedLanguage == tag) "✓  $label" else label)
-                    }
-                }
-            }
-        } else {
-            Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                Text(stringResource(titles[page - 1]), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-                Text(stringResource(bodies[page - 1]), style = MaterialTheme.typography.bodyLarge)
-            }
-        }
-
-        Button(
-            onClick = { if (page < 3) page++ else onFinished() },
-            enabled = page != 0 || selectedLanguage.isNotBlank(),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(if (page < 3) stringResource(R.string.continue_label) else stringResource(R.string.get_started))
-        }
     }
 }
 

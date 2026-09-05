@@ -5,7 +5,9 @@
     <application
         android:name=".RovenaApp"
         android:allowBackup="true"
-        android:label="@string/app_name"
+        android:icon="@drawable/rovena_app_visual"
+        android:roundIcon="@drawable/rovena_app_visual"
+        android:label="@string/app_display_name"
         android:localeConfig="@xml/locales_config"
         android:supportsRtl="true"
         android:theme="@style/Theme.Rovena">

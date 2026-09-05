@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_eyebrow">Dijital garajınız her zaman yanınızda</string>
+    <string name="onboarding_badge">Araç bakımı • yakıt • giderler</string>
+    <string name="onboarding_visual_description">Rovena Auto araç görseli</string>
+    <string name="onboarding_language_hint">Şimdi seçin. Dili daha sonra Ayarlar’dan değiştirebilirsiniz.</string>
+    <string name="notification_fixed_title">Akıllı hatırlatmalar aktif</string>
+    <string name="notification_fixed_every_12h">Rovena hatırlatmaları her 12 saatte bir kontrol eder</string>
+    <string name="notification_fixed_note">Uygulama içi hatırlatma anahtarı açık konumda sabittir. Android sistem bildirim izni yine geçerlidir.</string>
+</resources>

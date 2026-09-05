@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_eyebrow">Votre garage numérique, toujours avec vous</string>
+    <string name="onboarding_badge">Entretien • carburant • dépenses</string>
+    <string name="onboarding_visual_description">Illustration automobile Rovena Auto</string>
+    <string name="onboarding_language_hint">Choisissez maintenant. Vous pourrez changer la langue plus tard dans les paramètres.</string>
+    <string name="notification_fixed_title">Les rappels intelligents sont actifs</string>
+    <string name="notification_fixed_every_12h">Rovena vérifie les rappels toutes les 12 heures</string>
+    <string name="notification_fixed_note">Le bouton des rappels dans l’application reste activé. L’autorisation système Android s’applique toujours.</string>
+</resources>

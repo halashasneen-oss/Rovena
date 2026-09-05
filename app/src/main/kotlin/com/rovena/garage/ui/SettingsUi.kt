@@ -27,6 +27,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -64,9 +65,6 @@ internal fun SettingsScreen(
     onShareReport: () -> Unit
 ) {
     val themeMode by preferences.themeMode.collectAsStateWithLifecycle(initialValue = AppPreferences.THEME_SYSTEM)
-    val engagementEnabled by preferences.engagementEnabled.collectAsStateWithLifecycle(initialValue = true)
-    val engagementFrequency by preferences.engagementFrequencyDays.collectAsStateWithLifecycle(initialValue = 7)
-    val vehicleRemindersEnabled by preferences.vehicleRemindersEnabled.collectAsStateWithLifecycle(initialValue = true)
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val app = context.applicationContext as RovenaApp
@@ -164,33 +162,28 @@ internal fun SettingsScreen(
         item {
             SettingsCard(
                 icon = { Icon(Icons.Rounded.Notifications, null) },
-                title = stringResource(R.string.notifications_settings_title),
-                subtitle = stringResource(R.string.notifications_settings_subtitle)
+                title = stringResource(R.string.notification_fixed_title),
+                subtitle = stringResource(R.string.notification_fixed_every_12h)
             ) {
-                SettingToggle(
-                    title = stringResource(R.string.vehicle_reminders_setting),
-                    checked = vehicleRemindersEnabled,
-                    onCheckedChange = { enabled -> scope.launch { preferences.setVehicleRemindersEnabled(enabled) } }
-                )
-                SettingToggle(
-                    title = stringResource(R.string.engagement_reminders_setting),
-                    checked = engagementEnabled,
-                    onCheckedChange = { enabled -> scope.launch { preferences.setEngagementEnabled(enabled) } }
-                )
-                if (engagementEnabled) {
-                    Text(stringResource(R.string.reminder_frequency), style = MaterialTheme.typography.labelLarge)
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        listOf(3, 7, 14, 30).forEach { days ->
-                            item {
-                                FilterChip(
-                                    selected = engagementFrequency == days,
-                                    onClick = { scope.launch { preferences.setEngagementFrequencyDays(days) } },
-                                    label = { Text(stringResource(R.string.days_format, days)) }
-                                )
-                            }
-                        }
-                    }
+                LockedNotificationRow(stringResource(R.string.vehicle_reminders_setting))
+                LockedNotificationRow(stringResource(R.string.engagement_reminders_setting))
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer
+                ) {
+                    Text(
+                        stringResource(R.string.notification_fixed_every_12h),
+                        modifier = Modifier.padding(14.dp),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
+                Text(
+                    stringResource(R.string.notification_fixed_note),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
 
@@ -285,9 +278,9 @@ private fun SettingsCard(
 }
 
 @Composable
-private fun SettingToggle(title: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+private fun LockedNotificationRow(title: String) {
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Text(title, modifier = Modifier.weight(1f), fontWeight = FontWeight.SemiBold)
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
+        Switch(checked = true, onCheckedChange = null, enabled = false)
     }
 }

@@ -25,10 +25,7 @@ class EngagementWorker(
 
     override suspend fun doWork(): Result {
         val prefs = AppPreferences(applicationContext)
-        if (!prefs.engagementEnabled.first()) return Result.success()
-
-        val frequencyDays = prefs.engagementFrequencyDays.first().coerceIn(1, 30)
-        val threshold = TimeUnit.DAYS.toMillis(frequencyDays.toLong())
+        val threshold = TimeUnit.HOURS.toMillis(NotificationScheduler.REMINDER_INTERVAL_HOURS)
         val now = System.currentTimeMillis()
         val lastOpened = prefs.lastOpenedAt.first()
         val lastNotification = prefs.lastEngagementNotificationAt.first()
@@ -46,6 +43,7 @@ class EngagementWorker(
             localized.getString(R.string.engagement_message_costs),
             localized.getString(R.string.engagement_message_health)
         )
+        val messageIndex = ((now / threshold) % messages.size).toInt()
 
         val intent = Intent(applicationContext, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
@@ -58,8 +56,8 @@ class EngagementWorker(
         val notification = NotificationCompat.Builder(localized, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(localized.getString(R.string.engagement_title))
-            .setContentText(messages[(now / threshold).toInt().mod(messages.size)])
-            .setStyle(NotificationCompat.BigTextStyle().bigText(messages[(now / threshold).toInt().mod(messages.size)]))
+            .setContentText(messages[messageIndex])
+            .setStyle(NotificationCompat.BigTextStyle().bigText(messages[messageIndex]))
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

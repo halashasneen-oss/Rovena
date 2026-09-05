@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_eyebrow">Ihre digitale Garage – immer dabei</string>
+    <string name="onboarding_badge">Fahrzeugpflege • Kraftstoff • Kosten</string>
+    <string name="onboarding_visual_description">Rovena Auto Fahrzeugillustration</string>
+    <string name="onboarding_language_hint">Jetzt auswählen. Die Sprache kann später in den Einstellungen geändert werden.</string>
+    <string name="notification_fixed_title">Intelligente Erinnerungen sind aktiv</string>
+    <string name="notification_fixed_every_12h">Rovena prüft Erinnerungen alle 12 Stunden</string>
+    <string name="notification_fixed_note">Der Erinnerungsschalter in der App bleibt aktiviert. Die Android-Systemberechtigung für Benachrichtigungen gilt weiterhin.</string>
+</resources>
