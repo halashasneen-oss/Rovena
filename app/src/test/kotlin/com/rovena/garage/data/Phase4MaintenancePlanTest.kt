@@ -25,8 +25,8 @@ class Phase4MaintenancePlanTest {
         val oil = MaintenancePlanEngine.suggestions(vehicle(20_000), emptyList())
             .first { it.task == MaintenanceTask.ENGINE_OIL }
 
-        assertEquals(20_000, oil.nextDueMileage)
-        assertEquals(0, oil.remainingKm)
+        assertEquals(20_000L, oil.nextDueMileage)
+        assertEquals(0L, oil.remainingKm)
         assertEquals(MaintenancePlanStatus.DUE_SOON, oil.status)
         assertFalse(oil.basedOnRecordedService)
     }
@@ -45,8 +45,8 @@ class Phase4MaintenancePlanTest {
         val oil = MaintenancePlanEngine.suggestions(vehicle(21_000), records)
             .first { it.task == MaintenanceTask.ENGINE_OIL }
 
-        assertEquals(28_000, oil.nextDueMileage)
-        assertEquals(7_000, oil.remainingKm)
+        assertEquals(28_000L, oil.nextDueMileage)
+        assertEquals(7_000L, oil.remainingKm)
         assertTrue(oil.basedOnRecordedService)
         assertEquals(MaintenancePlanStatus.ON_TRACK, oil.status)
     }
