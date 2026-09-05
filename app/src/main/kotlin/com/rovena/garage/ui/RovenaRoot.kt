@@ -1,6 +1,7 @@
 package com.rovena.garage.ui
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DirectionsCar
 import androidx.compose.material.icons.rounded.History
