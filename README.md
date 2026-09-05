@@ -18,11 +18,12 @@ Rovena now has a Room-backed multi-car garage. Users can add cars, keep make/mod
 Maintenance, fuel, expenses and documents are first-class records linked to each vehicle. New fuel or maintenance odometer readings can advance the saved vehicle odometer, costs feed the expense dashboard, and scheduled maintenance/document dates drive local reminders.
 
 ## Milestone 3 — smart insights
-Rovena now calculates estimated fuel efficiency from consecutive fill-ups, including km/L, L/100 km, fuel cost per km, average price per liter and recent efficiency direction. A data-based care score summarizes overdue/upcoming maintenance, expired/expiring documents and meaningful fuel-efficiency deterioration with an explicit confidence level.
+Rovena calculates estimated fuel efficiency from consecutive fill-ups, including km/L, L/100 km, fuel cost per km, average price per liter and recent efficiency direction. A data-based care score summarizes overdue/upcoming maintenance, expired/expiring documents and meaningful fuel-efficiency deterioration with an explicit confidence level.
 
-Smart vehicle reminders now prioritize urgent overdue maintenance and expired documents, then approaching care items, and can surface a significant fuel-efficiency drop when enough fill-up history exists. Repeated alerts are rate-limited and deduplicated so the reminder system stays useful instead of noisy.
+## Milestone 4 — smart car guidance
+The Smart Center now has a dedicated Car Tools area alongside the existing insights overview. It provides a mileage-based maintenance guide that can use matching recorded services, adjusts combustion-only tasks for electric vehicles, explains high-priority dashboard warning lights, and offers conservative guidance for common vehicle symptoms.
 
-The new Insights area exposes the care score, fuel analytics and document status. The score is deliberately described as a record-based care indicator, not a mechanical diagnosis or replacement for a physical inspection.
+The maintenance intervals are explicitly generic guidance, not manufacturer-specific schedules. Warning-light and symptom guidance is safety-oriented and always presented as information rather than a mechanical diagnosis.
 
 ## Engineering baseline
 - Application ID: `com.rovena.garage`
@@ -33,4 +34,4 @@ The new Insights area exposes the care score, fuel analytics and document status
 - Android 26+; target/compile SDK 36
 - GitHub Actions runs unit tests, builds the debug APK and runs Android lint on every push
 
-Next: richer maintenance plans by vehicle profile, warning-light guidance, document/file capture, export/backup and stronger per-vehicle reports.
+Next: richer manufacturer/model-specific schedules, document/file capture, export/backup, reports, settings and release polish.

@@ -247,7 +247,7 @@ private fun MainShell(
                 modifier = Modifier.padding(padding),
                 onAddExpense = { openRecord(RecordAction.EXPENSE) }
             )
-            MainTab.MORE -> SmartHubScreen(
+            MainTab.MORE -> SmartCenterScreen(
                 vehicle = currentVehicle,
                 maintenance = maintenance,
                 fuel = fuel,
