@@ -1,6 +1,7 @@
 package com.rovena.garage
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -9,11 +10,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.rovena.garage.data.AppPreferences
 import com.rovena.garage.data.RovenaBackupManager
+import com.rovena.garage.notifications.NotificationScheduler
 import com.rovena.garage.ui.RovenaRoot
 import com.rovena.garage.ui.theme.RovenaTheme
 import java.time.LocalDate
@@ -29,12 +33,16 @@ class MainActivity : AppCompatActivity() {
     private val recordRepository by lazy { app.recordRepository }
     private val backupManager by lazy { RovenaBackupManager(app.database) }
     private var pendingBackupText: String? = null
-    private var startupPermissionCheckDone = false
 
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) {
-        lifecycleScope.launch { prefs.markNotificationPermissionAsked() }
+    ) { granted ->
+        lifecycleScope.launch {
+            prefs.markNotificationPermissionAsked()
+            if (granted) {
+                ensureNotificationsActive()
+            }
+        }
     }
 
     private val backupCreateLauncher = registerForActivityResult(
@@ -95,7 +103,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContent {
-            val themeMode = prefs.themeMode.collectAsStateWithLifecycle(initialValue = AppPreferences.THEME_SYSTEM).value
+            val themeMode = prefs.themeMode.collectAsStateWithLifecycle(
+                initialValue = AppPreferences.THEME_SYSTEM
+            ).value
             RovenaTheme(themeMode = themeMode) {
                 RovenaRoot(
                     preferences = prefs,
@@ -112,16 +122,37 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch { prefs.markOpened() }
+        lifecycleScope.launch {
+            prefs.markOpened()
 
-        if (!startupPermissionCheckDone) {
-            startupPermissionCheckDone = true
-            lifecycleScope.launch {
-                if (prefs.onboardingCompleted.first() && !prefs.notificationPermissionAsked.first()) {
-                    requestNotificationPermissionIfNeeded()
-                }
+            if (!prefs.onboardingCompleted.first()) return@launch
+
+            if (notificationsAllowed()) {
+                ensureNotificationsActive()
+            } else if (!prefs.notificationPermissionAsked.first()) {
+                requestNotificationPermissionIfNeeded()
             }
         }
+    }
+
+    private suspend fun ensureNotificationsActive() {
+        runCatching { NotificationScheduler.ensureScheduled(applicationContext) }
+
+        // On a clean install or an upgrade from the affected alpha build, send one
+        // verification reminder shortly after permission is available. After that,
+        // the normal cadence remains every 12 hours.
+        if (prefs.lastEngagementNotificationAt.first() == 0L) {
+            runCatching { NotificationScheduler.scheduleInitialVerification(applicationContext) }
+        }
+    }
+
+    private fun notificationsAllowed(): Boolean {
+        if (!NotificationManagerCompat.from(this).areNotificationsEnabled()) return false
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun changeLanguage(tag: String) {
@@ -136,9 +167,23 @@ class MainActivity : AppCompatActivity() {
 
     private fun requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            if (
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                lifecycleScope.launch { ensureNotificationsActive() }
+            } else {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
         } else {
-            lifecycleScope.launch { prefs.markNotificationPermissionAsked() }
+            lifecycleScope.launch {
+                prefs.markNotificationPermissionAsked()
+                if (NotificationManagerCompat.from(this@MainActivity).areNotificationsEnabled()) {
+                    ensureNotificationsActive()
+                }
+            }
         }
     }
 

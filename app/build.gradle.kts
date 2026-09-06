@@ -13,8 +13,8 @@ android {
         applicationId = "com.rovena.garage"
         minSdk = 26
         targetSdk = 36
-        versionCode = 7
-        versionName = "2.0.0-alpha06"
+        versionCode = 8
+        versionName = "2.0.0"
     }
 
     compileOptions {

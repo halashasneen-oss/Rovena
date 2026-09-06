@@ -16,7 +16,6 @@ import com.rovena.garage.R
 import com.rovena.garage.data.AppPreferences
 import kotlinx.coroutines.flow.first
 import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 class EngagementWorker(
     appContext: Context,
@@ -25,12 +24,16 @@ class EngagementWorker(
 
     override suspend fun doWork(): Result {
         val prefs = AppPreferences(applicationContext)
-        val threshold = TimeUnit.HOURS.toMillis(NotificationScheduler.REMINDER_INTERVAL_HOURS)
+        val threshold = NotificationPolicy.intervalMillis
         val now = System.currentTimeMillis()
-        val lastOpened = prefs.lastOpenedAt.first()
         val lastNotification = prefs.lastEngagementNotificationAt.first()
+        val force = inputData.getBoolean(NotificationScheduler.FORCE_NOTIFICATION_KEY, false)
 
-        if (lastOpened == 0L || now - lastOpened < threshold || now - lastNotification < threshold) {
+        // The affected alpha build also required 12 hours of app inactivity.
+        // Opening Rovena reset that clock, so a user who checked the app regularly
+        // could never see an engagement reminder. The release policy is a real
+        // 12-hour cadence that is independent of app-open time.
+        if (!NotificationPolicy.shouldSendPeriodic(lastNotification, now, force)) {
             return Result.success()
         }
 
@@ -44,6 +47,16 @@ class EngagementWorker(
             localized.getString(R.string.engagement_message_health)
         )
         val messageIndex = ((now / threshold) % messages.size).toInt()
+        val title = if (force) {
+            localized.getString(R.string.notification_fixed_title)
+        } else {
+            localized.getString(R.string.engagement_title)
+        }
+        val message = if (force) {
+            localized.getString(R.string.notification_fixed_every_12h)
+        } else {
+            messages[messageIndex]
+        }
 
         val intent = Intent(applicationContext, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
@@ -55,16 +68,17 @@ class EngagementWorker(
 
         val notification = NotificationCompat.Builder(localized, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(localized.getString(R.string.engagement_title))
-            .setContentText(messages[messageIndex])
-            .setStyle(NotificationCompat.BigTextStyle().bigText(messages[messageIndex]))
+            .setContentTitle(title)
+            .setContentText(message)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
 
-        if (NotificationManagerCompat.from(applicationContext).areNotificationsEnabled()) {
-            NotificationManagerCompat.from(applicationContext).notify(NOTIFICATION_ID, notification)
+        val manager = NotificationManagerCompat.from(applicationContext)
+        if (manager.areNotificationsEnabled()) {
+            manager.notify(NOTIFICATION_ID, notification)
             prefs.markEngagementNotificationSent(now)
         }
         return Result.success()
