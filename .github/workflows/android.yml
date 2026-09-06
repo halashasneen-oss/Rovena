@@ -16,7 +16,24 @@ jobs:
       - uses: android-actions/setup-android@v3
       - name: Install Android 36
         run: yes | sdkmanager "platforms;android-36" "build-tools;36.0.0" >/dev/null
+
+      - name: Prepare release signing key
+        env:
+          ROVENA_KEYSTORE_BASE64: ${{ secrets.ROVENA_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$ROVENA_KEYSTORE_BASE64" ]; then
+            printf '%s' "$ROVENA_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/rovena-upload-key.jks"
+            echo "ROVENA_KEYSTORE_PATH=$RUNNER_TEMP/rovena-upload-key.jks" >> "$GITHUB_ENV"
+            echo "ROVENA_SIGNING_READY=true" >> "$GITHUB_ENV"
+          else
+            echo "ROVENA_SIGNING_READY=false" >> "$GITHUB_ENV"
+          fi
+
       - name: Test, build, lint and bundle release
+        env:
+          ROVENA_STORE_PASSWORD: ${{ secrets.ROVENA_STORE_PASSWORD }}
+          ROVENA_KEY_ALIAS: ${{ secrets.ROVENA_KEY_ALIAS }}
+          ROVENA_KEY_PASSWORD: ${{ secrets.ROVENA_KEY_PASSWORD }}
         run: |
           chmod +x gradlew
           ./gradlew \
@@ -27,13 +44,28 @@ jobs:
             :app:lintRelease \
             :app:bundleRelease \
             --stacktrace
+
+      - name: Verify signed release AAB
+        if: env.ROVENA_SIGNING_READY == 'true'
+        run: jarsigner -verify -verbose -certs app/build/outputs/bundle/release/app-release.aab
+
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
           name: rovena2-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+      - name: Upload signed release AAB
+        if: env.ROVENA_SIGNING_READY == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rovena-auto-release-aab-signed
+          path: app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+
       - name: Upload unsigned release AAB
+        if: env.ROVENA_SIGNING_READY != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: rovena-auto-release-aab-unsigned
