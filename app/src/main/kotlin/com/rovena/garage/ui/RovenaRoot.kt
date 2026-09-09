@@ -69,7 +69,7 @@ fun RovenaRoot(
     val languageTag by preferences.languageTag.collectAsStateWithLifecycle(initialValue = "")
 
     if (!onboardingDone) {
-        AutomotiveOnboardingScreen(
+        PremiumAutomotiveOnboardingScreen(
             selectedLanguage = languageTag,
             onLanguageSelected = onLanguageSelected,
             onFinished = {
@@ -242,7 +242,7 @@ private fun MainShell(
                     onSetPrimary = { id -> scope.launch { vehicleRepository.setPrimary(id) } },
                     onDelete = { id -> deleteTargetId = id }
                 )
-                MainTab.HISTORY -> HistoryScreen(
+                MainTab.HISTORY -> PremiumHistoryScreen(
                     vehicle = currentVehicle,
                     maintenance = maintenance,
                     fuel = fuel,
@@ -251,7 +251,7 @@ private fun MainShell(
                     modifier = Modifier.padding(padding),
                     onAddRecord = ::openRecord
                 )
-                MainTab.EXPENSES -> EnhancedExpensesScreen(
+                MainTab.EXPENSES -> PremiumExpensesScreen(
                     vehicle = currentVehicle,
                     maintenance = maintenance,
                     fuel = fuel,
@@ -259,7 +259,7 @@ private fun MainShell(
                     modifier = Modifier.padding(padding),
                     onAddExpense = { openRecord(RecordAction.EXPENSE) }
                 )
-                MainTab.MORE -> SmartCenterScreen(
+                MainTab.MORE -> PremiumSmartCenterScreen(
                     vehicle = currentVehicle,
                     maintenance = maintenance,
                     fuel = fuel,
@@ -305,7 +305,7 @@ private fun MainShell(
 
     val activeVehicleId = currentVehicle?.id
     if (recordAction != null && activeVehicleId != null) {
-        Phase5RecordEntrySheet(
+        PremiumRecordEntrySheet(
             action = recordAction!!,
             currentMileage = currentVehicle.mileage,
             currencyCode = currentVehicle.currencyCode,
