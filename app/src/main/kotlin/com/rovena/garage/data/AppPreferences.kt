@@ -30,7 +30,7 @@ class AppPreferences(private val context: Context) {
 
     val onboardingCompleted: Flow<Boolean> = context.dataStore.data.map { it[Keys.onboardingCompleted] ?: false }
     val languageTag: Flow<String> = context.dataStore.data.map { it[Keys.languageTag] ?: "" }
-    val themeMode: Flow<String> = context.dataStore.data.map { it[Keys.themeMode] ?: THEME_SYSTEM }
+    val themeMode: Flow<String> = context.dataStore.data.map { it[Keys.themeMode] ?: THEME_DARK }
     val lastOpenedAt: Flow<Long> = context.dataStore.data.map { it[Keys.lastOpenedAt] ?: 0L }
     val notificationPermissionAsked: Flow<Boolean> = context.dataStore.data.map { it[Keys.notificationPermissionAsked] ?: false }
     val engagementEnabled: Flow<Boolean> = context.dataStore.data.map { it[Keys.engagementEnabled] ?: true }

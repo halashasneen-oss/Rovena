@@ -1,7 +1,13 @@
 package com.rovena.garage.ui
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DirectionsCar
 import androidx.compose.material.icons.rounded.History
@@ -11,6 +17,7 @@ import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,8 +29,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rovena.garage.R
 import com.rovena.garage.data.AppPreferences
@@ -38,6 +48,8 @@ import com.rovena.garage.data.local.DocumentEntity
 import com.rovena.garage.data.local.ExpenseEntity
 import com.rovena.garage.data.local.FuelEntryEntity
 import com.rovena.garage.data.local.MaintenanceEntity
+import com.rovena.garage.ui.theme.RovenaPalette
+import com.rovena.garage.ui.theme.RovenaScreenGradient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -148,94 +160,121 @@ private fun MainShell(
         }
     }
 
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    selected = tab == MainTab.HOME,
-                    onClick = { tabIndex = MainTab.HOME.ordinal },
-                    icon = { Icon(Icons.Rounded.Home, null) },
-                    label = { Text(stringResource(R.string.home)) }
+    val navColors = NavigationBarItemDefaults.colors(
+        selectedIconColor = RovenaPalette.Cyan,
+        selectedTextColor = RovenaPalette.TextPrimary,
+        indicatorColor = RovenaPalette.Accent.copy(alpha = 0.16f),
+        unselectedIconColor = RovenaPalette.TextSecondary,
+        unselectedTextColor = RovenaPalette.TextSecondary
+    )
+
+    Box(Modifier.fillMaxSize().background(RovenaScreenGradient)) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            containerColor = Color.Transparent,
+            bottomBar = {
+                NavigationBar(
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp, vertical = 7.dp)
+                        .clip(RoundedCornerShape(30.dp))
+                        .border(
+                            BorderStroke(1.dp, RovenaPalette.Outline.copy(alpha = 0.75f)),
+                            RoundedCornerShape(30.dp)
+                        ),
+                    containerColor = RovenaPalette.Navigation,
+                    tonalElevation = 0.dp
+                ) {
+                    NavigationBarItem(
+                        selected = tab == MainTab.HOME,
+                        onClick = { tabIndex = MainTab.HOME.ordinal },
+                        icon = { Icon(Icons.Rounded.Home, null) },
+                        label = { Text(stringResource(R.string.home)) },
+                        colors = navColors
+                    )
+                    NavigationBarItem(
+                        selected = tab == MainTab.CAR,
+                        onClick = { tabIndex = MainTab.CAR.ordinal },
+                        icon = { Icon(Icons.Rounded.DirectionsCar, null) },
+                        label = { Text(stringResource(R.string.my_car)) },
+                        colors = navColors
+                    )
+                    NavigationBarItem(
+                        selected = tab == MainTab.HISTORY,
+                        onClick = { tabIndex = MainTab.HISTORY.ordinal },
+                        icon = { Icon(Icons.Rounded.History, null) },
+                        label = { Text(stringResource(R.string.history)) },
+                        colors = navColors
+                    )
+                    NavigationBarItem(
+                        selected = tab == MainTab.EXPENSES,
+                        onClick = { tabIndex = MainTab.EXPENSES.ordinal },
+                        icon = { Icon(Icons.Rounded.Payments, null) },
+                        label = { Text(stringResource(R.string.expenses)) },
+                        colors = navColors
+                    )
+                    NavigationBarItem(
+                        selected = tab == MainTab.MORE,
+                        onClick = { tabIndex = MainTab.MORE.ordinal },
+                        icon = { Icon(Icons.Rounded.MoreHoriz, null) },
+                        label = { Text(stringResource(R.string.insights)) },
+                        colors = navColors
+                    )
+                }
+            }
+        ) { padding ->
+            when (tab) {
+                MainTab.HOME -> PremiumDashboardScreen(
+                    vehicles = vehicles,
+                    vehicle = currentVehicle,
+                    maintenance = maintenance,
+                    fuel = fuel,
+                    expenses = expenses,
+                    documents = documents,
+                    modifier = Modifier.padding(padding),
+                    onAddVehicle = { showAddVehicle = true },
+                    onSetPrimary = { id -> scope.launch { vehicleRepository.setPrimary(id) } },
+                    onAddRecord = ::openRecord
                 )
-                NavigationBarItem(
-                    selected = tab == MainTab.CAR,
-                    onClick = { tabIndex = MainTab.CAR.ordinal },
-                    icon = { Icon(Icons.Rounded.DirectionsCar, null) },
-                    label = { Text(stringResource(R.string.my_car)) }
+                MainTab.CAR -> GarageScreen(
+                    vehicles = vehicles,
+                    modifier = Modifier.padding(padding),
+                    onAddVehicle = { showAddVehicle = true },
+                    onSetPrimary = { id -> scope.launch { vehicleRepository.setPrimary(id) } },
+                    onDelete = { id -> deleteTargetId = id }
                 )
-                NavigationBarItem(
-                    selected = tab == MainTab.HISTORY,
-                    onClick = { tabIndex = MainTab.HISTORY.ordinal },
-                    icon = { Icon(Icons.Rounded.History, null) },
-                    label = { Text(stringResource(R.string.history)) }
+                MainTab.HISTORY -> HistoryScreen(
+                    vehicle = currentVehicle,
+                    maintenance = maintenance,
+                    fuel = fuel,
+                    expenses = expenses,
+                    documents = documents,
+                    modifier = Modifier.padding(padding),
+                    onAddRecord = ::openRecord
                 )
-                NavigationBarItem(
-                    selected = tab == MainTab.EXPENSES,
-                    onClick = { tabIndex = MainTab.EXPENSES.ordinal },
-                    icon = { Icon(Icons.Rounded.Payments, null) },
-                    label = { Text(stringResource(R.string.expenses)) }
+                MainTab.EXPENSES -> EnhancedExpensesScreen(
+                    vehicle = currentVehicle,
+                    maintenance = maintenance,
+                    fuel = fuel,
+                    expenses = expenses,
+                    modifier = Modifier.padding(padding),
+                    onAddExpense = { openRecord(RecordAction.EXPENSE) }
                 )
-                NavigationBarItem(
-                    selected = tab == MainTab.MORE,
-                    onClick = { tabIndex = MainTab.MORE.ordinal },
-                    icon = { Icon(Icons.Rounded.MoreHoriz, null) },
-                    label = { Text(stringResource(R.string.insights)) }
+                MainTab.MORE -> SmartCenterScreen(
+                    vehicle = currentVehicle,
+                    maintenance = maintenance,
+                    fuel = fuel,
+                    expenses = expenses,
+                    documents = documents,
+                    preferences = preferences,
+                    selectedLanguage = selectedLanguage,
+                    modifier = Modifier.padding(padding),
+                    onAddDocument = { openRecord(RecordAction.DOCUMENT) },
+                    onLanguageSelected = onLanguageSelected,
+                    onExportBackup = onExportBackup,
+                    onImportBackup = onImportBackup,
+                    onShareReport = ::shareReport
                 )
             }
-        }
-    ) { padding ->
-        when (tab) {
-            MainTab.HOME -> EnhancedDashboardScreen(
-                vehicles = vehicles,
-                vehicle = currentVehicle,
-                maintenance = maintenance,
-                fuel = fuel,
-                expenses = expenses,
-                documents = documents,
-                modifier = Modifier.padding(padding),
-                onAddVehicle = { showAddVehicle = true },
-                onSetPrimary = { id -> scope.launch { vehicleRepository.setPrimary(id) } },
-                onAddRecord = ::openRecord
-            )
-            MainTab.CAR -> GarageScreen(
-                vehicles = vehicles,
-                modifier = Modifier.padding(padding),
-                onAddVehicle = { showAddVehicle = true },
-                onSetPrimary = { id -> scope.launch { vehicleRepository.setPrimary(id) } },
-                onDelete = { id -> deleteTargetId = id }
-            )
-            MainTab.HISTORY -> HistoryScreen(
-                vehicle = currentVehicle,
-                maintenance = maintenance,
-                fuel = fuel,
-                expenses = expenses,
-                documents = documents,
-                modifier = Modifier.padding(padding),
-                onAddRecord = ::openRecord
-            )
-            MainTab.EXPENSES -> EnhancedExpensesScreen(
-                vehicle = currentVehicle,
-                maintenance = maintenance,
-                fuel = fuel,
-                expenses = expenses,
-                modifier = Modifier.padding(padding),
-                onAddExpense = { openRecord(RecordAction.EXPENSE) }
-            )
-            MainTab.MORE -> SmartCenterScreen(
-                vehicle = currentVehicle,
-                maintenance = maintenance,
-                fuel = fuel,
-                expenses = expenses,
-                documents = documents,
-                preferences = preferences,
-                selectedLanguage = selectedLanguage,
-                modifier = Modifier.padding(padding),
-                onAddDocument = { openRecord(RecordAction.DOCUMENT) },
-                onLanguageSelected = onLanguageSelected,
-                onExportBackup = onExportBackup,
-                onImportBackup = onImportBackup,
-                onShareReport = ::shareReport
-            )
         }
     }
 
