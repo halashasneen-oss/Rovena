@@ -146,6 +146,11 @@ private fun MainShell(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val tab = MainTab.entries[tabIndex]
+    LaunchedEffect(showAddVehicle, deleteTargetId, recordAction, tab) {
+        adsManager.setUserFlowActive(
+            showAddVehicle || deleteTargetId != null || recordAction != null || tab == MainTab.MORE
+        )
+    }
 
     fun openRecord(action: RecordAction) {
         if (currentVehicle == null) showAddVehicle = true else recordAction = action
@@ -166,7 +171,10 @@ private fun MainShell(
                     )
                 }
             }
-            result.onSuccess { file -> VehicleReportGenerator.sharePdf(context, file) }
+            result.onSuccess { file ->
+                adsManager.suppressNextReturn()
+                VehicleReportGenerator.sharePdf(context, file)
+            }
                 .onFailure {
                     Toast.makeText(context, R.string.report_failed, Toast.LENGTH_LONG).show()
                 }

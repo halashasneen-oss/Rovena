@@ -53,6 +53,7 @@ class RovenaAdManager(
     private var ignoreAppOpenUntil = 0L
     private var fullScreenAdShowing = false
     private var userFlowActive = false
+    private var skipNextForeground = false
     private var consentFormInProgress = false
     private var completedActions = 0
     private var lastInterstitialAt = 0L
@@ -95,6 +96,11 @@ class RovenaAdManager(
         userFlowActive = active
     }
 
+    /** Prevent a return from the OS file picker or sharing panel triggering an ad. */
+    fun suppressNextReturn() {
+        skipNextForeground = true
+    }
+
     fun onActivityStopped() {
         if (!fullScreenAdShowing && !consentFormInProgress) {
             lastBackgroundAt = System.currentTimeMillis()
@@ -104,9 +110,20 @@ class RovenaAdManager(
     /** Never show on a cold launch; only a preloaded ad after a genuine return. */
     fun onActivityResumed() {
         updateClock()
+        if (skipNextForeground) {
+            skipNextForeground = false
+            return
+        }
         if (!mayDisplayAds || consentFormInProgress || clock < ignoreAppOpenUntil) return
-        val ad = appOpenAd
-        val canShow = ad != null && RovenaAdPolicy.mayShowAppOpen(
+        if (appOpenAd != null && clock - appOpenLoadedAt >= RovenaAdPolicy.APP_OPEN_EXPIRY_MS) {
+            appOpenAd = null
+            appOpenLoadedAt = 0L
+        }
+        val ad = appOpenAd ?: run {
+            preloadAppOpen()
+            return
+        }
+        val canShow = RovenaAdPolicy.mayShowAppOpen(
             backgroundedAt = lastBackgroundAt,
             lastShownAt = lastAppOpenShownAt,
             loadedAt = appOpenLoadedAt,
@@ -115,10 +132,7 @@ class RovenaAdManager(
             userFlowActive = userFlowActive,
             fullScreenAdShowing = fullScreenAdShowing
         )
-        if (!canShow) {
-            if (ad == null || clock - appOpenLoadedAt >= RovenaAdPolicy.APP_OPEN_EXPIRY_MS) preloadAppOpen()
-            return
-        }
+        if (!canShow) return
         if (activity.isFinishing || activity.isDestroyed) return
         appOpenAd = null
         appOpenLoadedAt = 0L

@@ -148,6 +148,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStop() {
+        adsManager.onActivityStopped()
+        super.onStop()
+    }
+
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch {
@@ -164,6 +169,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 adsManager.requestConsent()
             }
+            adsManager.onActivityResumed()
         }
     }
 
@@ -255,11 +261,13 @@ class MainActivity : AppCompatActivity() {
                 return@launch
             }
             pendingBackupText = json
+            adsManager.suppressNextReturn()
             backupCreateLauncher.launch("Rovena-backup-${LocalDate.now()}.json")
         }
     }
 
     private fun importBackup() {
+        adsManager.suppressNextReturn()
         backupOpenLauncher.launch(arrayOf("application/json", "text/json", "text/plain"))
     }
 }
