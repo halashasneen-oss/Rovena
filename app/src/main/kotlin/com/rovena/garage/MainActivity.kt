@@ -166,7 +166,10 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             prefs.markOpened()
 
-            if (!prefs.onboardingCompleted.first()) return@launch
+            if (!prefs.onboardingCompleted.first()) {
+                adsManager.markOnboardingInThisActivity()
+                return@launch
+            }
 
             // Establish the short startup screen before consent and SDK loading.
             adsManager.onActivityResumed()

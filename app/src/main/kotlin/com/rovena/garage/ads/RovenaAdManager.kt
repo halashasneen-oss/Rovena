@@ -56,6 +56,12 @@ class RovenaAdManager(private val activity: AppCompatActivity) {
     val isTestAds: Boolean get() = BuildConfig.ADS_ARE_TEST
     val mayDisplayAds: Boolean get() = configured && sdkReady && !consentFormInProgress
 
+    /** Don't show the startup ad during the first-ever onboarding session. */
+    fun markOnboardingInThisActivity() {
+        initialForegroundHandled = true
+        startupVisible = false
+    }
+
     fun setUserFlowActive(active: Boolean) {
         userFlowActive = active
     }
