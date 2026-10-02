@@ -1,3 +1,10 @@
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
+    id("com.google.devtools.ksp")
+}
+
 // Separate Rovena AdMob credentials. Other apps' unit IDs must never be reused.
 val admobAppId = System.getenv("ROVENA_ADMOB_APP_ID").orEmpty().trim()
 val admobBannerId = System.getenv("ROVENA_ADMOB_BANNER_ID").orEmpty().trim()
@@ -17,12 +24,6 @@ if (admobValues.any(String::isNotBlank) && !productionAdsReady) {
 val testAdmobAppId = "ca-app-pub-3940256099942544~3347511713"
 fun javaString(value: String): String = "\"" + value + "\""
 
-plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose")
-    id("com.google.devtools.ksp")
-}
 
 android {
     namespace = "com.rovena.garage"
