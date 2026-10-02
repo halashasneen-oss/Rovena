@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="vb_vehicle_health">Indice de suivi du véhicule</string>
+    <string name="vb_excellent">Excellent</string>
+    <string name="vb_good">Bon</string>
+    <string name="vb_attention">À surveiller</string>
+    <string name="vb_urgent">Attention urgente</string>
+    <string name="vb_not_enough_data">Données insuffisantes</string>
+    <string name="vb_confidence">Fiabilité</string>
+    <string name="vb_high">Élevée</string>
+    <string name="vb_medium">Moyenne</string>
+    <string name="vb_low">Faible</string>
+    <string name="vb_not_diagnostic">Basé sur vos dossiers, pas sur un diagnostic mécanique.</string>
+    <string name="vb_top_priorities">Priorités</string>
+    <string name="vb_add_records">Ajoutez des entretiens et des documents pour commencer.</string>
+    <string name="vb_no_priority">Aucune urgence dans vos dossiers.</string>
+    <string name="vb_overdue">En retard · ajouter une entrée</string>
+    <string name="vb_due_soon">Bientôt dû · vérifier</string>
+    <string name="vb_fuel_drop">La consommation de carburant a augmenté</string>
+    <string name="vb_review_fuel">Ajouter un plein</string>
+    <string name="vb_expense_radar">ANALYSE DES DÉPENSES</string>
+    <string name="vb_lifetime_spend">Dépenses totales</string>
+    <string name="vb_current_month">Ce mois-ci</string>
+    <string name="vb_previous_month">Mois précédent</string>
+    <string name="vb_no_previous_comparison">Aucune donnée du mois précédent</string>
+    <string name="vb_month_change">Évolution mensuelle : %+.1f%%</string>
+    <string name="vb_other">Autres</string>
+    <string name="vb_cost_per_km">Coût par km</string>
+    <string name="vb_passport">PASSEPORT NUMÉRIQUE</string>
+    <string name="vb_passport_subtitle">Partagez un PDF complet de votre véhicule</string>
+    <string name="vb_restore_title">Remplacer les données actuelles ?</string>
+    <string name="vb_restore_message">Cette restauration remplacera tous les véhicules et dossiers de cet appareil. Sauvegardez d’abord vos données.</string>
+    <string name="vb_restore_confirm">Remplacer et restaurer</string>
+    <string name="vb_restore_cancel">Annuler</string>
+    <string name="vb_backup_note">La sauvegarde contient les dossiers et les liens vers les pièces jointes, mais pas les fichiers eux-mêmes.</string>
+    <string name="vb_passport_report_title">PASSEPORT NUMÉRIQUE</string>
+    <string name="vb_passport_report_subtitle">Historique du véhicule · par Rovena</string>
+    <string name="vb_report_monthly">Ce mois-ci</string>
+    <string name="vb_report_previous">Mois précédent</string>
+    <string name="vb_report_cost_per_km">Coût par km</string>
+</resources>

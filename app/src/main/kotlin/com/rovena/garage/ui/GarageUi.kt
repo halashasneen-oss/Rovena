@@ -171,7 +171,7 @@ private fun GarageVehicleCard(
                     .height(155.dp)
                     .background(
                         Brush.linearGradient(
-                            listOf(Color(0xFF0B3555), Color(0xFF071B2D), Color(0xFF0A2740))
+                            listOf(Color(0xFF0D4354), Color(0xFF071B2D), Color(0xFF0F3541))
                         )
                     )
                     .padding(16.dp)

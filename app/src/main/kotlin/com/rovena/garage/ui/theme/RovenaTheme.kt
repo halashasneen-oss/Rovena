@@ -16,39 +16,39 @@ import androidx.compose.ui.unit.sp
 import com.rovena.garage.data.AppPreferences
 
 object RovenaPalette {
-    val Midnight = Color(0xFF020B15)
-    val DeepNavy = Color(0xFF041421)
-    val Surface = Color(0xFF081B2D)
-    val SurfaceRaised = Color(0xFF0D243A)
-    val SurfaceSoft = Color(0xFF112B44)
-    val Navigation = Color(0xF20A1B2C)
-    val Accent = Color(0xFF149CFF)
-    val Cyan = Color(0xFF38D7FF)
-    val Sky = Color(0xFF74BEFF)
+    val Midnight = Color(0xFF040D16)
+    val DeepNavy = Color(0xFF071725)
+    val Surface = Color(0xFF0A2030)
+    val SurfaceRaised = Color(0xFF0E2A3C)
+    val SurfaceSoft = Color(0xFF173B4A)
+    val Navigation = Color(0xF2091D2B)
+    val Accent = Color(0xFF18AFD1)
+    val Cyan = Color(0xFF46E0DC)
+    val Sky = Color(0xFF8CCDFC)
     val Success = Color(0xFF35D69B)
     val Warning = Color(0xFFFFB84D)
     val Danger = Color(0xFFFF6174)
     val TextPrimary = Color(0xFFF5FAFF)
-    val TextSecondary = Color(0xFFA8BCD0)
-    val Outline = Color(0xFF27445F)
+    val TextSecondary = Color(0xFFAAC6D1)
+    val Outline = Color(0xFF2C5362)
 }
 
 val RovenaScreenGradient = Brush.verticalGradient(
     colors = listOf(
         RovenaPalette.Midnight,
         RovenaPalette.DeepNavy,
-        Color(0xFF061C2F)
+        Color(0xFF0A2635)
     )
 )
 
 private val DarkColors = darkColorScheme(
     primary = RovenaPalette.Accent,
     onPrimary = Color.White,
-    primaryContainer = Color(0xFF0C3557),
+    primaryContainer = Color(0xFF0F4154),
     onPrimaryContainer = RovenaPalette.TextPrimary,
     secondary = RovenaPalette.Cyan,
     onSecondary = Color(0xFF001F2A),
-    secondaryContainer = Color(0xFF10364B),
+    secondaryContainer = Color(0xFF164251),
     onSecondaryContainer = RovenaPalette.TextPrimary,
     tertiary = RovenaPalette.Warning,
     onTertiary = Color(0xFF2B1700),
@@ -61,7 +61,7 @@ private val DarkColors = darkColorScheme(
     surfaceVariant = RovenaPalette.SurfaceRaised,
     onSurfaceVariant = RovenaPalette.TextSecondary,
     outline = RovenaPalette.Outline,
-    outlineVariant = Color(0xFF19344E),
+    outlineVariant = Color(0xFF234658),
     error = RovenaPalette.Danger,
     errorContainer = Color(0xFF4D1F2A),
     onErrorContainer = Color(0xFFFFD9DE)

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="vb_vehicle_health">Estado del vehículo</string>
+    <string name="vb_excellent">Excelente</string>
+    <string name="vb_good">Bueno</string>
+    <string name="vb_attention">Requiere atención</string>
+    <string name="vb_urgent">Atención urgente</string>
+    <string name="vb_not_enough_data">Datos insuficientes</string>
+    <string name="vb_confidence">Confianza</string>
+    <string name="vb_high">Alta</string>
+    <string name="vb_medium">Media</string>
+    <string name="vb_low">Baja</string>
+    <string name="vb_not_diagnostic">Basado en tus registros, no es un diagnóstico mecánico.</string>
+    <string name="vb_top_priorities">Prioridades</string>
+    <string name="vb_add_records">Agrega mantenimientos y documentos para empezar.</string>
+    <string name="vb_no_priority">No hay tareas urgentes en tus registros.</string>
+    <string name="vb_overdue">Vencido · agregar registro</string>
+    <string name="vb_due_soon">Próximo · revisar</string>
+    <string name="vb_fuel_drop">Ha bajado la eficiencia del combustible</string>
+    <string name="vb_review_fuel">Añadir carga</string>
+    <string name="vb_expense_radar">RADAR DE GASTOS</string>
+    <string name="vb_lifetime_spend">Gasto total</string>
+    <string name="vb_current_month">Este mes</string>
+    <string name="vb_previous_month">Mes anterior</string>
+    <string name="vb_no_previous_comparison">Sin datos del mes anterior</string>
+    <string name="vb_month_change">Cambio mensual: %+.1f%%</string>
+    <string name="vb_other">Otros</string>
+    <string name="vb_cost_per_km">Costo por km</string>
+    <string name="vb_passport">PASAPORTE DIGITAL</string>
+    <string name="vb_passport_subtitle">Comparte un PDF del historial de tu coche</string>
+    <string name="vb_restore_title">¿Reemplazar los datos actuales?</string>
+    <string name="vb_restore_message">La restauración reemplazará todos los vehículos y registros de este dispositivo. Guarda primero lo importante.</string>
+    <string name="vb_restore_confirm">Reemplazar y restaurar</string>
+    <string name="vb_restore_cancel">Cancelar</string>
+    <string name="vb_backup_note">La copia incluye registros y enlaces a adjuntos, no los archivos originales. Consérvalos por separado.</string>
+    <string name="vb_passport_report_title">PASAPORTE DIGITAL</string>
+    <string name="vb_passport_report_subtitle">Historial del vehículo · Rovena</string>
+    <string name="vb_report_monthly">Este mes</string>
+    <string name="vb_report_previous">Mes anterior</string>
+    <string name="vb_report_cost_per_km">Costo por km</string>
+</resources>

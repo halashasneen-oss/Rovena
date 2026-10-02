@@ -78,7 +78,8 @@ internal fun PremiumDashboardScreen(
     modifier: Modifier = Modifier,
     onAddVehicle: () -> Unit,
     onSetPrimary: (Long) -> Unit,
-    onAddRecord: (RecordAction) -> Unit
+    onAddRecord: (RecordAction) -> Unit,
+    onShareReport: () -> Unit
 ) {
     val upcoming = remember(vehicle, maintenance, documents) {
         vehicle?.let { DashboardAnalytics.upcoming(it, maintenance, documents) }.orEmpty()
@@ -179,6 +180,17 @@ internal fun PremiumDashboardScreen(
             }
 
             item {
+                health?.let {
+                    RovenaCareSpotlight(
+                        health = it,
+                        upcoming = upcoming,
+                        fuelDrop = VehicleHealthEngine.isMeaningfulFuelDrop(fuelInsights),
+                        onAddRecord = onAddRecord
+                    )
+                }
+            }
+
+            item {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     PremiumMetricCard(
                         modifier = Modifier.weight(1f),
@@ -220,6 +232,8 @@ internal fun PremiumDashboardScreen(
                     }
                 }
             }
+
+            item { RovenaPassportCard(onShareReport = onShareReport) }
 
             item {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -285,7 +299,7 @@ private fun VehicleHeroCard(
                 .fillMaxWidth()
                 .background(
                     Brush.linearGradient(
-                        listOf(Color(0xFF0B3555), Color(0xFF071B2D), Color(0xFF0B2842))
+                        listOf(Color(0xFF10475A), Color(0xFF071A2C), Color(0xFF092A3A))
                     )
                 )
                 .padding(20.dp)

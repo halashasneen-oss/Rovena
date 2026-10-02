@@ -6,6 +6,10 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.mutableStateOf
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +37,8 @@ class MainActivity : AppCompatActivity() {
     private val recordRepository by lazy { app.recordRepository }
     private val backupManager by lazy { RovenaBackupManager(app.database) }
     private var pendingBackupText: String? = null
+    private var pendingRestoreText: String? = null
+    private val showRestoreConfirmation = mutableStateOf(false)
 
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -73,17 +79,17 @@ class MainActivity : AppCompatActivity() {
     ) { uri ->
         if (uri != null) {
             lifecycleScope.launch(Dispatchers.IO) {
-                val result = runCatching {
-                    val json = contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
+                val json = runCatching {
+                    contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
                         ?: error("Could not read backup")
-                    backupManager.restoreJson(json)
                 }
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        if (result.isSuccess) R.string.backup_import_success else R.string.backup_import_failed,
-                        Toast.LENGTH_LONG
-                    ).show()
+                    json.onSuccess { content ->
+                        pendingRestoreText = content
+                        showRestoreConfirmation.value = true
+                    }.onFailure {
+                        Toast.makeText(this@MainActivity, R.string.backup_import_failed, Toast.LENGTH_LONG).show()
+                    }
                 }
             }
         }
@@ -116,6 +122,23 @@ class MainActivity : AppCompatActivity() {
                     onExportBackup = ::exportBackup,
                     onImportBackup = ::importBackup
                 )
+                if (showRestoreConfirmation.value) {
+                    AlertDialog(
+                        onDismissRequest = ::cancelRestore,
+                        title = { Text(getString(R.string.vb_restore_title)) },
+                        text = { Text(getString(R.string.vb_restore_message)) },
+                        confirmButton = {
+                            TextButton(onClick = ::restorePendingBackup) {
+                                Text(getString(R.string.vb_restore_confirm))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = ::cancelRestore) {
+                                Text(getString(R.string.vb_restore_cancel))
+                            }
+                        }
+                    )
+                }
             }
         }
     }
@@ -183,6 +206,26 @@ class MainActivity : AppCompatActivity() {
                 if (NotificationManagerCompat.from(this@MainActivity).areNotificationsEnabled()) {
                     ensureNotificationsActive()
                 }
+            }
+        }
+    }
+
+    private fun cancelRestore() {
+        pendingRestoreText = null
+        showRestoreConfirmation.value = false
+    }
+
+    private fun restorePendingBackup() {
+        val json = pendingRestoreText ?: return
+        cancelRestore()
+        lifecycleScope.launch(Dispatchers.IO) {
+            val result = runCatching { backupManager.restoreJson(json) }
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    this@MainActivity,
+                    if (result.isSuccess) R.string.backup_import_success else R.string.backup_import_failed,
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
     }

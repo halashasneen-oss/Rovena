@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="vb_vehicle_health">Araç bakım puanı</string>
+    <string name="vb_excellent">Mükemmel</string>
+    <string name="vb_good">İyi</string>
+    <string name="vb_attention">Dikkat gerekli</string>
+    <string name="vb_urgent">Acil dikkat</string>
+    <string name="vb_not_enough_data">Yeterli veri yok</string>
+    <string name="vb_confidence">Güven düzeyi</string>
+    <string name="vb_high">Yüksek</string>
+    <string name="vb_medium">Orta</string>
+    <string name="vb_low">Düşük</string>
+    <string name="vb_not_diagnostic">Kayıtlarınıza dayanır; mekanik teşhis değildir.</string>
+    <string name="vb_top_priorities">Öncelikler</string>
+    <string name="vb_add_records">Başlamak için bakım ve belge kayıtları ekleyin.</string>
+    <string name="vb_no_priority">Kayıtlarınızda acil bir iş yok.</string>
+    <string name="vb_overdue">Gecikti · kayıt ekle</string>
+    <string name="vb_due_soon">Yaklaşıyor · kontrol et</string>
+    <string name="vb_fuel_drop">Yakıt verimliliği düştü</string>
+    <string name="vb_review_fuel">Yakıt kaydı ekle</string>
+    <string name="vb_expense_radar">GİDER RADARI</string>
+    <string name="vb_lifetime_spend">Toplam harcama</string>
+    <string name="vb_current_month">Bu ay</string>
+    <string name="vb_previous_month">Geçen ay</string>
+    <string name="vb_no_previous_comparison">Önceki aya ait veri yok</string>
+    <string name="vb_month_change">Aylık değişim: %+.1f%%</string>
+    <string name="vb_other">Diğer</string>
+    <string name="vb_cost_per_km">Km başına maliyet</string>
+    <string name="vb_passport">DİJİTAL ARAÇ PASAPORTU</string>
+    <string name="vb_passport_subtitle">Araç geçmişinizi şık bir PDF ile paylaşın</string>
+    <string name="vb_restore_title">Mevcut veriler değiştirilsin mi?</string>
+    <string name="vb_restore_message">Bu yedek geri yüklendiğinde cihazdaki tüm araçlar ve kayıtlar değiştirilir. Önce önemli verilerinizi saklayın.</string>
+    <string name="vb_restore_confirm">Değiştir ve geri yükle</string>
+    <string name="vb_restore_cancel">İptal</string>
+    <string name="vb_backup_note">Yedek; kayıtları ve ek bağlantılarını içerir, özgün ek dosyalarını içermez. Dosyaları ayrı saklayın.</string>
+    <string name="vb_passport_report_title">DİJİTAL ARAÇ PASAPORTU</string>
+    <string name="vb_passport_report_subtitle">Araç geçmişi · Rovena</string>
+    <string name="vb_report_monthly">Bu ay</string>
+    <string name="vb_report_previous">Geçen ay</string>
+    <string name="vb_report_cost_per_km">Km başına maliyet</string>
+</resources>

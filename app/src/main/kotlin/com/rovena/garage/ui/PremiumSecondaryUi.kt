@@ -189,45 +189,11 @@ internal fun PremiumExpensesScreen(
             item { PremiumEmptyCard(stringResource(R.string.no_vehicle_title), stringResource(R.string.no_vehicle_body)) }
         } else {
             item {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(30.dp),
-                    color = Color.Transparent,
-                    border = BorderStroke(1.dp, RovenaPalette.Cyan.copy(alpha = 0.38f))
-                ) {
-                    Box(
-                        Modifier.fillMaxWidth().then(
-                            Modifier
-                        )
-                    ) {
-                        Column(
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(22.dp),
-                            verticalArrangement = Arrangement.spacedBy(7.dp)
-                        ) {
-                            Text(stringResource(R.string.p5b_this_month), color = RovenaPalette.TextSecondary, fontWeight = FontWeight.SemiBold)
-                            Text(
-                                premiumMoney(analytics.current.total, vehicle.currencyCode),
-                                style = MaterialTheme.typography.headlineLarge,
-                                fontWeight = FontWeight.Black
-                            )
-                            Text(
-                                stringResource(R.string.p5b_previous_month_value, premiumMoney(analytics.previous.total, vehicle.currencyCode)),
-                                color = RovenaPalette.TextSecondary
-                            )
-                            Text(
-                                premiumCostChange(analytics.changePercent),
-                                color = when {
-                                    analytics.changePercent == null -> RovenaPalette.TextSecondary
-                                    analytics.changePercent <= 0.0 -> RovenaPalette.Success
-                                    else -> RovenaPalette.Warning
-                                },
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
+                RovenaExpenseRadar(
+                    analytics = analytics,
+                    lifetimeSpend = maintenance.sumOf { it.cost } + fuel.sumOf { it.totalCost } + expenses.sumOf { it.amount },
+                    currencyCode = vehicle.currencyCode
+                )
             }
 
             item {
@@ -419,7 +385,7 @@ private fun PremiumSmartOverview(
         item {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 PremiumActionTile(Modifier.weight(1f), Icons.Rounded.Description, stringResource(R.string.add_document), onAddDocument)
-                PremiumActionTile(Modifier.weight(1f), Icons.Rounded.PictureAsPdf, stringResource(R.string.share_vehicle_report), onShareReport)
+                PremiumActionTile(Modifier.weight(1f), Icons.Rounded.PictureAsPdf, stringResource(R.string.vb_passport), onShareReport)
             }
         }
         item {
@@ -585,7 +551,7 @@ private fun PremiumSettingsScreen(
                 }
                 PremiumSettingsAction(Icons.Rounded.Backup, stringResource(R.string.export_backup), onExportBackup)
                 PremiumSettingsAction(Icons.Rounded.Restore, stringResource(R.string.import_backup), onImportBackup)
-                Text(stringResource(R.string.backup_attachment_note), style = MaterialTheme.typography.bodySmall, color = RovenaPalette.TextSecondary)
+                Text(stringResource(R.string.vb_backup_note), style = MaterialTheme.typography.bodySmall, color = RovenaPalette.TextSecondary)
             }
         }
     }

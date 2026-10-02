@@ -54,6 +54,10 @@ class RovenaBackupManager(private val database: RovenaDatabase) {
     suspend fun restoreJson(json: String): RestoreSummary {
         val root = JSONObject(json)
         require(root.optInt("schemaVersion", -1) == SCHEMA_VERSION) { "Unsupported backup version" }
+        require(root.optString("app") == "Rovena") { "This is not a Rovena backup" }
+        listOf("vehicles", "maintenance", "fuel", "expenses", "documents").forEach { key ->
+            require(root.optJSONArray(key) != null) { "Backup is missing " + key }
+        }
 
         val vehicles = root.optJSONArray("vehicles").toVehicleList()
         val vehicleIds = vehicles.map { it.id }.toSet()
@@ -66,6 +70,12 @@ class RovenaBackupManager(private val database: RovenaDatabase) {
         val documents = root.optJSONArray("documents").toDocumentList()
         require((maintenance.map { it.vehicleId } + fuel.map { it.vehicleId } + expenses.map { it.vehicleId } + documents.map { it.vehicleId })
             .all { it in vehicleIds }) { "Backup contains orphan records" }
+        require(maintenance.map { it.id }.distinct().size == maintenance.size &&
+            fuel.map { it.id }.distinct().size == fuel.size &&
+            expenses.map { it.id }.distinct().size == expenses.size &&
+            documents.map { it.id }.distinct().size == documents.size) {
+            "Backup contains duplicate record IDs"
+        }
 
         val vehicleDao = database.vehicleDao()
         val recordDao = database.recordDao()

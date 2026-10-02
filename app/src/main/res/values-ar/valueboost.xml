@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="vb_vehicle_health">مؤشر العناية بالسيارة</string>
+    <string name="vb_excellent">ممتاز</string>
+    <string name="vb_good">جيد</string>
+    <string name="vb_attention">تحتاج اهتمامًا</string>
+    <string name="vb_urgent">اهتمام عاجل</string>
+    <string name="vb_not_enough_data">البيانات غير كافية</string>
+    <string name="vb_confidence">موثوقية التقييم</string>
+    <string name="vb_high">مرتفعة</string>
+    <string name="vb_medium">متوسطة</string>
+    <string name="vb_low">منخفضة</string>
+    <string name="vb_not_diagnostic">يعتمد على سجلاتك وليس تشخيصًا ميكانيكيًا.</string>
+    <string name="vb_top_priorities">أهم الأولويات</string>
+    <string name="vb_add_records">أضف سجلات الصيانة والوثائق للبدء.</string>
+    <string name="vb_no_priority">لا توجد عناصر عاجلة في السجلات.</string>
+    <string name="vb_overdue">متأخر · أضف سجلًا جديدًا</string>
+    <string name="vb_due_soon">قريب · راجع وحدّث</string>
+    <string name="vb_fuel_drop">انخفضت كفاءة استهلاك الوقود</string>
+    <string name="vb_review_fuel">أضف قراءة وقود</string>
+    <string name="vb_expense_radar">رادار المصاريف</string>
+    <string name="vb_lifetime_spend">إجمالي المصاريف</string>
+    <string name="vb_current_month">الشهر الحالي</string>
+    <string name="vb_previous_month">الشهر السابق</string>
+    <string name="vb_no_previous_comparison">لا توجد بيانات للشهر السابق للمقارنة</string>
+    <string name="vb_month_change">التغير عن الشهر السابق: %+.1f%%</string>
+    <string name="vb_other">أخرى</string>
+    <string name="vb_cost_per_km">التكلفة لكل كيلومتر</string>
+    <string name="vb_passport">جواز السيارة الرقمي</string>
+    <string name="vb_passport_subtitle">شارك تقرير PDF أنيقًا بتاريخ سيارتك</string>
+    <string name="vb_restore_title">استبدال البيانات الحالية؟</string>
+    <string name="vb_restore_message">ستستبدل الاستعادة جميع السيارات والسجلات على هذا الجهاز. تأكد من حفظ بياناتك المهمة أولًا.</string>
+    <string name="vb_restore_confirm">استبدال واستعادة</string>
+    <string name="vb_restore_cancel">إلغاء</string>
+    <string name="vb_backup_note">تتضمن النسخة السجلات وروابط المرفقات، ولا تتضمن ملفات المرفقات الأصلية. احتفظ بها بشكل منفصل.</string>
+    <string name="vb_passport_report_title">جواز السيارة الرقمي</string>
+    <string name="vb_passport_report_subtitle">تاريخ السيارة · من Rovena</string>
+    <string name="vb_report_monthly">الشهر الحالي</string>
+    <string name="vb_report_previous">الشهر السابق</string>
+    <string name="vb_report_cost_per_km">تكلفة الكيلومتر</string>
+</resources>

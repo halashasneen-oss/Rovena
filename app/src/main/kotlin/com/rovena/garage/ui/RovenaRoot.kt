@@ -189,35 +189,40 @@ private fun MainShell(
                         onClick = { tabIndex = MainTab.HOME.ordinal },
                         icon = { Icon(Icons.Rounded.Home, null) },
                         label = { Text(stringResource(R.string.home)) },
-                        colors = navColors
+                        colors = navColors,
+                    alwaysShowLabel = false
                     )
                     NavigationBarItem(
                         selected = tab == MainTab.CAR,
                         onClick = { tabIndex = MainTab.CAR.ordinal },
                         icon = { Icon(Icons.Rounded.DirectionsCar, null) },
                         label = { Text(stringResource(R.string.my_car)) },
-                        colors = navColors
+                        colors = navColors,
+                    alwaysShowLabel = false
                     )
                     NavigationBarItem(
                         selected = tab == MainTab.HISTORY,
                         onClick = { tabIndex = MainTab.HISTORY.ordinal },
                         icon = { Icon(Icons.Rounded.History, null) },
                         label = { Text(stringResource(R.string.history)) },
-                        colors = navColors
+                        colors = navColors,
+                    alwaysShowLabel = false
                     )
                     NavigationBarItem(
                         selected = tab == MainTab.EXPENSES,
                         onClick = { tabIndex = MainTab.EXPENSES.ordinal },
                         icon = { Icon(Icons.Rounded.Payments, null) },
                         label = { Text(stringResource(R.string.expenses)) },
-                        colors = navColors
+                        colors = navColors,
+                    alwaysShowLabel = false
                     )
                     NavigationBarItem(
                         selected = tab == MainTab.MORE,
                         onClick = { tabIndex = MainTab.MORE.ordinal },
                         icon = { Icon(Icons.Rounded.MoreHoriz, null) },
                         label = { Text(stringResource(R.string.insights)) },
-                        colors = navColors
+                        colors = navColors,
+                    alwaysShowLabel = false
                     )
                 }
             }
@@ -233,7 +238,8 @@ private fun MainShell(
                     modifier = Modifier.padding(padding),
                     onAddVehicle = { showAddVehicle = true },
                     onSetPrimary = { id -> scope.launch { vehicleRepository.setPrimary(id) } },
-                    onAddRecord = ::openRecord
+                    onAddRecord = ::openRecord,
+                    onShareReport = ::shareReport
                 )
                 MainTab.CAR -> GarageScreen(
                     vehicles = vehicles,

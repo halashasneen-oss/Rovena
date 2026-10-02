@@ -13,8 +13,8 @@ android {
         applicationId = "com.rovena.garage"
         minSdk = 26
         targetSdk = 36
-        versionCode = 8
-        versionName = "2.0.0"
+        versionCode = 9
+        versionName = "2.1.0"
     }
 
     val releaseKeystorePath = System.getenv("ROVENA_KEYSTORE_PATH")

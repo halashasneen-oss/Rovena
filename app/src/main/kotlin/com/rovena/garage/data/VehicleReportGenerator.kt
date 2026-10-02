@@ -36,8 +36,9 @@ object VehicleReportGenerator {
         val money = { value: Double -> formatMoney(value, vehicle.currencyCode) }
         val totalSpend = maintenance.sumOf { it.cost } + fuel.sumOf { it.totalCost } + expenses.sumOf { it.amount }
         val fuelInsights = FuelAnalytics.analyze(fuel)
+        val monthly = DashboardAnalytics.monthlyCosts(maintenance, fuel, expenses)
 
-        writer.title(context.getString(R.string.report_title))
+        writer.title(context.getString(R.string.vb_passport_report_title))
         writer.text("${vehicle.make} ${vehicle.model} • ${vehicle.year}", 16f, true)
         vehicle.nickname.takeIf { it.isNotBlank() }?.let { writer.text(it, 12f) }
         writer.gap(8f)
@@ -45,6 +46,9 @@ object VehicleReportGenerator {
         vehicle.plateNumber.takeIf { it.isNotBlank() }?.let { writer.keyValue(context.getString(R.string.report_plate), it) }
         vehicle.vin.takeIf { it.isNotBlank() }?.let { writer.keyValue("VIN", it) }
         writer.keyValue(context.getString(R.string.report_total_spend), money(totalSpend))
+        writer.keyValue(context.getString(R.string.vb_report_monthly), money(monthly.current.total))
+        writer.keyValue(context.getString(R.string.vb_report_previous), money(monthly.previous.total))
+        monthly.costPer100Km?.let { writer.keyValue(context.getString(R.string.vb_report_cost_per_km), money(it / 100.0)) }
         fuelInsights.averageKmPerLiter?.let {
             writer.keyValue(context.getString(R.string.report_avg_efficiency), "${formatNumber(it, 1)} km/L")
         }
@@ -148,17 +152,30 @@ object VehicleReportGenerator {
         private var pageNumber = 0
 
         fun title(value: String) {
-            ensureSpace(56f)
-            text(value, 24f, true)
-            muted("Rovena • ${formatDate(System.currentTimeMillis())}")
-            gap(12f)
+            val canvas = currentCanvas()
+            val banner = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = android.graphics.Color.rgb(6, 27, 43) }
+            canvas.drawRoundRect(28f, 22f, 567f, 139f, 18f, 18f, banner)
+            val stripe = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = android.graphics.Color.rgb(47, 219, 218) }
+            canvas.drawRoundRect(39f, 34f, 45f, 125f, 3f, 3f, stripe)
+            paint.color = android.graphics.Color.WHITE
+            y = 74f
+            text(value, 19f, true)
+            paint.color = android.graphics.Color.rgb(180, 227, 232)
+            text("Rovena  •  ${formatDate(System.currentTimeMillis())}", 10f)
+            paint.color = android.graphics.Color.rgb(25, 30, 38)
+            y = 164f
         }
 
         fun section(value: String) {
-            ensureSpace(50f)
-            gap(12f)
-            text(value, 17f, true)
-            gap(5f)
+            ensureSpace(60f)
+            gap(17f)
+            val canvas = currentCanvas()
+            val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = android.graphics.Color.rgb(227, 246, 248) }
+            canvas.drawRoundRect(LEFT - 5f, y - 15f, PAGE_WIDTH - 38f, y + 19f, 6f, 6f, fill)
+            paint.color = android.graphics.Color.rgb(8, 65, 81)
+            text(value, 15f, true)
+            paint.color = android.graphics.Color.rgb(25, 30, 38)
+            gap(9f)
         }
 
         fun keyValue(key: String, value: String) {
@@ -219,6 +236,13 @@ object VehicleReportGenerator {
             val newPage = document.startPage(info)
             page = newPage
             y = TOP
+            val line = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = android.graphics.Color.rgb(47, 180, 190) }
+            newPage.canvas.drawRect(0f, 0f, PAGE_WIDTH.toFloat(), 6f, line)
+            val foot = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = android.graphics.Color.rgb(110, 132, 145)
+                textSize = 9f
+            }
+            newPage.canvas.drawText("Rovena  •  " + pageNumber, LEFT, PAGE_HEIGHT - 21f, foot)
             return newPage
         }
 

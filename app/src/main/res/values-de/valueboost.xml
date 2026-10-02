@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="vb_vehicle_health">Fahrzeugzustand</string>
+    <string name="vb_excellent">Ausgezeichnet</string>
+    <string name="vb_good">Gut</string>
+    <string name="vb_attention">Handlungsbedarf</string>
+    <string name="vb_urgent">Dringender Handlungsbedarf</string>
+    <string name="vb_not_enough_data">Nicht genügend Daten</string>
+    <string name="vb_confidence">Zuverlässigkeit</string>
+    <string name="vb_high">Hoch</string>
+    <string name="vb_medium">Mittel</string>
+    <string name="vb_low">Niedrig</string>
+    <string name="vb_not_diagnostic">Basierend auf Einträgen, keine mechanische Diagnose.</string>
+    <string name="vb_top_priorities">Wichtigste Aufgaben</string>
+    <string name="vb_add_records">Wartung und Dokumente hinzufügen, um zu starten.</string>
+    <string name="vb_no_priority">Keine dringenden Aufgaben in den Einträgen.</string>
+    <string name="vb_overdue">Überfällig · Eintrag hinzufügen</string>
+    <string name="vb_due_soon">Bald fällig · prüfen</string>
+    <string name="vb_fuel_drop">Kraftstoffeffizienz ist gesunken</string>
+    <string name="vb_review_fuel">Tankvorgang hinzufügen</string>
+    <string name="vb_expense_radar">KOSTENRADAR</string>
+    <string name="vb_lifetime_spend">Gesamtausgaben</string>
+    <string name="vb_current_month">Dieser Monat</string>
+    <string name="vb_previous_month">Vormonat</string>
+    <string name="vb_no_previous_comparison">Keine Daten aus dem Vormonat</string>
+    <string name="vb_month_change">Veränderung zum Vormonat: %+.1f%%</string>
+    <string name="vb_other">Sonstige</string>
+    <string name="vb_cost_per_km">Kosten pro km</string>
+    <string name="vb_passport">DIGITALER FAHRZEUGPASS</string>
+    <string name="vb_passport_subtitle">Fahrzeugverlauf als PDF teilen</string>
+    <string name="vb_restore_title">Aktuelle Daten ersetzen?</string>
+    <string name="vb_restore_message">Die Wiederherstellung ersetzt alle Fahrzeuge und Einträge auf diesem Gerät. Wichtige Daten vorher sichern.</string>
+    <string name="vb_restore_confirm">Ersetzen und wiederherstellen</string>
+    <string name="vb_restore_cancel">Abbrechen</string>
+    <string name="vb_backup_note">Die Sicherung enthält Einträge und Links zu Anhängen, nicht die Originaldateien. Diese separat sichern.</string>
+    <string name="vb_passport_report_title">DIGITALER FAHRZEUGPASS</string>
+    <string name="vb_passport_report_subtitle">Fahrzeugverlauf · Rovena</string>
+    <string name="vb_report_monthly">Dieser Monat</string>
+    <string name="vb_report_previous">Vormonat</string>
+    <string name="vb_report_cost_per_km">Kosten pro km</string>
+</resources>

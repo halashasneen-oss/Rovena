@@ -35,3 +35,12 @@ The maintenance intervals are explicitly generic guidance, not manufacturer-spec
 - GitHub Actions runs unit tests, builds the debug APK and runs Android lint on every push
 
 Next: richer manufacturer/model-specific schedules, document/file capture, export/backup, reports, settings and release polish.
+
+## Version 2.1 — Value Boost / Premium Automotive UI
+- Deep-navy and teal premium theme across garage, dashboard, history, expenses and forms.
+- Interactive care ring with confidence, three contextual priorities and data-based actions.
+- Expense Radar: lifetime spend, monthly comparison, fuel/maintenance/other breakdown and cost/km when enough odometer data exists.
+- Digital Vehicle Passport: branded multi-page PDF with vehicle details, spending and maintenance/fuel/document history.
+- Restore requires explicit confirmation; JSON backups are validated before transactional replacement. Backups contain attachment URIs, not binary files.
+- Unknown Room database versions no longer trigger silent destructive migration.
+- Release bundle is signed only when the ROVENA_* signing secrets are available.

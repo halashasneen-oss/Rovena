@@ -226,7 +226,7 @@ internal fun SettingsScreen(
                     Text("  ${stringResource(R.string.import_backup)}")
                 }
                 Text(
-                    stringResource(R.string.backup_attachment_note),
+                    stringResource(R.string.vb_backup_note),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
