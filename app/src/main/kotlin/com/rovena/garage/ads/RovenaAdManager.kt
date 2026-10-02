@@ -88,6 +88,7 @@ class RovenaAdManager(
                 adFreeUntil = until
                 preferencesLoaded = true
                 updateClock()
+                if (sdkReady && !isAdFree) preloadAppOpen()
             }
         }
     }
