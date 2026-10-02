@@ -5,6 +5,7 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+// Pin Ads 24.0 / UMP 3.1 to the current Kotlin 2.0.21 toolchain.
 // Separate Rovena AdMob credentials. Other apps' unit IDs must never be reused.
 val admobAppId = System.getenv("ROVENA_ADMOB_APP_ID").orEmpty().trim()
 val admobBannerId = System.getenv("ROVENA_ADMOB_BANNER_ID").orEmpty().trim()
@@ -118,8 +119,8 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("androidx.work:work-runtime-ktx:2.10.0")
     implementation("com.google.android.material:material:1.12.0")
-    implementation("com.google.android.gms:play-services-ads:25.5.0")
-    implementation("com.google.android.ump:user-messaging-platform:4.0.0")
+    implementation("com.google.android.gms:play-services-ads:24.0.0")
+    implementation("com.google.android.ump:user-messaging-platform:3.1.0")
 
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
