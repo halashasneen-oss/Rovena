@@ -48,7 +48,7 @@ fun RovenaAdaptiveBanner(ads: RovenaAdManager) {
     if (!ads.mayDisplayAds) return
     val context = LocalContext.current
     val screenWidth = LocalConfiguration.current.screenWidthDp
-    val adWidth = (screenWidth - 24).coerceAtLeast(320)
+    val adWidth = (screenWidth - 24).coerceAtLeast(1)
     val adView = remember(context, adWidth) {
         AdView(context).apply {
             adUnitId = BuildConfig.ADMOB_BANNER_ID
@@ -66,7 +66,6 @@ fun RovenaAdaptiveBanner(ads: RovenaAdManager) {
         }
         adView.loadAd(AdRequest.Builder().build())
         onDispose {
-            adView.adListener = null
             adView.destroy()
         }
     }
@@ -83,7 +82,7 @@ fun RovenaAdaptiveBanner(ads: RovenaAdManager) {
         }
         AndroidView(
             factory = { adView },
-            modifier = Modifier.fillMaxWidth().height(adView.adSize.height.dp)
+            modifier = Modifier.fillMaxWidth().height((adView.adSize?.height ?: 50).dp)
         )
     }
 }
