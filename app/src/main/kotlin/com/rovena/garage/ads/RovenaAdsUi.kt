@@ -4,16 +4,17 @@ import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.CardGiftcard
 import androidx.compose.material.icons.rounded.PrivacyTip
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -26,6 +27,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -90,7 +93,6 @@ fun RovenaAdaptiveBanner(ads: RovenaAdManager) {
 @Composable
 fun RovenaAdsSettingsPanel(ads: RovenaAdManager) {
     if (!ads.configured) return
-    val minutesRemaining = ((ads.adFreeUntil - ads.clock + 59_999) / 60_000).coerceAtLeast(0)
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -98,7 +100,7 @@ fun RovenaAdsSettingsPanel(ads: RovenaAdManager) {
         border = BorderStroke(1.dp, RovenaPalette.Cyan.copy(alpha = 0.32f))
     ) {
         Column(
-            Modifier.padding(18.dp),
+            modifier = Modifier.padding(18.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
@@ -106,30 +108,10 @@ fun RovenaAdsSettingsPanel(ads: RovenaAdManager) {
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Black
             )
-            Text(stringResource(R.string.ad_settings_description), color = RovenaPalette.TextSecondary)
-            if (ads.isAdFree) {
-                Text(
-                    stringResource(R.string.ad_reward_active, minutesRemaining),
-                    color = RovenaPalette.Success,
-                    fontWeight = FontWeight.Bold
-                )
-            } else {
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = ads::watchAdToHideAds,
-                    enabled = ads.mayOfferReward
-                ) {
-                    Icon(Icons.Rounded.CardGiftcard, contentDescription = null)
-                    Text("  " + stringResource(R.string.ad_reward_button))
-                }
-                if (!ads.mayOfferReward) {
-                    Text(
-                        stringResource(R.string.ad_reward_unavailable),
-                        color = RovenaPalette.TextSecondary,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
+            Text(
+                stringResource(R.string.ad_settings_description),
+                color = RovenaPalette.TextSecondary
+            )
             if (ads.privacyOptionsRequired) {
                 OutlinedButton(
                     modifier = Modifier.fillMaxWidth(),
@@ -140,14 +122,48 @@ fun RovenaAdsSettingsPanel(ads: RovenaAdManager) {
                 }
             }
             if (ads.isTestAds) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    stringResource(R.string.ad_test_mode),
+                    color = RovenaPalette.Warning,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
+    }
+}
+
+/** Branded, bounded startup loading screen; late ads never interrupt main content. */
+@Composable
+fun RovenaOpeningOverlay() {
+    Box(
+        modifier = Modifier.fillMaxSize().background(
+            Brush.verticalGradient(
+                listOf(RovenaPalette.Midnight, RovenaPalette.DeepNavy, RovenaPalette.Surface)
+            )
+        ),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp)) {
+            Surface(
+                shape = CircleShape,
+                color = RovenaPalette.Accent.copy(alpha = 0.17f),
+                border = BorderStroke(1.dp, RovenaPalette.Cyan.copy(alpha = 0.6f))
+            ) {
+                Box(Modifier.size(96.dp), contentAlignment = Alignment.Center) {
                     Text(
-                        stringResource(R.string.ad_test_mode),
-                        color = RovenaPalette.Warning,
-                        style = MaterialTheme.typography.bodySmall
+                        "R",
+                        color = RovenaPalette.Cyan,
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.Black
                     )
                 }
             }
+            Text(stringResource(R.string.app_display_name), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Black)
+            Text(
+                stringResource(R.string.p5b_home_subtitle),
+                color = RovenaPalette.TextSecondary,
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }

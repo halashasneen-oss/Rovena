@@ -2,10 +2,7 @@
 <resources>
     <string name="ad_label">Publicidad</string>
     <string name="ad_settings_title">Anuncios y privacidad</string>
-    <string name="ad_settings_description">Los anuncios ayudan a mantener Rovena gratis. Mira un anuncio opcional y oculta los banners e intersticiales durante una hora.</string>
-    <string name="ad_reward_button">Ver anuncio: 1 hora sin publicidad</string>
-    <string name="ad_reward_unavailable">El anuncio no está disponible. Inténtalo más tarde.</string>
-    <string name="ad_reward_active">Anuncios ocultos durante %1$d minutos más</string>
+    <string name="ad_settings_description">Rovena muestra anuncios de banner, intersticiales y de apertura. Puedes gestionar tus preferencias de privacidad si corresponde.</string>
     <string name="ad_privacy_options">Gestionar privacidad de anuncios</string>
-    <string name="ad_test_mode">Anuncios de prueba: sin ingresos. Se necesitan IDs de producción.</string>
+    <string name="ad_test_mode">Versión de prueba: solo anuncios de Google de prueba, sin ingresos.</string>
 </resources>

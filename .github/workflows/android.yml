@@ -46,24 +46,16 @@ jobs:
           ROVENA_STORE_PASSWORD: ${{ secrets.ROVENA_STORE_PASSWORD }}
           ROVENA_KEY_ALIAS: ${{ secrets.ROVENA_KEY_ALIAS }}
           ROVENA_KEY_PASSWORD: ${{ secrets.ROVENA_KEY_PASSWORD }}
-          ROVENA_ADMOB_APP_ID: ${{ secrets.ROVENA_ADMOB_APP_ID }}
-          ROVENA_ADMOB_BANNER_ID: ${{ secrets.ROVENA_ADMOB_BANNER_ID }}
-          ROVENA_ADMOB_INTERSTITIAL_ID: ${{ secrets.ROVENA_ADMOB_INTERSTITIAL_ID }}
-          ROVENA_ADMOB_REWARDED_ID: ${{ secrets.ROVENA_ADMOB_REWARDED_ID }}
-          ROVENA_ADMOB_APP_OPEN_ID: ${{ secrets.ROVENA_ADMOB_APP_OPEN_ID }}
         run: |
-          if [ -n "$ROVENA_ADMOB_APP_ID" ] && [ -n "$ROVENA_ADMOB_BANNER_ID" ] && [ -n "$ROVENA_ADMOB_INTERSTITIAL_ID" ] && [ -n "$ROVENA_ADMOB_REWARDED_ID" ] && [ -n "$ROVENA_ADMOB_APP_OPEN_ID" ]; then
-            echo "ROVENA_LIVE_ADS_READY=true" >> "$GITHUB_ENV"
-            echo "Rovena AdMob: complete production credentials supplied"
-          else
-            echo "ROVENA_LIVE_ADS_READY=false" >> "$GITHUB_ENV"
-            echo "::warning::Rovena production AdMob IDs absent. Release builds but AD REQUESTS ARE DISABLED."
-          fi
+          echo "ROVENA_LIVE_ADS_READY=true" >> "$GITHUB_ENV"
+          echo "Rovena production identifiers are provided by the app Gradle configuration"
           chmod +x gradlew
           ./gradlew \
+            :app:verifyProductionAds \
             :app:testDebugUnitTest \
             :app:testReleaseUnitTest \
             :app:assembleDebug \
+            :app:assembleRelease \
             :app:lintDebug \
             :app:lintRelease \
             :app:bundleRelease \
@@ -72,6 +64,18 @@ jobs:
       - name: Verify signed release AAB
         if: env.ROVENA_SIGNING_READY == 'true'
         run: jarsigner -verify -verbose -certs app/build/outputs/bundle/release/app-release.aab
+
+      - name: Verify signed production APK
+        if: env.ROVENA_SIGNING_READY == 'true'
+        run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose app/build/outputs/apk/release/app-release.apk
+
+      - name: Upload signed production APK
+        if: env.ROVENA_SIGNING_READY == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rovena-production-release-apk-signed
+          path: app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4

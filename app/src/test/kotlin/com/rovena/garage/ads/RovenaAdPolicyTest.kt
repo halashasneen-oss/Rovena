@@ -5,38 +5,26 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class RovenaAdPolicyTest {
-    @Test fun neverShowOnAppLaunchOrFirstThreeActions() {
-        for (n in 0..3) {
-            assertFalse(RovenaAdPolicy.mayShowInterstitial(n, 0, 1_000_000, false))
-        }
+    @Test fun interstitialAppearsOnlyAtNaturalBreaks() {
+        (0..3).forEach { assertFalse(RovenaAdPolicy.mayShowInterstitial(it, 0L, 1_000_000L)) }
+        assertTrue(RovenaAdPolicy.mayShowInterstitial(4, 0L, 1_000_000L))
+        assertFalse(RovenaAdPolicy.mayShowInterstitial(8, 1_000_000L, 1_100_000L))
+        assertTrue(RovenaAdPolicy.mayShowInterstitial(8, 1_000_000L, 1_300_000L))
+        assertFalse(RovenaAdPolicy.mayShowInterstitial(9, 0L, 1_300_000L))
     }
 
-    @Test fun capCompletedActionsAndFiveMinuteCooldown() {
-        assertTrue(RovenaAdPolicy.mayShowInterstitial(4, 0, 1_000_000, false))
-        assertFalse(RovenaAdPolicy.mayShowInterstitial(8, 1_000_000, 1_100_000, false))
-        assertTrue(RovenaAdPolicy.mayShowInterstitial(8, 1_000_000, 1_300_000, false))
-        assertFalse(RovenaAdPolicy.mayShowInterstitial(9, 0, 1_300_000, false))
-    }
-
-    @Test fun rewardedAdFreePeriodSuppressesEveryAdFormat() {
-        assertTrue(RovenaAdPolicy.adsSuppressed(3_600_000, 3_500_000))
-        assertFalse(RovenaAdPolicy.adsSuppressed(3_600_000, 3_600_000))
-        assertFalse(RovenaAdPolicy.mayShowInterstitial(8, 0, 3_500_000, true))
-    }
-
-    @Test fun appOpenRequiresWarmReturnAndFreshPreloadedAd() {
+    @Test fun appOpenRequiresEligibleReturnAndFreshAd() {
         val now = 10_000_000L
-        val ready = { lastBackground: Long, lastShown: Long, loaded: Long, nowAt: Long,
-                     suppressed: Boolean, flow: Boolean, fullscreen: Boolean ->
-            RovenaAdPolicy.mayShowAppOpen(lastBackground,lastShown,loaded,nowAt,suppressed,flow,fullscreen)
-        }
-        assertFalse(ready(0,0,now - 1000,now,false,false,false)) // cold launch
-        assertFalse(ready(now - 89_999,0,now - 1000,now,false,false,false))
-        assertTrue(ready(now - 91_000,0,now - 1000,now,false,false,false))
-        assertFalse(ready(now - 91_000,now - 1000,now - 1000,now,false,false,false))
-        assertFalse(ready(now - 91_000,0,now - RovenaAdPolicy.APP_OPEN_EXPIRY_MS,now,false,false,false))
-        assertFalse(ready(now - 91_000,0,now - 1000,now,true,false,false))
-        assertFalse(ready(now - 91_000,0,now - 1000,now,false,true,false))
-        assertFalse(ready(now - 91_000,0,now - 1000,now,false,false,true))
+        fun allowed(background: Long, previous: Long = 0L, loaded: Long = now - 1000,
+                    active: Boolean = false, showing: Boolean = false): Boolean =
+            RovenaAdPolicy.mayShowAppOpen(background, previous, loaded, now, active, showing)
+
+        assertFalse(allowed(0L))
+        assertFalse(allowed(now - 89_999L))
+        assertTrue(allowed(now - 91_000L))
+        assertFalse(allowed(now - 91_000L, previous = now - 1000L))
+        assertFalse(allowed(now - 91_000L, loaded = now - RovenaAdPolicy.APP_OPEN_EXPIRY_MS))
+        assertFalse(allowed(now - 91_000L, active = true))
+        assertFalse(allowed(now - 91_000L, showing = true))
     }
 }

@@ -71,11 +71,6 @@ fun RovenaRoot(
     onImportBackup: () -> Unit,
     adsManager: RovenaAdManager
 ) {
-    LaunchedEffect(adsManager.adFreeUntil) {
-        val remaining = adsManager.adFreeUntil - System.currentTimeMillis()
-        if (remaining > 0L) delay(remaining)
-        adsManager.updateClock()
-    }
     val onboardingDone by preferences.onboardingCompleted.collectAsStateWithLifecycle(initialValue = false)
     val languageTag by preferences.languageTag.collectAsStateWithLifecycle(initialValue = "")
 

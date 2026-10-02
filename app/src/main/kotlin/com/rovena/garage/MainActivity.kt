@@ -6,6 +6,9 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -20,6 +23,7 @@ import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.rovena.garage.ads.RovenaAdManager
+import com.rovena.garage.ads.RovenaOpeningOverlay
 import com.rovena.garage.data.AppPreferences
 import com.rovena.garage.data.RovenaBackupManager
 import com.rovena.garage.notifications.NotificationScheduler
@@ -33,7 +37,7 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     private val prefs by lazy { AppPreferences(this) }
-    private val adsManager by lazy { RovenaAdManager(this, prefs) }
+    private val adsManager by lazy { RovenaAdManager(this) }
     private val app by lazy { application as RovenaApp }
     private val vehicleRepository by lazy { app.vehicleRepository }
     private val recordRepository by lazy { app.recordRepository }
@@ -101,7 +105,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        adsManager.attach()
 
         lifecycleScope.launch {
             val savedLanguage = prefs.languageTag.first()
@@ -117,6 +120,7 @@ class MainActivity : AppCompatActivity() {
                 initialValue = AppPreferences.THEME_SYSTEM
             ).value
             RovenaTheme(themeMode = themeMode) {
+                Box(Modifier.fillMaxSize()) {
                 RovenaRoot(
                     preferences = prefs,
                     vehicleRepository = vehicleRepository,
@@ -144,6 +148,10 @@ class MainActivity : AppCompatActivity() {
                         }
                     )
                 }
+                if (adsManager.startupVisible) {
+                    RovenaOpeningOverlay()
+                }
+                }
             }
         }
     }
@@ -160,16 +168,14 @@ class MainActivity : AppCompatActivity() {
 
             if (!prefs.onboardingCompleted.first()) return@launch
 
-            adsManager.updateClock()
+            // Establish the short startup screen before consent and SDK loading.
+            adsManager.onActivityResumed()
+            adsManager.requestConsent()
             if (notificationsAllowed()) {
                 ensureNotificationsActive()
-                adsManager.requestConsent()
             } else if (!prefs.notificationPermissionAsked.first()) {
                 requestNotificationPermissionIfNeeded()
-            } else {
-                adsManager.requestConsent()
             }
-            adsManager.onActivityResumed()
         }
     }
 

@@ -7,21 +7,20 @@ plugins {
 
 // Pin Ads 24.0 / UMP 3.1 to the current Kotlin 2.0.21 toolchain.
 // Separate Rovena AdMob credentials. Other apps' unit IDs must never be reused.
-val admobAppId = System.getenv("ROVENA_ADMOB_APP_ID").orEmpty().trim()
-val admobBannerId = System.getenv("ROVENA_ADMOB_BANNER_ID").orEmpty().trim()
-val admobInterstitialId = System.getenv("ROVENA_ADMOB_INTERSTITIAL_ID").orEmpty().trim()
-val admobRewardedId = System.getenv("ROVENA_ADMOB_REWARDED_ID").orEmpty().trim()
-val admobAppOpenId = System.getenv("ROVENA_ADMOB_APP_OPEN_ID").orEmpty().trim()
-val admobValues = listOf(admobAppId, admobBannerId, admobInterstitialId, admobRewardedId, admobAppOpenId)
+val admobAppId = "ca-app-pub-5961173995415325~8165480729"
+val admobBannerId = "ca-app-pub-5961173995415325/1659696400"
+val admobInterstitialId = "ca-app-pub-5961173995415325/3017095820"
+val admobAppOpenId = "ca-app-pub-5961173995415325/7642736542"
+val admobValues = listOf(admobAppId, admobBannerId, admobInterstitialId, admobAppOpenId)
 val appIdPattern = Regex("ca-app-pub-[0-9]{16}~[0-9]{10}")
 val unitIdPattern = Regex("ca-app-pub-[0-9]{16}/[0-9]{10}")
 val productionAdsReady = appIdPattern.matches(admobAppId) &&
-    listOf(admobBannerId, admobInterstitialId, admobRewardedId, admobAppOpenId).all(unitIdPattern::matches) &&
-    listOf(admobBannerId, admobInterstitialId, admobRewardedId, admobAppOpenId).all {
+    listOf(admobBannerId, admobInterstitialId, admobAppOpenId).all(unitIdPattern::matches) &&
+    listOf(admobBannerId, admobInterstitialId, admobAppOpenId).all {
         it.substringBefore('/') == admobAppId.substringBefore('~')
     }
 if (admobValues.any(String::isNotBlank) && !productionAdsReady) {
-    throw GradleException("Rovena AdMob: supply a valid app ID and all four unit IDs from the SAME AdMob app.")
+    throw GradleException("Rovena AdMob: supply a valid app ID and all three unit IDs from the SAME AdMob app.")
 }
 val testAdmobAppId = "ca-app-pub-3940256099942544~3347511713"
 fun javaString(value: String): String = "\"" + value + "\""
@@ -81,7 +80,6 @@ android {
             buildConfigField("boolean", "ADS_ARE_TEST", "true")
             buildConfigField("String", "ADMOB_BANNER_ID", javaString("ca-app-pub-3940256099942544/9214589741"))
             buildConfigField("String", "ADMOB_INTERSTITIAL_ID", javaString("ca-app-pub-3940256099942544/1033173712"))
-            buildConfigField("String", "ADMOB_REWARDED_ID", javaString("ca-app-pub-3940256099942544/5224354917"))
             buildConfigField("String", "ADMOB_APP_OPEN_ID", javaString("ca-app-pub-3940256099942544/9257395921"))
         }
         release {
@@ -92,7 +90,6 @@ android {
             buildConfigField("boolean", "ADS_ARE_TEST", "false")
             buildConfigField("String", "ADMOB_BANNER_ID", javaString(if (productionAdsReady) admobBannerId else ""))
             buildConfigField("String", "ADMOB_INTERSTITIAL_ID", javaString(if (productionAdsReady) admobInterstitialId else ""))
-            buildConfigField("String", "ADMOB_REWARDED_ID", javaString(if (productionAdsReady) admobRewardedId else ""))
             buildConfigField("String", "ADMOB_APP_OPEN_ID", javaString(if (productionAdsReady) admobAppOpenId else ""))
             if (hasReleaseSigning) {
                 signingConfig = signingConfigs.getByName("release")
@@ -139,7 +136,7 @@ dependencies {
 tasks.register("verifyProductionAds") {
     doLast {
         check(productionAdsReady) {
-            "Production AdMob IDs for com.rovena.garage are missing. Set ROVENA_ADMOB_APP_ID, _BANNER_ID, _INTERSTITIAL_ID, _REWARDED_ID and _APP_OPEN_ID."
+            "Production AdMob IDs for com.rovena.garage are missing. Set ROVENA_ADMOB_APP_ID, _BANNER_ID, _INTERSTITIAL_ID and _APP_OPEN_ID."
         }
     }
 }

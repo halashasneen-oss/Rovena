@@ -1,122 +1,95 @@
 package com.rovena.garage.ads
 
-import android.app.Activity
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Lifecycle
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.appopen.AppOpenAd
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
-import com.google.android.gms.ads.rewarded.RewardedAd
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.ump.ConsentInformation
 import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
 import com.rovena.garage.BuildConfig
-import com.rovena.garage.data.AppPreferences
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
-/**
- * One Activity-owned ad controller. Live ads are impossible without five matching
- * Rovena-specific production IDs, a fresh UMP consent check, and SDK initialization.
- */
-class RovenaAdManager(
-    private val activity: AppCompatActivity,
-    private val preferences: AppPreferences
-) {
+/** Activity-owned controller: only banner, interstitial and App Open; no rewarded requests. */
+class RovenaAdManager(private val activity: AppCompatActivity) {
     private val consent by lazy { UserMessagingPlatform.getConsentInformation(activity) }
     private val mainHandler = Handler(Looper.getMainLooper())
-    private var attached = false
+
     private var consentStarted = false
+    private var consentFormInProgress = false
     private var initializing = false
     private var sdkInitialized = false
     private var interstitialLoading = false
-    private var rewardedLoading = false
-    private var interstitial: InterstitialAd? = null
-    private var rewarded: RewardedAd? = null
-    private var appOpenAd: AppOpenAd? = null
     private var appOpenLoading = false
+    private var interstitial: InterstitialAd? = null
+    private var appOpenAd: AppOpenAd? = null
     private var appOpenLoadedAt = 0L
     private var lastAppOpenShownAt = 0L
     private var lastBackgroundAt = 0L
+    private var lastInterstitialAt = 0L
     private var ignoreAppOpenUntil = 0L
     private var fullScreenAdShowing = false
     private var userFlowActive = false
     private var skipNextForeground = false
-    private var consentFormInProgress = false
+    private var initialForegroundHandled = false
+    private var startupExpiresAt = 0L
     private var completedActions = 0
-    private var lastInterstitialAt = 0L
 
     var sdkReady by mutableStateOf(false)
         private set
     var privacyOptionsRequired by mutableStateOf(false)
         private set
-    var rewardedReady by mutableStateOf(false)
-        private set
-    var adFreeUntil by mutableLongStateOf(0L)
-        private set
-    var clock by mutableLongStateOf(System.currentTimeMillis())
-        private set
-    var preferencesLoaded by mutableStateOf(false)
+    var startupVisible by mutableStateOf(false)
         private set
 
     val configured: Boolean get() = BuildConfig.ADS_CONFIGURED
     val isTestAds: Boolean get() = BuildConfig.ADS_ARE_TEST
-    val isAdFree: Boolean
-        get() = RovenaAdPolicy.adsSuppressed(adFreeUntil, clock)
-    val mayDisplayAds: Boolean
-        get() = configured && sdkReady && preferencesLoaded && !isAdFree
-    val mayOfferReward: Boolean
-        get() = configured && sdkReady && preferencesLoaded && !isAdFree && rewardedReady
-
-    fun attach() {
-        if (attached) return
-        attached = true
-        activity.lifecycleScope.launch {
-            preferences.adsHiddenUntil.collectLatest { until ->
-                adFreeUntil = until
-                preferencesLoaded = true
-                updateClock()
-                if (sdkReady && !isAdFree) preloadAppOpen()
-            }
-        }
-    }
+    val mayDisplayAds: Boolean get() = configured && sdkReady && !consentFormInProgress
 
     fun setUserFlowActive(active: Boolean) {
         userFlowActive = active
     }
 
-    /** Prevent a return from the OS file picker or sharing panel triggering an ad. */
     fun suppressNextReturn() {
         skipNextForeground = true
     }
 
     fun onActivityStopped() {
+        startupVisible = false
         if (!fullScreenAdShowing && !consentFormInProgress) {
             lastBackgroundAt = System.currentTimeMillis()
         }
     }
 
-    /** Never show on a cold launch; only a preloaded ad after a genuine return. */
+    /** Cold start: an existing user's short branded loading window; never show late. */
     fun onActivityResumed() {
-        updateClock()
+        val now = System.currentTimeMillis()
         if (skipNextForeground) {
             skipNextForeground = false
             return
         }
-        if (!mayDisplayAds || consentFormInProgress || clock < ignoreAppOpenUntil) return
-        if (appOpenAd != null && clock - appOpenLoadedAt >= RovenaAdPolicy.APP_OPEN_EXPIRY_MS) {
+        if (!initialForegroundHandled) {
+            initialForegroundHandled = true
+            if (configured && !userFlowActive && !activity.isFinishing) {
+                startupVisible = true
+                startupExpiresAt = now + 2_500L
+                mainHandler.postDelayed({ startupVisible = false }, 2_500L)
+                if (sdkReady) preloadAppOpen()
+            }
+            return
+        }
+        if (!mayDisplayAds || startupVisible || now < ignoreAppOpenUntil) return
+        if (appOpenAd != null && now - appOpenLoadedAt >= RovenaAdPolicy.APP_OPEN_EXPIRY_MS) {
             appOpenAd = null
             appOpenLoadedAt = 0L
         }
@@ -124,68 +97,39 @@ class RovenaAdManager(
             preloadAppOpen()
             return
         }
-        val canShow = RovenaAdPolicy.mayShowAppOpen(
-            backgroundedAt = lastBackgroundAt,
-            lastShownAt = lastAppOpenShownAt,
-            loadedAt = appOpenLoadedAt,
-            now = clock,
-            adsSuppressed = isAdFree,
-            userFlowActive = userFlowActive,
-            fullScreenAdShowing = fullScreenAdShowing
-        )
-        if (!canShow) return
-        if (activity.isFinishing || activity.isDestroyed) return
-        appOpenAd = null
-        appOpenLoadedAt = 0L
-        lastBackgroundAt = 0L
-        lastAppOpenShownAt = clock
-        fullScreenAdShowing = true
-        ad.fullScreenContentCallback = object : FullScreenContentCallback() {
-            override fun onAdDismissedFullScreenContent() {
-                finishFullScreenAd()
-                preloadAppOpen()
-            }
-            override fun onAdFailedToShowFullScreenContent(error: AdError) {
-                finishFullScreenAd()
-                preloadAppOpen()
-            }
-        }
-        ad.show(activity)
+        if (!RovenaAdPolicy.mayShowAppOpen(
+                lastBackgroundAt, lastAppOpenShownAt, appOpenLoadedAt, now,
+                userFlowActive, fullScreenAdShowing
+            )
+        ) return
+        showAppOpen(ad, now)
     }
 
-    fun updateClock() {
-        clock = System.currentTimeMillis()
-    }
-
-    /** Call after onboarding, once per Activity launch. */
+    /** Call only after onboarding. Production requests require fresh UMP consent. */
     fun requestConsent() {
         if (!configured || consentStarted || activity.isFinishing || activity.isDestroyed) return
         consentStarted = true
-        // Google's published demo ad unit IDs do not belong to a production account.
-        // A debug build serves only test creatives and does not require live consent forms.
         if (BuildConfig.DEBUG) {
             initializeSdk()
             return
         }
         consentFormInProgress = true
-        val params = ConsentRequestParameters.Builder().build()
         consent.requestConsentInfoUpdate(
             activity,
-            params,
+            ConsentRequestParameters.Builder().build(),
             {
                 updatePrivacyStatus()
                 UserMessagingPlatform.loadAndShowConsentFormIfRequired(activity) {
-                    updatePrivacyStatus()
                     consentFormInProgress = false
-                    ignoreAppOpenUntil = System.currentTimeMillis() + 60_000L
+                    updatePrivacyStatus()
                     if (consent.canRequestAds()) initializeSdk() else revokeAdAccess()
                 }
                 if (consent.canRequestAds()) initializeSdk()
             },
             {
-                updatePrivacyStatus()
                 consentFormInProgress = false
-                // If an update fails, UMP may allow a valid prior consent decision.
+                updatePrivacyStatus()
+                // UMP may provide an existing valid decision if its network request fails.
                 if (consent.canRequestAds()) initializeSdk() else revokeAdAccess()
             }
         )
@@ -193,6 +137,7 @@ class RovenaAdManager(
 
     fun showPrivacyOptions() {
         if (!configured || !privacyOptionsRequired || BuildConfig.DEBUG) return
+        startupVisible = false
         consentFormInProgress = true
         UserMessagingPlatform.showPrivacyOptionsForm(activity) {
             consentFormInProgress = false
@@ -211,16 +156,15 @@ class RovenaAdManager(
     private fun revokeAdAccess() {
         sdkReady = false
         interstitial = null
-        rewarded = null
-        rewardedReady = false
         appOpenAd = null
         appOpenLoadedAt = 0L
+        startupVisible = false
     }
 
     private fun initializeSdk() {
         if (sdkInitialized) {
-            sdkReady = true
-            preloadFullScreenAds()
+            sdkReady = BuildConfig.DEBUG || consent.canRequestAds()
+            if (sdkReady) preloadAds()
             return
         }
         if (initializing) return
@@ -228,25 +172,24 @@ class RovenaAdManager(
         Thread {
             MobileAds.initialize(activity) {
                 mainHandler.post {
+                    initializing = false
                     if (!activity.isFinishing && !activity.isDestroyed) {
-                        initializing = false
                         sdkInitialized = true
                         sdkReady = BuildConfig.DEBUG || consent.canRequestAds()
-                        if (sdkReady) preloadFullScreenAds()
+                        if (sdkReady) preloadAds()
                     }
                 }
             }
         }.start()
     }
 
-    private fun preloadFullScreenAds() {
+    private fun preloadAds() {
         preloadInterstitial()
-        preloadRewarded()
         preloadAppOpen()
     }
 
     private fun preloadAppOpen() {
-        if (!sdkReady || !preferencesLoaded || isAdFree || appOpenLoading || appOpenAd != null) return
+        if (!sdkReady || consentFormInProgress || appOpenLoading || appOpenAd != null) return
         appOpenLoading = true
         AppOpenAd.load(
             activity,
@@ -255,9 +198,16 @@ class RovenaAdManager(
             object : AppOpenAd.AppOpenAdLoadCallback() {
                 override fun onAdLoaded(ad: AppOpenAd) {
                     appOpenLoading = false
-                    if (!sdkReady) return
+                    if (!mayDisplayAds) return
                     appOpenAd = ad
                     appOpenLoadedAt = System.currentTimeMillis()
+                    // The app is still genuinely displaying its startup loading UI.
+                    if (startupVisible && appOpenLoadedAt < startupExpiresAt &&
+                        activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
+                        !userFlowActive && !fullScreenAdShowing
+                    ) {
+                        showAppOpen(ad, appOpenLoadedAt)
+                    }
                 }
                 override fun onAdFailedToLoad(error: LoadAdError) {
                     appOpenLoading = false
@@ -268,6 +218,29 @@ class RovenaAdManager(
         )
     }
 
+    private fun showAppOpen(ad: AppOpenAd, now: Long) {
+        if (!mayDisplayAds || fullScreenAdShowing || userFlowActive ||
+            activity.isFinishing || activity.isDestroyed
+        ) return
+        startupVisible = false
+        appOpenAd = null
+        appOpenLoadedAt = 0L
+        lastBackgroundAt = 0L
+        lastAppOpenShownAt = now
+        fullScreenAdShowing = true
+        ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+            override fun onAdDismissedFullScreenContent() {
+                finishFullScreenAd()
+                preloadAppOpen()
+            }
+            override fun onAdFailedToShowFullScreenContent(error: AdError) {
+                finishFullScreenAd()
+                preloadAppOpen()
+            }
+        }
+        ad.show(activity)
+    }
+
     private fun finishFullScreenAd() {
         fullScreenAdShowing = false
         ignoreAppOpenUntil = System.currentTimeMillis() + 60_000L
@@ -275,7 +248,7 @@ class RovenaAdManager(
     }
 
     private fun preloadInterstitial() {
-        if (!sdkReady || interstitialLoading || interstitial != null) return
+        if (!sdkReady || consentFormInProgress || interstitialLoading || interstitial != null) return
         interstitialLoading = true
         InterstitialAd.load(
             activity,
@@ -284,23 +257,24 @@ class RovenaAdManager(
             object : InterstitialAdLoadCallback() {
                 override fun onAdLoaded(ad: InterstitialAd) {
                     interstitialLoading = false
-                    interstitial = ad
+                    if (sdkReady) interstitial = ad
                 }
                 override fun onAdFailedToLoad(error: LoadAdError) {
                     interstitialLoading = false
                     interstitial = null
-                    // No aggressive retry loops: try again at the next real user action.
                 }
             }
         )
     }
 
-    /** Only at a natural break AFTER a record was saved and its sheet closed. */
+    /** Natural break only, after a successful save closes its entry sheet. */
     fun onCompletedRecord() {
         completedActions++
-        updateClock()
-        if (!mayDisplayAds || fullScreenAdShowing || clock - lastAppOpenShownAt < 60_000L) return
-        if (!RovenaAdPolicy.mayShowInterstitial(completedActions, lastInterstitialAt, clock, isAdFree)) {
+        val now = System.currentTimeMillis()
+        if (!mayDisplayAds || startupVisible || userFlowActive || fullScreenAdShowing ||
+            now - lastAppOpenShownAt < 60_000L
+        ) return
+        if (!RovenaAdPolicy.mayShowInterstitial(completedActions, lastInterstitialAt, now)) {
             if (interstitial == null) preloadInterstitial()
             return
         }
@@ -310,7 +284,7 @@ class RovenaAdManager(
         }
         if (activity.isFinishing || activity.isDestroyed) return
         interstitial = null
-        lastInterstitialAt = clock
+        lastInterstitialAt = now
         fullScreenAdShowing = true
         ad.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdDismissedFullScreenContent() {
@@ -325,59 +299,9 @@ class RovenaAdManager(
         ad.show(activity)
     }
 
-    private fun preloadRewarded() {
-        if (!sdkReady || rewardedLoading || rewarded != null) return
-        rewardedLoading = true
-        RewardedAd.load(
-            activity,
-            BuildConfig.ADMOB_REWARDED_ID,
-            AdRequest.Builder().build(),
-            object : RewardedAdLoadCallback() {
-                override fun onAdLoaded(ad: RewardedAd) {
-                    rewardedLoading = false
-                    rewarded = ad
-                    rewardedReady = true
-                }
-                override fun onAdFailedToLoad(error: LoadAdError) {
-                    rewardedLoading = false
-                    rewarded = null
-                    rewardedReady = false
-                }
-            }
-        )
-    }
-
-    /** User-triggered ONLY. Grant the benefit only after the earned-reward callback. */
-    fun watchAdToHideAds() {
-        updateClock()
-        if (!mayOfferReward || fullScreenAdShowing || activity.isFinishing || activity.isDestroyed) return
-        val ad = rewarded ?: return
-        rewarded = null
-        rewardedReady = false
-        fullScreenAdShowing = true
-        ad.fullScreenContentCallback = object : FullScreenContentCallback() {
-            override fun onAdDismissedFullScreenContent() {
-                finishFullScreenAd()
-                preloadRewarded()
-            }
-            override fun onAdFailedToShowFullScreenContent(error: AdError) {
-                finishFullScreenAd()
-                preloadRewarded()
-            }
-        }
-        ad.show(activity) {
-            val until = System.currentTimeMillis() + RovenaAdPolicy.AD_FREE_REWARD_MS
-            adFreeUntil = until
-            updateClock()
-            activity.lifecycleScope.launch { preferences.hideAdsUntil(until) }
-        }
-    }
-
     fun release() {
-        appOpenAd = null
-        appOpenLoadedAt = 0L
+        startupVisible = false
         interstitial = null
-        rewarded = null
-        rewardedReady = false
+        appOpenAd = null
     }
 }

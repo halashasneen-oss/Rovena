@@ -45,25 +45,14 @@ Next: richer manufacturer/model-specific schedules, document/file capture, expor
 - Unknown Room database versions no longer trigger silent destructive migration.
 - Release bundle is signed only when the ROVENA_* signing secrets are available.
 
-## Rovena AdMob integration — version 2.2
+## Rovena 2.2: production AdMob — three formats
 
-- Debug APK: **only official Google demo ads** (anchored adaptive banner, capped interstitial, opt-in rewarded ad).
-- Live release: reads these five `GitHub Actions > Secrets and variables > Actions` secrets, created specifically for the **Rovena** app:
-  - `ROVENA_ADMOB_APP_ID` in the form `ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY`
-  - `ROVENA_ADMOB_BANNER_ID` in the form `ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY`
-  - `ROVENA_ADMOB_INTERSTITIAL_ID` (same unit-ID format)
-  - `ROVENA_ADMOB_REWARDED_ID` (same unit-ID format)
-  - `ROVENA_ADMOB_APP_OPEN_ID` (same format; a separate App Open ad unit for Rovena)
-- Do **not** copy ad unit IDs from Truth Test or another app. All five IDs must share the same publisher prefix.
-- If any ID is missing, Gradle produces an ads-disabled release, with an explicit CI warning; no test ads are served in that release.
-- For local release builds, export the same five environment variables. Run `./gradlew :app:verifyProductionAds` to assert that real IDs are set before publishing.
-- Create and publish the appropriate **Privacy & messaging** consent form in the Rovena AdMob app; production UMP runs at every app launch after onboarding.
-- Add `app-ads.txt` to the root of the **website listed in the Google Play store page** and verify it in AdMob. This file is external to the APK.
-- Check Play Console's **Contains ads**, **Data safety** (ad identifiers / SDK network collection), and current privacy policy before publishing. Do not claim that this AdMob-enabled version is fully offline.
-- Interstitial appears only after four completed record saves and no more often than once every five minutes, never on onboarding. A user may voluntarily earn one hour of banner/interstitial suppression by watching a rewarded ad.
+Production identifiers for `com.rovena.garage` are configured as **public ad unit IDs** in `app/build.gradle.kts`, as supplied by the publisher. Google account credentials, signing keys and other private material must never be checked in. No rewarded ads or rewarded ad-free timers remain.
 
-### App Open (returning to Rovena)
-- Uses the official App Open test ad ID in debug; needs `ROVENA_ADMOB_APP_OPEN_ID` in production.
-- Preloads after SDK/UMP readiness; shows **only** on an eligible return after at least 90 seconds in background, never during onboarding, consent, or initial cold startup.
-- Maximum once per 30 minutes, ignores ads older than four hours, respects rewarded ad-free time, and never interrupts active record-entry dialogs or another full-screen ad.
-- App Open is skipped if a preloaded ad is unavailable; it must never appear unexpectedly after the user starts interacting.
+- Banner: adaptive banner positioned above the existing bottom navigation.
+- Interstitial: only after every fourth successful record save, with a five-minute minimum interval and no overlap with App Open.
+- App Open: separate Rovena unit, preloaded after UMP/SDK readiness. A brief, branded 2.5-second startup loading screen on eligible cold launches can show a ready ad; later ads never interrupt the main content. Also displays after an eligible return from background (at least 90 seconds), at most once per 30 minutes. Ads older than four hours are discarded. Initial onboarding, file pickers, sharing, consent forms and active input dialogs are protected.
+- Debug builds use Google's official **test** app ID and banner/interstitial/app-open unit IDs. Never click or test live production ads.
+- CI runs `./gradlew :app:verifyProductionAds` before unit tests, lint, signed debug/release APK and signed release AAB generation. Signed production APK and AAB are separate Actions artifacts.
+- For production, configure and publish the Rovena **AdMob Privacy & messaging / UMP** consent form. Update the Google Play **Contains ads** declaration, **Data safety** and privacy policy to reflect the ad SDK. Ensure `app-ads.txt` is hosted on the **developer website listed in Google Play** and ownership is verified in AdMob.
+- As with all AdMob integrations, valid IDs and a successful build **do not guarantee immediate real-ad fill**: the account/app status, policy review, consent, internet connection and inventory also matter.

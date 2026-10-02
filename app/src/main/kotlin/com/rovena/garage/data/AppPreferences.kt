@@ -26,7 +26,6 @@ class AppPreferences(private val context: Context) {
         val lastVehicleReminderAt = longPreferencesKey("last_vehicle_reminder_at")
         val lastSmartReminderKey = stringPreferencesKey("last_smart_reminder_key")
         val lastSmartReminderAt = longPreferencesKey("last_smart_reminder_at")
-        val adsHiddenUntil = longPreferencesKey("ads_hidden_until")
     }
 
     val onboardingCompleted: Flow<Boolean> = context.dataStore.data.map { it[Keys.onboardingCompleted] ?: false }
@@ -41,7 +40,6 @@ class AppPreferences(private val context: Context) {
     val lastVehicleReminderAt: Flow<Long> = context.dataStore.data.map { it[Keys.lastVehicleReminderAt] ?: 0L }
     val lastSmartReminderKey: Flow<String> = context.dataStore.data.map { it[Keys.lastSmartReminderKey] ?: "" }
     val lastSmartReminderAt: Flow<Long> = context.dataStore.data.map { it[Keys.lastSmartReminderAt] ?: 0L }
-    val adsHiddenUntil: Flow<Long> = context.dataStore.data.map { it[Keys.adsHiddenUntil] ?: 0L }
 
     suspend fun completeOnboarding() = context.dataStore.edit { it[Keys.onboardingCompleted] = true }
     suspend fun setLanguage(tag: String) = context.dataStore.edit { it[Keys.languageTag] = tag }
@@ -59,10 +57,6 @@ class AppPreferences(private val context: Context) {
         it[Keys.lastSmartReminderKey] = key
         it[Keys.lastSmartReminderAt] = time
         it[Keys.lastVehicleReminderAt] = time
-    }
-
-    suspend fun hideAdsUntil(timestamp: Long) = context.dataStore.edit {
-        it[Keys.adsHiddenUntil] = timestamp
     }
 
     companion object {
