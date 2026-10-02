@@ -13,9 +13,12 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
+      # GitHub's Ubuntu runner already includes cmdline-tools; the old setup action
+      # attempted to install the removed legacy "tools" package and failed.
       - name: Install Android 36
-        run: yes | sdkmanager "platforms;android-36" "build-tools;36.0.0" >/dev/null
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager --install "platforms;android-36" "build-tools;36.0.0" >/dev/null
 
       - name: Prepare release signing key
         env:
