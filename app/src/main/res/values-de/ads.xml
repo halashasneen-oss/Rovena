@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ad_label">Anzeige</string>
+    <string name="ad_settings_title">Werbung und Datenschutz</string>
+    <string name="ad_settings_description">Werbung hält Rovena kostenlos. Ein freiwilliges Video blendet Banner und Vollbildanzeigen eine Stunde lang aus.</string>
+    <string name="ad_reward_button">Werbung ansehen: 1 Stunde werbefrei</string>
+    <string name="ad_reward_unavailable">Anzeige momentan nicht verfügbar. Später erneut versuchen.</string>
+    <string name="ad_reward_active">Werbung noch %1$d Minuten ausgeblendet</string>
+    <string name="ad_privacy_options">Datenschutzoptionen für Werbung</string>
+    <string name="ad_test_mode">Testanzeigen: kein Umsatz. Produktive Anzeigen-IDs erforderlich.</string>
+</resources>

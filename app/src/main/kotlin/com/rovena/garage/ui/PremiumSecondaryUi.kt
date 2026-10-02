@@ -70,6 +70,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rovena.garage.R
+import com.rovena.garage.ads.RovenaAdManager
+import com.rovena.garage.ads.RovenaAdsSettingsPanel
 import com.rovena.garage.data.AppPreferences
 import com.rovena.garage.data.CarSymptom
 import com.rovena.garage.data.DashboardAnalytics
@@ -262,7 +264,8 @@ internal fun PremiumSmartCenterScreen(
     onLanguageSelected: (String) -> Unit,
     onExportBackup: () -> Unit,
     onImportBackup: () -> Unit,
-    onShareReport: () -> Unit
+    onShareReport: () -> Unit,
+    adsManager: RovenaAdManager
 ) {
     var page by rememberSaveable { mutableIntStateOf(0) }
 
@@ -301,7 +304,8 @@ internal fun PremiumSmartCenterScreen(
                     onLanguageSelected = onLanguageSelected,
                     onExportBackup = onExportBackup,
                     onImportBackup = onImportBackup,
-                    onShareReport = onShareReport
+                    onShareReport = onShareReport,
+                    adsManager = adsManager
                 )
             }
         }
@@ -468,7 +472,8 @@ private fun PremiumSettingsScreen(
     onLanguageSelected: (String) -> Unit,
     onExportBackup: () -> Unit,
     onImportBackup: () -> Unit,
-    onShareReport: () -> Unit
+    onShareReport: () -> Unit,
+    adsManager: RovenaAdManager
 ) {
     val themeMode by preferences.themeMode.collectAsStateWithLifecycle(initialValue = AppPreferences.THEME_DARK)
     val scope = rememberCoroutineScope()
@@ -520,6 +525,10 @@ private fun PremiumSettingsScreen(
                 PremiumLockedSwitch(stringResource(R.string.engagement_reminders_setting))
                 Text(stringResource(R.string.notification_fixed_note), style = MaterialTheme.typography.bodySmall, color = RovenaPalette.TextSecondary)
             }
+        }
+
+        if (adsManager.configured) {
+            item { RovenaAdsSettingsPanel(adsManager) }
         }
 
         if (attachments.isNotEmpty()) {

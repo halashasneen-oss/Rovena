@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ad_label">Reklam</string>
+    <string name="ad_settings_title">Reklamlar ve gizlilik</string>
+    <string name="ad_settings_description">Reklamlar Rovena uygulamasını ücretsiz tutar. İsteğe bağlı bir reklam izleyerek banner ve geçiş reklamlarını bir saat gizleyin.</string>
+    <string name="ad_reward_button">Reklam izle: 1 saat reklamsız</string>
+    <string name="ad_reward_unavailable">Reklam şu anda kullanılamıyor. Daha sonra tekrar deneyin.</string>
+    <string name="ad_reward_active">Reklamlar %1$d dakika daha gizli</string>
+    <string name="ad_privacy_options">Reklam gizlilik seçeneklerini yönet</string>
+    <string name="ad_test_mode">Test reklamları: gelir yok. Yayın kimlikleri gerekli.</string>
+</resources>

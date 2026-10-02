@@ -46,7 +46,18 @@ jobs:
           ROVENA_STORE_PASSWORD: ${{ secrets.ROVENA_STORE_PASSWORD }}
           ROVENA_KEY_ALIAS: ${{ secrets.ROVENA_KEY_ALIAS }}
           ROVENA_KEY_PASSWORD: ${{ secrets.ROVENA_KEY_PASSWORD }}
+          ROVENA_ADMOB_APP_ID: ${{ secrets.ROVENA_ADMOB_APP_ID }}
+          ROVENA_ADMOB_BANNER_ID: ${{ secrets.ROVENA_ADMOB_BANNER_ID }}
+          ROVENA_ADMOB_INTERSTITIAL_ID: ${{ secrets.ROVENA_ADMOB_INTERSTITIAL_ID }}
+          ROVENA_ADMOB_REWARDED_ID: ${{ secrets.ROVENA_ADMOB_REWARDED_ID }}
         run: |
+          if [ -n "$ROVENA_ADMOB_APP_ID" ] && [ -n "$ROVENA_ADMOB_BANNER_ID" ] && [ -n "$ROVENA_ADMOB_INTERSTITIAL_ID" ] && [ -n "$ROVENA_ADMOB_REWARDED_ID" ]; then
+            echo "ROVENA_LIVE_ADS_READY=true" >> "$GITHUB_ENV"
+            echo "Rovena AdMob: complete production credentials supplied"
+          else
+            echo "ROVENA_LIVE_ADS_READY=false" >> "$GITHUB_ENV"
+            echo "::warning::Rovena production AdMob IDs absent. Release builds but AD REQUESTS ARE DISABLED."
+          fi
           chmod +x gradlew
           ./gradlew \
             :app:testDebugUnitTest \
@@ -68,11 +79,19 @@ jobs:
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
 
-      - name: Upload signed release AAB
-        if: env.ROVENA_SIGNING_READY == 'true'
+      - name: Upload signed release AAB with live AdMob
+        if: env.ROVENA_SIGNING_READY == 'true' && env.ROVENA_LIVE_ADS_READY == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: rovena-auto-release-aab-signed
+          name: rovena-signed-aab-admob-live
+          path: app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+
+      - name: Upload signed AAB without live ads (not for launch)
+        if: env.ROVENA_SIGNING_READY == 'true' && env.ROVENA_LIVE_ADS_READY != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rovena-signed-aab-ads-disabled
           path: app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
 

@@ -1,3 +1,22 @@
+// Separate Rovena AdMob credentials. Other apps' unit IDs must never be reused.
+val admobAppId = System.getenv("ROVENA_ADMOB_APP_ID").orEmpty().trim()
+val admobBannerId = System.getenv("ROVENA_ADMOB_BANNER_ID").orEmpty().trim()
+val admobInterstitialId = System.getenv("ROVENA_ADMOB_INTERSTITIAL_ID").orEmpty().trim()
+val admobRewardedId = System.getenv("ROVENA_ADMOB_REWARDED_ID").orEmpty().trim()
+val admobValues = listOf(admobAppId, admobBannerId, admobInterstitialId, admobRewardedId)
+val appIdPattern = Regex("ca-app-pub-[0-9]{16}~[0-9]{10}")
+val unitIdPattern = Regex("ca-app-pub-[0-9]{16}/[0-9]{10}")
+val productionAdsReady = appIdPattern.matches(admobAppId) &&
+    listOf(admobBannerId, admobInterstitialId, admobRewardedId).all(unitIdPattern::matches) &&
+    listOf(admobBannerId, admobInterstitialId, admobRewardedId).all {
+        it.substringBefore('/') == admobAppId.substringBefore('~')
+    }
+if (admobValues.any(String::isNotBlank) && !productionAdsReady) {
+    throw GradleException("Rovena AdMob: supply a valid app ID and all three unit IDs from the SAME AdMob app.")
+}
+val testAdmobAppId = "ca-app-pub-3940256099942544~3347511713"
+fun javaString(value: String): String = "\"" + value + "\""
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -13,8 +32,8 @@ android {
         applicationId = "com.rovena.garage"
         minSdk = 26
         targetSdk = 36
-        versionCode = 9
-        versionName = "2.1.0"
+        versionCode = 10
+        versionName = "2.2.0"
     }
 
     val releaseKeystorePath = System.getenv("ROVENA_KEYSTORE_PATH")
@@ -53,7 +72,23 @@ android {
     }
 
     buildTypes {
+        getByName("debug") {
+            manifestPlaceholders["rovenaAdmobAppId"] = testAdmobAppId
+            buildConfigField("boolean", "ADS_CONFIGURED", "true")
+            buildConfigField("boolean", "ADS_ARE_TEST", "true")
+            buildConfigField("String", "ADMOB_BANNER_ID", javaString("ca-app-pub-3940256099942544/9214589741"))
+            buildConfigField("String", "ADMOB_INTERSTITIAL_ID", javaString("ca-app-pub-3940256099942544/1033173712"))
+            buildConfigField("String", "ADMOB_REWARDED_ID", javaString("ca-app-pub-3940256099942544/5224354917"))
+        }
         release {
+            // Missing credentials: release compiles, but NO ad requests are sent.
+            // The test app ID only satisfies SDK manifest metadata on an ads-disabled build.
+            manifestPlaceholders["rovenaAdmobAppId"] = if (productionAdsReady) admobAppId else testAdmobAppId
+            buildConfigField("boolean", "ADS_CONFIGURED", productionAdsReady.toString())
+            buildConfigField("boolean", "ADS_ARE_TEST", "false")
+            buildConfigField("String", "ADMOB_BANNER_ID", javaString(if (productionAdsReady) admobBannerId else ""))
+            buildConfigField("String", "ADMOB_INTERSTITIAL_ID", javaString(if (productionAdsReady) admobInterstitialId else ""))
+            buildConfigField("String", "ADMOB_REWARDED_ID", javaString(if (productionAdsReady) admobRewardedId else ""))
             if (hasReleaseSigning) {
                 signingConfig = signingConfigs.getByName("release")
             }
@@ -82,6 +117,8 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("androidx.work:work-runtime-ktx:2.10.0")
     implementation("com.google.android.material:material:1.12.0")
+    implementation("com.google.android.gms:play-services-ads:25.5.0")
+    implementation("com.google.android.ump:user-messaging-platform:4.0.0")
 
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
@@ -91,4 +128,13 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     testImplementation("junit:junit:4.13.2")
+}
+
+// Run this task before sending a production bundle to Google Play.
+tasks.register("verifyProductionAds") {
+    doLast {
+        check(productionAdsReady) {
+            "Production AdMob IDs for com.rovena.garage are missing. Set ROVENA_ADMOB_APP_ID, _BANNER_ID, _INTERSTITIAL_ID and _REWARDED_ID."
+        }
+    }
 }

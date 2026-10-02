@@ -44,3 +44,19 @@ Next: richer manufacturer/model-specific schedules, document/file capture, expor
 - Restore requires explicit confirmation; JSON backups are validated before transactional replacement. Backups contain attachment URIs, not binary files.
 - Unknown Room database versions no longer trigger silent destructive migration.
 - Release bundle is signed only when the ROVENA_* signing secrets are available.
+
+## Rovena AdMob integration — version 2.2
+
+- Debug APK: **only official Google demo ads** (anchored adaptive banner, capped interstitial, opt-in rewarded ad).
+- Live release: reads these four `GitHub Actions > Secrets and variables > Actions` secrets, created specifically for the **Rovena** app:
+  - `ROVENA_ADMOB_APP_ID` in the form `ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY`
+  - `ROVENA_ADMOB_BANNER_ID` in the form `ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY`
+  - `ROVENA_ADMOB_INTERSTITIAL_ID` (same unit-ID format)
+  - `ROVENA_ADMOB_REWARDED_ID` (same unit-ID format)
+- Do **not** copy ad unit IDs from Truth Test or another app. All four IDs must share the same publisher prefix.
+- If any ID is missing, Gradle produces an ads-disabled release, with an explicit CI warning; no test ads are served in that release.
+- For local release builds, export the same four environment variables. Run `./gradlew :app:verifyProductionAds` to assert that real IDs are set before publishing.
+- Create and publish the appropriate **Privacy & messaging** consent form in the Rovena AdMob app; production UMP runs at every app launch after onboarding.
+- Add `app-ads.txt` to the root of the **website listed in the Google Play store page** and verify it in AdMob. This file is external to the APK.
+- Check Play Console's **Contains ads**, **Data safety** (ad identifiers / SDK network collection), and current privacy policy before publishing. Do not claim that this AdMob-enabled version is fully offline.
+- Interstitial appears only after four completed record saves and no more often than once every five minutes, never on onboarding. A user may voluntarily earn one hour of banner/interstitial suppression by watching a rewarded ad.

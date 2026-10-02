@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ad_label">Advertisement</string>
+    <string name="ad_settings_title">Ads and privacy</string>
+    <string name="ad_settings_description">Ads help keep Rovena free. Choose to watch one optional ad and hide banner and interstitial ads for one hour.</string>
+    <string name="ad_reward_button">Watch ad: 1 hour without ads</string>
+    <string name="ad_reward_unavailable">Ad is not available yet. Try again later.</string>
+    <string name="ad_reward_active">Ads hidden for %1$d more minutes</string>
+    <string name="ad_privacy_options">Manage advertising privacy choices</string>
+    <string name="ad_test_mode">Test ads: no revenue. Production IDs required for release.</string>
+</resources>

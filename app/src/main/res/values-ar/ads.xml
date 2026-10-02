@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ad_label">إعلان</string>
+    <string name="ad_settings_title">الإعلانات والخصوصية</string>
+    <string name="ad_settings_description">تساعد الإعلانات على بقاء Rovena مجانيًا. يمكنك مشاهدة إعلان اختياري لإخفاء البنر والإعلانات البينية لمدة ساعة.</string>
+    <string name="ad_reward_button">شاهد إعلانًا: ساعة دون إعلانات</string>
+    <string name="ad_reward_unavailable">الإعلان غير متاح حاليًا. حاول لاحقًا.</string>
+    <string name="ad_reward_active">الإعلانات مخفية لمدة %1$d دقيقة أخرى</string>
+    <string name="ad_privacy_options">إدارة خيارات خصوصية الإعلانات</string>
+    <string name="ad_test_mode">إعلانات تجريبية: لا تحقق أرباحًا. يلزم إدخال معرّفات النشر.</string>
+</resources>

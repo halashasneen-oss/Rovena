@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.rovena.garage.ads.RovenaAdManager
 import com.rovena.garage.data.AppPreferences
 import com.rovena.garage.data.RovenaBackupManager
 import com.rovena.garage.notifications.NotificationScheduler
@@ -32,6 +33,7 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     private val prefs by lazy { AppPreferences(this) }
+    private val adsManager by lazy { RovenaAdManager(this, prefs) }
     private val app by lazy { application as RovenaApp }
     private val vehicleRepository by lazy { app.vehicleRepository }
     private val recordRepository by lazy { app.recordRepository }
@@ -48,6 +50,7 @@ class MainActivity : AppCompatActivity() {
             if (granted) {
                 ensureNotificationsActive()
             }
+            adsManager.requestConsent()
         }
     }
 
@@ -98,6 +101,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        adsManager.attach()
 
         lifecycleScope.launch {
             val savedLanguage = prefs.languageTag.first()
@@ -120,7 +124,8 @@ class MainActivity : AppCompatActivity() {
                     onLanguageSelected = ::changeLanguage,
                     onRequestNotifications = ::requestNotificationPermissionIfNeeded,
                     onExportBackup = ::exportBackup,
-                    onImportBackup = ::importBackup
+                    onImportBackup = ::importBackup,
+                    adsManager = adsManager
                 )
                 if (showRestoreConfirmation.value) {
                     AlertDialog(
@@ -150,10 +155,14 @@ class MainActivity : AppCompatActivity() {
 
             if (!prefs.onboardingCompleted.first()) return@launch
 
+            adsManager.updateClock()
             if (notificationsAllowed()) {
                 ensureNotificationsActive()
+                adsManager.requestConsent()
             } else if (!prefs.notificationPermissionAsked.first()) {
                 requestNotificationPermissionIfNeeded()
+            } else {
+                adsManager.requestConsent()
             }
         }
     }
@@ -196,7 +205,10 @@ class MainActivity : AppCompatActivity() {
                     Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                lifecycleScope.launch { ensureNotificationsActive() }
+                lifecycleScope.launch {
+                    ensureNotificationsActive()
+                    adsManager.requestConsent()
+                }
             } else {
                 notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
@@ -206,8 +218,14 @@ class MainActivity : AppCompatActivity() {
                 if (NotificationManagerCompat.from(this@MainActivity).areNotificationsEnabled()) {
                     ensureNotificationsActive()
                 }
+                adsManager.requestConsent()
             }
         }
+    }
+
+    override fun onDestroy() {
+        adsManager.release()
+        super.onDestroy()
     }
 
     private fun cancelRestore() {

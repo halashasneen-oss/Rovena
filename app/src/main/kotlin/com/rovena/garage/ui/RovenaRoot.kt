@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +22,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +38,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rovena.garage.R
+import com.rovena.garage.ads.RovenaAdManager
+import com.rovena.garage.ads.RovenaAdaptiveBanner
 import com.rovena.garage.data.AppPreferences
 import com.rovena.garage.data.CarRecordRepository
 import com.rovena.garage.data.DocumentDraft
@@ -53,6 +57,7 @@ import com.rovena.garage.ui.theme.RovenaScreenGradient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 @Composable
@@ -63,8 +68,14 @@ fun RovenaRoot(
     onLanguageSelected: (String) -> Unit,
     onRequestNotifications: () -> Unit,
     onExportBackup: () -> Unit,
-    onImportBackup: () -> Unit
+    onImportBackup: () -> Unit,
+    adsManager: RovenaAdManager
 ) {
+    LaunchedEffect(adsManager.adFreeUntil) {
+        val remaining = adsManager.adFreeUntil - System.currentTimeMillis()
+        if (remaining > 0L) delay(remaining)
+        adsManager.updateClock()
+    }
     val onboardingDone by preferences.onboardingCompleted.collectAsStateWithLifecycle(initialValue = false)
     val languageTag by preferences.languageTag.collectAsStateWithLifecycle(initialValue = "")
 
@@ -87,7 +98,8 @@ fun RovenaRoot(
             recordRepository = recordRepository,
             onLanguageSelected = onLanguageSelected,
             onExportBackup = onExportBackup,
-            onImportBackup = onImportBackup
+            onImportBackup = onImportBackup,
+            adsManager = adsManager
         )
     }
 }
@@ -102,7 +114,8 @@ private fun MainShell(
     recordRepository: CarRecordRepository,
     onLanguageSelected: (String) -> Unit,
     onExportBackup: () -> Unit,
-    onImportBackup: () -> Unit
+    onImportBackup: () -> Unit,
+    adsManager: RovenaAdManager
 ) {
     var tabIndex by rememberSaveable { mutableIntStateOf(0) }
     var showAddVehicle by rememberSaveable { mutableStateOf(false) }
@@ -173,7 +186,9 @@ private fun MainShell(
             modifier = Modifier.fillMaxSize(),
             containerColor = Color.Transparent,
             bottomBar = {
-                NavigationBar(
+                Column {
+                    RovenaAdaptiveBanner(adsManager)
+                    NavigationBar(
                     modifier = Modifier
                         .padding(horizontal = 10.dp, vertical = 7.dp)
                         .clip(RoundedCornerShape(30.dp))
@@ -224,6 +239,7 @@ private fun MainShell(
                         colors = navColors,
                     alwaysShowLabel = false
                     )
+                    }
                 }
             }
         ) { padding ->
@@ -278,7 +294,8 @@ private fun MainShell(
                     onLanguageSelected = onLanguageSelected,
                     onExportBackup = onExportBackup,
                     onImportBackup = onImportBackup,
-                    onShareReport = ::shareReport
+                    onShareReport = ::shareReport,
+                    adsManager = adsManager
                 )
             }
         }
@@ -320,24 +337,36 @@ private fun MainShell(
                 scope.launch {
                     recordRepository.addMaintenance(activeVehicleId, draft)
                     recordAction = null
+                    // Finish closing the entry sheet before any eligible interstitial.
+                    delay(350)
+                    adsManager.onCompletedRecord()
                 }
             },
             onFuel = { draft: FuelDraft ->
                 scope.launch {
                     recordRepository.addFuel(activeVehicleId, draft)
                     recordAction = null
+                    // Finish closing the entry sheet before any eligible interstitial.
+                    delay(350)
+                    adsManager.onCompletedRecord()
                 }
             },
             onExpense = { draft: ExpenseDraft ->
                 scope.launch {
                     recordRepository.addExpense(activeVehicleId, draft)
                     recordAction = null
+                    // Finish closing the entry sheet before any eligible interstitial.
+                    delay(350)
+                    adsManager.onCompletedRecord()
                 }
             },
             onDocument = { draft: DocumentDraft ->
                 scope.launch {
                     recordRepository.addDocument(activeVehicleId, draft)
                     recordAction = null
+                    // Finish closing the entry sheet before any eligible interstitial.
+                    delay(350)
+                    adsManager.onCompletedRecord()
                 }
             }
         )
