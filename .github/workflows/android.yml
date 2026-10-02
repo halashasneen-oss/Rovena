@@ -17,13 +17,17 @@ jobs:
       # attempted to install the removed legacy "tools" package and failed.
       - name: Install Android 36
         run: |
-          export ANDROID_HOME="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
-          SDKMANAGER="$ANDROID_HOME/cmdline-tools/16.0/bin/sdkmanager"
-          test -x "$SDKMANAGER"
-          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
-          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
-          yes | "$SDKMANAGER" --licenses >/dev/null || true
-          "$SDKMANAGER" --install "platforms;android-36" "build-tools;36.0.0" >/dev/null
+          SDK_ROOT="$RUNNER_TEMP/android-sdk"
+          mkdir -p "$SDK_ROOT/cmdline-tools"
+          curl -fsSL --retry 3 "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip" -o "$RUNNER_TEMP/android-cli.zip"
+          echo "2d2d50857e4eb553af5a6dc3ad507a17adf43d115264b1afc116f95c92e5e258  $RUNNER_TEMP/android-cli.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/android-cli.zip" -d "$RUNNER_TEMP/android-cli"
+          mv "$RUNNER_TEMP/android-cli/cmdline-tools" "$SDK_ROOT/cmdline-tools/latest"
+          echo "ANDROID_HOME=$SDK_ROOT" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> "$GITHUB_ENV"
+          SDKMANAGER="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --sdk_root="$SDK_ROOT" --licenses >/dev/null || true
+          "$SDKMANAGER" --sdk_root="$SDK_ROOT" --install "platform-tools" "platforms;android-36" "build-tools;36.0.0" >/dev/null
 
       - name: Prepare release signing key
         env:
