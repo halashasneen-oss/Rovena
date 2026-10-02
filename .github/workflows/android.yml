@@ -50,8 +50,9 @@ jobs:
           ROVENA_ADMOB_BANNER_ID: ${{ secrets.ROVENA_ADMOB_BANNER_ID }}
           ROVENA_ADMOB_INTERSTITIAL_ID: ${{ secrets.ROVENA_ADMOB_INTERSTITIAL_ID }}
           ROVENA_ADMOB_REWARDED_ID: ${{ secrets.ROVENA_ADMOB_REWARDED_ID }}
+          ROVENA_ADMOB_APP_OPEN_ID: ${{ secrets.ROVENA_ADMOB_APP_OPEN_ID }}
         run: |
-          if [ -n "$ROVENA_ADMOB_APP_ID" ] && [ -n "$ROVENA_ADMOB_BANNER_ID" ] && [ -n "$ROVENA_ADMOB_INTERSTITIAL_ID" ] && [ -n "$ROVENA_ADMOB_REWARDED_ID" ]; then
+          if [ -n "$ROVENA_ADMOB_APP_ID" ] && [ -n "$ROVENA_ADMOB_BANNER_ID" ] && [ -n "$ROVENA_ADMOB_INTERSTITIAL_ID" ] && [ -n "$ROVENA_ADMOB_REWARDED_ID" ] && [ -n "$ROVENA_ADMOB_APP_OPEN_ID" ]; then
             echo "ROVENA_LIVE_ADS_READY=true" >> "$GITHUB_ENV"
             echo "Rovena AdMob: complete production credentials supplied"
           else

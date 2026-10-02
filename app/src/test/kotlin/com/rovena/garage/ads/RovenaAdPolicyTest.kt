@@ -23,4 +23,20 @@ class RovenaAdPolicyTest {
         assertFalse(RovenaAdPolicy.adsSuppressed(3_600_000, 3_600_000))
         assertFalse(RovenaAdPolicy.mayShowInterstitial(8, 0, 3_500_000, true))
     }
+
+    @Test fun appOpenRequiresWarmReturnAndFreshPreloadedAd() {
+        val now = 10_000_000L
+        val ready = { lastBackground: Long, lastShown: Long, loaded: Long, nowAt: Long,
+                     suppressed: Boolean, flow: Boolean, fullscreen: Boolean ->
+            RovenaAdPolicy.mayShowAppOpen(lastBackground,lastShown,loaded,nowAt,suppressed,flow,fullscreen)
+        }
+        assertFalse(ready(0,0,now - 1000,now,false,false,false)) // cold launch
+        assertFalse(ready(now - 89_999,0,now - 1000,now,false,false,false))
+        assertTrue(ready(now - 91_000,0,now - 1000,now,false,false,false))
+        assertFalse(ready(now - 91_000,now - 1000,now - 1000,now,false,false,false))
+        assertFalse(ready(now - 91_000,0,now - RovenaAdPolicy.APP_OPEN_EXPIRY_MS,now,false,false,false))
+        assertFalse(ready(now - 91_000,0,now - 1000,now,true,false,false))
+        assertFalse(ready(now - 91_000,0,now - 1000,now,false,true,false))
+        assertFalse(ready(now - 91_000,0,now - 1000,now,false,false,true))
+    }
 }
